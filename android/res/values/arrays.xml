@@ -1,0 +1,19 @@
+<resources>
+    <!-- Reply Preference -->
+    <string-array name="nem_skupina">
+        <item>Prvá</item>
+        <item>Druhá</item>
+    </string-array>
+
+    <string-array name="odp_skupina">
+        <item>Prvá</item>
+        <item>Druhá</item>
+        <item>Tretia</item>
+    </string-array>
+
+    <string-array name="etv_nbv">
+        <item>Etika</item>
+        <item>Náboženstvo</item>
+    </string-array>
+
+</resources>

@@ -1,0 +1,65 @@
+{
+  "timetable": [
+  [
+    "51:ELE",
+    "63:MAT",
+    "144:TEG/36:SJG",
+    "144:TEG/64B:UDP",
+    "51:ANJ/64B:UDP",
+    "OBED:OBED/37:NEJ",
+    "27:WEB/OBED:OBED",
+    "27:WEB/OBED:OBED",
+    "27:WEB/-:-"
+  ],
+  [
+    "48:ELE",
+    "53:ETV/24:NBV",
+    "36:SJG/87:PCI",
+    "145:GAM/87:PCI",
+    "145:GAM/87:PCI",
+    "TV:TSV",
+    "38B:NEJ/37:NEJ",
+    "OBED:OBED"
+  ],
+  [
+    "-:-/95B:WEB",
+    "38B:NEJ/95B:WEB",
+    "50:ANJ/7:ANJ",
+    "40:DEJ",
+    "63:MAT",
+    "TV:TSV",
+    "36:SJL",
+    "OBED:OBED"
+  ],
+  [
+    "145:ODP/95A:ODP/106:ODP",
+    "145:ODP/95A:ODP/106:ODP",
+    "145:ODP/95A:ODP/106:ODP",
+    "95B:PCI/7:ANJ",
+    "95B:PCI/37:NEJ",
+    "95B:PCI/OBED:OBED",
+    "38A:ANJ/144:TEG",
+    "OBED:OBED/144:TEG"
+  ],
+  [
+    "64B:UDP/145:GAM",
+    "64B:UDP/145:GAM",
+    "39:OBN",
+    "38B:NEJ/7:ANJ",
+    "40:DEJ",
+    "36:SJG",
+    "63:MAT",
+    "OBED:OBED"
+  ]
+],
+  "times": [
+  "8:00-8:45",
+  "8:50-9:35",
+  "9:45-10:30",
+  "10:50-11:35",
+  "11:40-12:25",
+  "12:35-13:20",
+  "13:30-14:15",
+  "14:20-15:05"
+  ]
+}
