@@ -4,6 +4,7 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g3d.utils.AnimationController;
@@ -28,6 +29,9 @@ import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.graphics.g3d.model.Animation;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.ObjectMap;
+import com.sun.org.apache.xpath.internal.compiler.PsuedoNames;
+
+import org.w3c.dom.Text;
 
 import java.awt.List;
 import java.util.ArrayList;
@@ -94,6 +98,11 @@ public class DavidRenderer extends ApplicationAdapter
 
     ArrayList<String> animations;
 
+    public static Texture BGTex;
+    public static Sprite BGsprite;
+    public SpriteBatch SpriteRenderer;
+
+
     @Override
     public void create() {
 
@@ -120,10 +129,14 @@ public class DavidRenderer extends ApplicationAdapter
         camera.far = 300f;
         camera.update();
 
+
+        int PseudoRandomIndex = (int)(Math.random() * animations.size());
+
+
         ModelBuilder modelBuilder = new ModelBuilder();
         model = new G3dModelLoader(
                 new JsonReader()).loadModel(
-                        Gdx.files.internal("Ninja_Idle_1.g3dj")
+                        Gdx.files.internal(animations.get(PseudoRandomIndex))
         );
         instance = new ModelInstance(model);
 
@@ -137,6 +150,11 @@ public class DavidRenderer extends ApplicationAdapter
        {
            System.out.println(a.id);
        }
+
+       // 2D setup
+       SpriteRenderer = new SpriteBatch();
+       BGTex = new Texture(Gdx.files.internal("Forest.jpg"));
+       BGsprite = new Sprite(BGTex);
     }
 
     @Override
@@ -149,9 +167,17 @@ public class DavidRenderer extends ApplicationAdapter
 
         float delta = Gdx.graphics.getDeltaTime();
 
+        SpriteRenderer.begin();
+        {
+            BGsprite.draw(SpriteRenderer);
+        }
+        SpriteRenderer.end();
+
         modelBatch.begin(camera);
-        animation.update(delta);
-        modelBatch.render(instance, environment);
+        {
+            animation.update(delta);
+            modelBatch.render(instance, environment);
+        }
         modelBatch.end();
     }
 
