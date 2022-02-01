@@ -107,7 +107,7 @@ public class DavidNotifications {
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context.getApplicationContext(), 100, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context.getApplicationContext(), 100, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
 
         if(show && time != null) {
 

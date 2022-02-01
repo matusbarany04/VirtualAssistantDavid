@@ -1,4 +1,6 @@
 package com.david.game.davidnotifyme.david;
+import static com.david.game.davidnotifyme.david.DavidClockUtils.timeToMinutes;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -65,7 +67,7 @@ public class David {
         //int[] breaks = {0, 5, 10, 20, 5, 10, 10, 5};
         String[] timeArray = {"7:55", "8:45", "9:35", "10:30", "11:35", "12:25", "13:20", "14:15", "15:05"};
         int[] timeArrayMinutes = Arrays.stream(timeArray).mapToInt(DavidClockUtils::timeToMinutes).toArray();
-        int startTimeMinutes = DavidClockUtils.timeToMinutes(startTime);
+        int startTimeMinutes = timeToMinutes(startTime);
 
         if (startTimeMinutes > timeArrayMinutes[timeArrayMinutes.length - 1] ||
                 startTimeMinutes < timeArrayMinutes[0]) {
@@ -79,6 +81,17 @@ public class David {
             }
         }
         return 427;
+    }
+
+    public boolean prebiehaHodina() {
+        int index = timetable.getIndexOfCurrentLesson();
+        return index != -2;
+    }
+
+    public boolean bliziSaKoniecHodiny(){
+        if(timetable.getIndexOfCurrentLesson() == -2) return false;
+        int timeToEnd = DavidClockUtils.timeToMinutes(timetable.getEndOfCurrentLesson()) - DavidClockUtils.currentTimeInMinutes();
+        return timeToEnd < 5;
     }
 
     public static ArrayList<Long> ziskajCasyAktualizacie(Context context) {
@@ -95,10 +108,10 @@ public class David {
         timeArray.add(startTime);
         for (int i = 0; i < times.size(); i++) {
             if (i == 0) {
-                timeArray.add( DavidClockUtils.minutesToTime( DavidClockUtils.timeToMinutes(times.get(i).split("-")[0]) - aheadTime));
+                timeArray.add( DavidClockUtils.minutesToTime( timeToMinutes(times.get(i).split("-")[0]) - aheadTime));
             }
-            timeArray.add( DavidClockUtils.minutesToTime( DavidClockUtils.timeToMinutes(times.get(i).split("-")[1]) - aheadTime));
-            timeArray.add(times.get(i).split("-")[1]);
+            timeArray.add(times.get(i).split("-")[0]);
+            timeArray.add( DavidClockUtils.minutesToTime( timeToMinutes(times.get(i).split("-")[1]) - aheadTime));
         }
         timeArray.add(endTime);
 
@@ -108,8 +121,10 @@ public class David {
         ArrayList<Long> output = new ArrayList<>();
         String myDate =  DavidClockUtils.currentTimeInString();
 
+
         for (String s : timeArray) {
             if ( DavidClockUtils.timeToMillis(s) >  DavidClockUtils.timeToMillis(myDate)) { //mozno mozny mozno opraveny problemik
+                Log.d("time", s + " -> " + DavidClockUtils.millisFromNowTill(s));
                 output.add((long)  DavidClockUtils.millisFromNowTill(s));
             }
         }

@@ -93,8 +93,9 @@ public class MainActivity extends AppCompatActivity implements AndroidFragmentAp
         for (int i = 0; i < times.size(); i++) {
             Log.d("cas", times.get(i) + "");
             PendingIntent pendingIntent = PendingIntent.getBroadcast(this.getApplicationContext(),
-                    i, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    i, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
             alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + times.get(i), pendingIntent);
+            Log.d("timeMillis", times.get(i) + "");
         }
 
         DavidNotifications.planMorningNotification(this, null);
@@ -138,24 +139,41 @@ public class MainActivity extends AppCompatActivity implements AndroidFragmentAp
 
     private void updateTimetableData() {
         david.zistiSkupiny(this);
-        Pair<String, String> updatedNotification = david.ziskajDalsiuHodinuEdupage(true);
+
+        String header = david.prebiehaHodina() ? david.ziskajPrebiehajucuHodinu().first : "Prestávka";
+
+        String description = "";
+        if(david.prebiehaHodina() && !david.bliziSaKoniecHodiny()) {
+            description = david.ziskajPrebiehajucuHodinu().second;
+
+        } else {
+            Pair<String, String> message = david.ziskajDalsiuHodinuEdupage(true);
+            description = String.format("%s\n%s", message.first, message.second);
+
+            if (message.second.contains("Zisťujem čo je na obed...")) {
+                String finalDescription = description;
+                david.zistiNovyObed().nastavObedoveNacuvadlo(new David.OnObedNajdenyNacuvadlo() {
+
+                    @Override
+                    public void onObedNajdeny(ArrayList<String> data) {
+                        String todayLunch = LunchActivity.formatLunch(data.get(DavidClockUtils.zistiDen() - 1), ", ");
+                        String formatLunch = getString(R.string.na_obed) + todayLunch;
+                        String newDescription = finalDescription.replace("Zisťujem čo je na obed...", formatLunch);
+                        TextView details = findViewById(R.id.details);
+                        details.post(() -> details.setText(newDescription));
+                    }
+                });
+            }
+
+        }
 
         TextView timetableTextView = findViewById(R.id.timetable);
-        timetableTextView.setText(updatedNotification.first);
+        timetableTextView.setText(header);
 
         TextView details = findViewById(R.id.details);
-        details.setText(updatedNotification.second);
+        details.setText(description);
 
-        if (updatedNotification.second.equals("Zisťujem čo je na obed...")) {
-            david.zistiNovyObed().nastavObedoveNacuvadlo(new David.OnObedNajdenyNacuvadlo() {
-                @Override
-                public void onObedNajdeny(ArrayList<String> data) {
-                    String todayLunch = LunchActivity.formatLunch(data.get(DavidClockUtils.zistiDen() - 1), ", ");
-                    String formatLunch = getString(R.string.na_obed) + todayLunch;
-                    details.post(() -> details.setText(formatLunch));
-                }
-            });
-        }
+
 
         sendBroadcast(notificationIntent);
     }

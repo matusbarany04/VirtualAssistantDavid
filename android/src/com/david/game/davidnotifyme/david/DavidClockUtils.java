@@ -34,7 +34,7 @@ public class DavidClockUtils {
 
     public static int millisFromNowTill(String tillTime) {
         SimpleDateFormat formatter;
-        formatter = new SimpleDateFormat("hh:mm", Locale.ENGLISH);
+        formatter = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
 
         try {
 
