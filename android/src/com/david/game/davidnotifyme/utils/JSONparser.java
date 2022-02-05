@@ -1,4 +1,4 @@
-package com.david.game.davidnotifyme.david;
+package com.david.game.davidnotifyme.utils;
 import android.content.Context;
 
 import java.io.BufferedReader;

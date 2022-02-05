@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements AndroidFragmentAp
                 commit();
 
         try {
-            new EdupageScraper().scrape("smh");
+            new EdupageScraper();//.scrape("smh");
         } catch (Exception e) {
             e.printStackTrace();
         }
