@@ -18,7 +18,7 @@ public class JSONparser {
 
             while ((line = bufferedReader.readLine()) != null) {
                 builder.append(line + "\n");
-            }
+            } 
             bufferedReader.close();
         } catch (FileNotFoundException ex) {
             System.out.println("Unable to open file '" + id + "'");
