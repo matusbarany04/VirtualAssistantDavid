@@ -90,10 +90,11 @@ public class Timetable {
 
         int index = getClassIndexBasedOnCurrentTime();
         //Log.d("index", index + " ");
-        if (index != -1) {
+        ArrayList<String> timeTableToday = timetable.get(day - 1);
 
-            ArrayList<String> lesson = new ArrayList<>(
-                    Arrays.asList(timetable.get(day - 1).get(index).split("/")));
+        if (index != -1 && index < timeTableToday.size()) {
+
+            ArrayList<String> lesson = new ArrayList<>(Arrays.asList(timeTableToday.get(index).split("/")));
 
             if (lesson.size() == 1) { //normálka
                 lesson = new ArrayList<>(Arrays.asList(lesson.get(0).split(":")));
@@ -161,7 +162,7 @@ public class Timetable {
             }
             if (timeInMinutesStart <= currentTime && timeInMinutesEnd >= currentTime) {
                 return i;
-            } else if (timeInMinutesStart <= currentTime && timeInMinutesEnd + breaks[i] >= currentTime) {
+            } else if (timeInMinutesStart < currentTime && timeInMinutesEnd + breaks[i] > currentTime) {
                 return -2;
             }
         }

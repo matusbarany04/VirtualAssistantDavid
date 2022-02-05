@@ -54,11 +54,13 @@ public class BroadCastReceiver extends BroadcastReceiver {
         if(shouldShowNotification(context)){
             Timetable timetable = david.ziskajRozvrh();
 
-            boolean prebiehaHodina = DavidClockUtils.timeToMinutes(timetable.getEndOfCurrentLesson()) - DavidClockUtils.currentTimeInMinutes() > 5;
+            boolean prebiehajucaNotifikacia = david.prebiehaHodina() && !david.bliziSaKoniecHodiny();
+
+            Log.d("compare", david.prebiehaHodina() + "." + david.bliziSaKoniecHodiny());
 
             Log.d("minutes", DavidClockUtils.timeToMinutes(timetable.getEndOfCurrentLesson()) + "-" + DavidClockUtils.currentTimeInMinutes());
 
-            Pair<String, String> updatedNotification = prebiehaHodina ? david.ziskajPrebiehajucuHodinu() : david.ziskajDalsiuHodinuEdupage(true);
+            Pair<String, String> updatedNotification = prebiehajucaNotifikacia ? david.ziskajPrebiehajucuHodinu() : david.ziskajDalsiuHodinuEdupage(true);
 
             if(updatedNotification.second.equals("Zisťujem čo je na obed...")) {
                 david.zistiNovyObed().nastavObedoveNacuvadlo(new David.OnObedNajdenyNacuvadlo() {

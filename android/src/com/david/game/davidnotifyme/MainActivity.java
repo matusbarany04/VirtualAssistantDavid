@@ -16,6 +16,8 @@ import android.content.pm.ConfigurationInfo;
 import android.net.Uri;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
@@ -88,13 +90,17 @@ public class MainActivity extends AppCompatActivity implements AndroidFragmentAp
     public void scheduleNotifications() {
         ArrayList<Long> times = David.ziskajCasyAktualizacie(this);
 
+        Handler handler = new Handler(Looper.getMainLooper());
         AlarmManager alarmManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
 
         for (int i = 0; i < times.size(); i++) {
             Log.d("cas", times.get(i) + "");
             PendingIntent pendingIntent = PendingIntent.getBroadcast(this.getApplicationContext(),
-                    i, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    i, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
             alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + times.get(i), pendingIntent);
+
+            handler.postDelayed(this::updateTimetableData, times.get(i));
+            Log.d("timeMillis", times.get(i) + "");
         }
 
         DavidNotifications.planMorningNotification(this, null);
@@ -137,27 +143,46 @@ public class MainActivity extends AppCompatActivity implements AndroidFragmentAp
     }
 
     private void updateTimetableData() {
-        david.zistiSkupiny(this);
-        Pair<String, String> updatedNotification = david.ziskajDalsiuHodinuEdupage(true);
+        try {
+            david.zistiSkupiny(this);
 
-        TextView timetableTextView = findViewById(R.id.timetable);
-        timetableTextView.setText(updatedNotification.first);
+            String header = david.prebiehaHodina() ? david.ziskajPrebiehajucuHodinu().first : "Prestávka";
 
-        TextView details = findViewById(R.id.details);
-        details.setText(updatedNotification.second);
+            String description = "";
+            if(david.prebiehaHodina() && !david.bliziSaKoniecHodiny()) {
+                description = david.ziskajPrebiehajucuHodinu().second;
 
-        if (updatedNotification.second.equals("Zisťujem čo je na obed...")) {
-            david.zistiNovyObed().nastavObedoveNacuvadlo(new David.OnObedNajdenyNacuvadlo() {
-                @Override
-                public void onObedNajdeny(ArrayList<String> data) {
-                    String todayLunch = LunchActivity.formatLunch(data.get(DavidClockUtils.zistiDen() - 1), ", ");
-                    String formatLunch = getString(R.string.na_obed) + todayLunch;
-                    details.post(() -> details.setText(formatLunch));
+            } else {
+                Pair<String, String> message = david.ziskajDalsiuHodinuEdupage(true);
+                description = String.format("%s\n%s", message.first, message.second);
+
+                if (message.second.contains("Zisťujem čo je na obed...")) {
+                    String finalDescription = description;
+                    david.zistiNovyObed().nastavObedoveNacuvadlo(new David.OnObedNajdenyNacuvadlo() {
+
+                        @Override
+                        public void onObedNajdeny(ArrayList<String> data) {
+                            String todayLunch = LunchActivity.formatLunch(data.get(DavidClockUtils.zistiDen() - 1), ", ");
+                            String formatLunch = getString(R.string.na_obed) + todayLunch;
+                            String newDescription = finalDescription.replace("Zisťujem čo je na obed...", formatLunch);
+                            TextView details = findViewById(R.id.details);
+                            details.post(() -> details.setText(newDescription));
+                        }
+                    });
                 }
-            });
-        }
 
-        sendBroadcast(notificationIntent);
+            }
+
+            TextView timetableTextView = findViewById(R.id.timetable);
+            timetableTextView.setText(header);
+
+            TextView details = findViewById(R.id.details);
+            details.setText(description);
+
+            sendBroadcast(notificationIntent);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void startAnimations() {
