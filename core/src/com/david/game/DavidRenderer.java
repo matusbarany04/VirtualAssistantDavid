@@ -1,5 +1,13 @@
 package com.david.game;
 
+
+import static com.badlogic.gdx.graphics.GL20.GL_BACK;
+import static com.badlogic.gdx.graphics.GL20.GL_LEQUAL;
+
+import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Camera;
+
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
@@ -7,7 +15,15 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+
+import com.badlogic.gdx.graphics.g3d.Renderable;
+import com.badlogic.gdx.graphics.g3d.Shader;
 import com.badlogic.gdx.graphics.g3d.utils.AnimationController;
+import com.badlogic.gdx.graphics.g3d.utils.RenderContext;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+
+import com.badlogic.gdx.graphics.g3d.utils.AnimationController;
+
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.ApplicationListener;
@@ -27,6 +43,9 @@ import com.badlogic.gdx.graphics.g3d.loader.G3dModelLoader;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.graphics.g3d.model.Animation;
+
+import com.badlogic.gdx.utils.GdxRuntimeException;
+
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.sun.org.apache.xpath.internal.compiler.PsuedoNames;
@@ -87,12 +106,84 @@ public class DavidRenderer extends ApplicationAdapter
     } */
 
 
+    public class MYshader implements Shader {
+
+        ShaderProgram program;
+        Camera camera;
+        RenderContext ctx;
+
+        @Override
+        public void init()
+        {
+            String vertex = Gdx.files.internal("Shaders/vertex.glsl").readString();
+            String fragment = Gdx.files.internal("Shaders/fragment.glsl").readString();
+            program = new ShaderProgram(vertex, fragment);
+
+            if (!program.isCompiled())
+            {
+                throw new GdxRuntimeException(program.getLog());
+            }
+        }
+
+        @Override
+        public void dispose()
+        {
+            program.dispose();
+        }
+
+        @Override
+        public void begin(Camera camera, RenderContext context)
+        {
+            this.camera = camera;
+            this.ctx = context;
+            program.begin();
+
+            program.setUniformMatrix("u_projViewTrans", camera.combined);
+
+            context.setDepthTest(GL_LEQUAL);
+            context.setCullFace(GL_BACK);
+        }
+
+        @Override
+        public void render(Renderable renderable)
+        {
+            program.setUniformMatrix("u_worldTrans", renderable.worldTransform);
+            renderable.meshPart.render(program);
+        }
+
+        @Override
+        public void end()
+        {
+            program.end();
+        }
+
+        @Override
+        public int compareTo(Shader other)
+        {
+            return 0;
+        }
+
+        @Override
+        public boolean canRender(Renderable instance)
+        {
+            return true;
+        }
+
+    };
+
+
+
+
     private Environment environment;
     private PerspectiveCamera camera;
     private CameraInputController cameraController;
     private ModelBatch modelBatch;
     private Model model;
     private ModelInstance instance;
+
+
+    private Shader shaders;
+
 
     private AnimationController animation;
 
@@ -155,6 +246,11 @@ public class DavidRenderer extends ApplicationAdapter
        SpriteRenderer = new SpriteBatch();
        BGTex = new Texture(Gdx.files.internal("Forest.jpg"));
        BGsprite = new Sprite(BGTex);
+
+       // custom shaders
+       //shaders = new MYshader();
+       //shaders.init();
+
     }
 
     @Override
