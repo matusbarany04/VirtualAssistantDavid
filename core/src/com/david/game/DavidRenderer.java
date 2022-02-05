@@ -1,21 +1,29 @@
 package com.david.game;
 
+
 import static com.badlogic.gdx.graphics.GL20.GL_BACK;
 import static com.badlogic.gdx.graphics.GL20.GL_LEQUAL;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
+
+import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+
 import com.badlogic.gdx.graphics.g3d.Renderable;
 import com.badlogic.gdx.graphics.g3d.Shader;
 import com.badlogic.gdx.graphics.g3d.utils.AnimationController;
 import com.badlogic.gdx.graphics.g3d.utils.RenderContext;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+
+import com.badlogic.gdx.graphics.g3d.utils.AnimationController;
+
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.ApplicationListener;
@@ -35,7 +43,9 @@ import com.badlogic.gdx.graphics.g3d.loader.G3dModelLoader;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.graphics.g3d.model.Animation;
+
 import com.badlogic.gdx.utils.GdxRuntimeException;
+
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.sun.org.apache.xpath.internal.compiler.PsuedoNames;
@@ -94,6 +104,7 @@ public class DavidRenderer extends ApplicationAdapter
     {
         renderer.dispose();
     } */
+
 
     public class MYshader implements Shader {
 
@@ -170,7 +181,9 @@ public class DavidRenderer extends ApplicationAdapter
     private Model model;
     private ModelInstance instance;
 
+
     private Shader shaders;
+
 
     private AnimationController animation;
 
@@ -234,10 +247,10 @@ public class DavidRenderer extends ApplicationAdapter
        BGTex = new Texture(Gdx.files.internal("Forest.jpg"));
        BGsprite = new Sprite(BGTex);
 
-
        // custom shaders
        //shaders = new MYshader();
        //shaders.init();
+
     }
 
     @Override
