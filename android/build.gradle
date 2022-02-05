@@ -115,6 +115,9 @@ dependencies {
     implementation 'androidx.navigation:navigation-fragment:2.4.0'
     implementation 'androidx.navigation:navigation-ui:2.4.0'
 
+    //okhttp for simplifying http requests
+    implementation 'com.squareup.okhttp3:okhttp:3.11.0'
+
 }
 
 eclipse.project.name = appName + "-android"
