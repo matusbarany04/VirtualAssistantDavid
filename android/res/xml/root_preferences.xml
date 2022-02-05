@@ -1,0 +1,122 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory app:title="Hlavné">
+
+        <SwitchPreferenceCompat
+            app:key="show_notify"
+            app:title="Zobrazovanie oznámení"
+            app:defaultValue="true"/>
+
+        <EditTextPreference
+            android:defaultValue="5"
+            app:key="time-ahead"
+            android:dependency="show_notify"
+            app:title="Čas aktualizácie pred koncom hodiny"
+            android:dialogMessage="(v minútach)"
+            app:useSimpleSummaryProvider="true" />
+
+        <EditTextPreference
+            app:key="meno"
+            app:title="Meno"
+            app:useSimpleSummaryProvider="true" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="Skupiny">
+
+        <ListPreference
+            app:defaultValue="Prvá"
+            app:entries="@array/nem_skupina"
+            app:entryValues="@array/nem_skupina"
+            app:key="nemcina"
+            app:title="Skupina nemčiny"
+            app:useSimpleSummaryProvider="true" />
+
+        <ListPreference
+            app:defaultValue="Prvá"
+            app:entries="@array/odp_skupina"
+            app:entryValues="@array/odp_skupina"
+            app:key="odp"
+            app:title="Skupina ODP"
+            app:useSimpleSummaryProvider="true" />
+
+        <ListPreference
+            app:defaultValue="Etika"
+            app:entries="@array/etv_nbv"
+            app:entryValues="@array/etv_nbv"
+            app:key="etv_nbv"
+            app:title="Skupina ETV / NBV"
+            app:useSimpleSummaryProvider="true" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="Notifikácia">
+
+        <EditTextPreference
+            android:defaultValue="7:30"
+            app:key="time_on"
+            app:title="Zobrazenie"
+            app:useSimpleSummaryProvider="true" />
+
+
+        <EditTextPreference
+            android:defaultValue="15:00"
+            app:key="time_off"
+            app:title="Zmiznutie"
+            app:useSimpleSummaryProvider="true" />
+
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="Ráno">
+
+        <SwitchPreferenceCompat
+            app:key="show_notify_morning"
+            app:title="Oznámenie"
+            app:defaultValue="true"/>
+
+        <EditTextPreference
+            app:key="time_notify_morning"
+            app:title="Zobrazenie"
+            app:dependency="show_notify_morning"
+            app:useSimpleSummaryProvider="true"
+            app:defaultValue="7:00"/>
+
+    </PreferenceCategory>
+
+
+    <PreferenceCategory app:title="About">
+
+        <Preference
+            android:title="Version"
+            android:key="about_version"
+            android:summary="1.0">
+        </Preference>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:title="Advanced"
+        android:key="developer_category"
+        app:isPreferenceVisible="false">
+
+        <SwitchPreferenceCompat
+            app:key="two_notify"
+            app:title="David power"
+            android:summary=""/>
+
+        <SwitchPreferenceCompat
+            app:key="two_notify"
+            app:title="Smart David"
+            android:summary=""/>
+
+        <SwitchPreferenceCompat
+            app:key="two_notify"
+            app:title="David supervisions"
+            android:summary=""/>
+
+    </PreferenceCategory>
+
+
+</PreferenceScreen>
