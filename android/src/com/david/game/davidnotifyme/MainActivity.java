@@ -31,6 +31,7 @@ import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.badlogic.gdx.backends.android.AndroidFragmentApplication;
 import com.david.game.AndroidLauncher;
 import com.david.game.R;
+import com.david.game.davidnotifyme.david.ClassroomLocation;
 import com.david.game.davidnotifyme.david.David;
 import com.david.game.davidnotifyme.david.DavidClockUtils;
 import com.david.game.davidnotifyme.edupage.EdupageScraper;
@@ -135,11 +136,12 @@ public class MainActivity extends AppCompatActivity implements AndroidFragmentAp
             startActivity(lunchIntent);
         });
 
-        LinearLayout github = findViewById(R.id.github);
-        github.setOnClickListener((View view) -> {
-            String url = "http://www.github.com/mtu4554";
+        LinearLayout location = findViewById(R.id.location);
+        location.setOnClickListener((View view) -> {
+            showClasroomInput();
+           /* String url = "http://www.github.com/mtu4554";
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-            startActivity(browserIntent);
+            startActivity(browserIntent);*/
         });
 
         sendBroadcast(notificationIntent);
@@ -228,6 +230,12 @@ public class MainActivity extends AppCompatActivity implements AndroidFragmentAp
         }
     }
 
+    private void showClasroomInput() {
+        LinearLayout layout = findViewById(R.id.davidWords);
+
+        ClassroomLocation classroomLocation = new ClassroomLocation(this);
+        classroomLocation.inflateView(layout);
+    }
 
     @Override
     protected void onDestroy() {
