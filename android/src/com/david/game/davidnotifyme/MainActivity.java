@@ -80,30 +80,33 @@ public class MainActivity extends AppCompatActivity implements AndroidFragmentAp
 
         david = new David(this, executor);
 
-        scheduleNotifications();
+        scheduleNotifications(this, notificationIntent);
 
         initUI();
 
         initDavidGLView();
     }
 
-    public void scheduleNotifications() {
-        ArrayList<Long> times = David.ziskajCasyAktualizacie(this);
+    public static void scheduleNotifications(Context context, Intent intent) {
+        ArrayList<Long> times = David.ziskajCasyAktualizacie(context);
 
         Handler handler = new Handler(Looper.getMainLooper());
-        AlarmManager alarmManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
         for (int i = 0; i < times.size(); i++) {
             Log.d("cas", times.get(i) + "");
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(this.getApplicationContext(),
-                    i, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
+                    i, intent, PendingIntent.FLAG_IMMUTABLE);
             alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + times.get(i), pendingIntent);
 
-            handler.postDelayed(this::updateTimetableData, times.get(i));
+            if(context instanceof MainActivity) {
+                MainActivity mainActivity = (MainActivity) context;
+                handler.postDelayed(mainActivity::updateTimetableData, times.get(i));
+            }
             Log.d("timeMillis", times.get(i) + "");
         }
 
-        DavidNotifications.planMorningNotification(this, null);
+        DavidNotifications.planMorningNotification(context, null);
     }
 
     public void initUI() {
@@ -155,23 +158,9 @@ public class MainActivity extends AppCompatActivity implements AndroidFragmentAp
             } else {
                 Pair<String, String> message = david.ziskajDalsiuHodinuEdupage(true);
                 description = String.format("%s\n%s", message.first, message.second);
-
-                if (message.second.contains("Zisťujem čo je na obed...")) {
-                    String finalDescription = description;
-                    david.zistiNovyObed().nastavObedoveNacuvadlo(new David.OnObedNajdenyNacuvadlo() {
-
-                        @Override
-                        public void onObedNajdeny(ArrayList<String> data) {
-                            String todayLunch = LunchActivity.formatLunch(data.get(DavidClockUtils.zistiDen() - 1), ", ");
-                            String formatLunch = getString(R.string.na_obed) + todayLunch;
-                            String newDescription = finalDescription.replace("Zisťujem čo je na obed...", formatLunch);
-                            TextView details = findViewById(R.id.details);
-                            details.post(() -> details.setText(newDescription));
-                        }
-                    });
-                }
-
             }
+
+            if (description.contains("Zisťujem čo je na obed...")) checkLunch(description);
 
             TextView timetableTextView = findViewById(R.id.timetable);
             timetableTextView.setText(header);
@@ -183,6 +172,25 @@ public class MainActivity extends AppCompatActivity implements AndroidFragmentAp
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void checkLunch(String description) {
+            david.zistiNovyObed().nastavObedoveNacuvadlo(new David.OnObedNajdenyNacuvadlo() {
+
+                @Override
+                public void onObedNajdeny(ArrayList<String> data) {
+                    int dayIndex = DavidClockUtils.zistiDen() - 1;
+                    String newDescription;
+                    if(dayIndex < data.size()) {
+                        String todayLunch = LunchActivity.formatLunch(data.get(dayIndex), ", ");
+                        String formatLunch = getString(R.string.na_obed) + todayLunch;
+                        newDescription = description.replace("Zisťujem čo je na obed...", formatLunch);
+                    }
+                    else newDescription = "Dneska obed nie je";
+                    TextView details = findViewById(R.id.details);
+                    details.post(() -> details.setText(newDescription));
+                }
+            });
     }
 
     private void startAnimations() {

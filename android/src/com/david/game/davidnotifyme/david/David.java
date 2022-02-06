@@ -225,8 +225,16 @@ public class David {
 
     public Pair<String, String> ziskajPrebiehajucuHodinu() {
 
-        String header = "Aktuálne prebieha " + timetable.getCurrentLesson();
+        String lesson = timetable.getCurrentLesson();
+
+        String header = "Aktuálne prebieha " + lesson;
+
         String text = "hodina končí " + timetable.getEndOfCurrentLesson();
+
+        if(lesson.equals("OBED")) {
+            header = "Nasleduje obed. Dobrú chuť !";
+            text = "Zisťujem čo je na obed...";
+        }
 
         return new Pair<>(header, text);
     }
