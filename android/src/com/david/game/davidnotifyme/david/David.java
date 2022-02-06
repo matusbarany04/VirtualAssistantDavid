@@ -227,6 +227,8 @@ public class David {
 
         String lesson = timetable.getCurrentLesson();
 
+        if(lesson.equals("voľno")) return new Pair<>("Máš voľno", "");
+
         String header = "Aktuálne prebieha " + lesson;
 
         String text = "hodina končí " + timetable.getEndOfCurrentLesson();
