@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements AndroidFragmentAp
     David david;
     Intent notificationIntent;
     private GLSurfaceView mGLSurfaceView;
+    private ClassroomLocation classroomLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -233,7 +234,7 @@ public class MainActivity extends AppCompatActivity implements AndroidFragmentAp
     private void showClasroomInput() {
         LinearLayout layout = findViewById(R.id.davidWords);
 
-        ClassroomLocation classroomLocation = new ClassroomLocation(this);
+        classroomLocation = new ClassroomLocation(this);
         classroomLocation.inflateView(layout);
     }
 
@@ -257,6 +258,15 @@ public class MainActivity extends AppCompatActivity implements AndroidFragmentAp
         // The activity must call the GL surface view's onPause() on activity onPause().
         super.onPause();
         mGLSurfaceView.onPause();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(classroomLocation != null && classroomLocation.isShowed()) {
+            classroomLocation.hide();
+        } else {
+            finish();
+        }
     }
 
     public void coming_soon() {

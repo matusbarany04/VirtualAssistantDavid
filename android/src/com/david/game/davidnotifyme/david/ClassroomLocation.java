@@ -27,7 +27,8 @@ import java.util.logging.LogRecord;
 
 public class ClassroomLocation {
 
-    private Activity activity;
+    private boolean showed;
+    private final Activity activity;
     private View view;
     private View school;
     private GradientDrawable activeSchoolPart;
@@ -43,6 +44,7 @@ public class ClassroomLocation {
         view.setAlpha(0);
         view.animate().alpha(1).setDuration(1000);
         handleButton();
+        showed = true;
     }
 
     private void handleButton() {
@@ -157,5 +159,14 @@ public class ClassroomLocation {
             view = new View(activity);
         }
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    public void hide() {
+        activity.recreate();
+        showed = false;
+    }
+
+    public boolean isShowed() {
+        return showed;
     }
 }
