@@ -28,6 +28,7 @@ import android.widget.Toast;
 import com.badlogic.gdx.backends.android.AndroidFragmentApplication;
 import com.david.game.AndroidLauncher;
 import com.david.game.R;
+import com.david.game.davidnotifyme.david.ClassroomLocation;
 import com.david.game.davidnotifyme.david.David;
 import com.david.game.davidnotifyme.david.DavidClockUtils;
 import com.david.game.davidnotifyme.edupage.Edupage;
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements AndroidFragmentAp
     David david;
     Intent notificationIntent;
     private GLSurfaceView mGLSurfaceView;
+    private ClassroomLocation classroomLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,30 +77,33 @@ public class MainActivity extends AppCompatActivity implements AndroidFragmentAp
 
         david = new David(this, executor);
 
-        scheduleNotifications();
+        scheduleNotifications(this, notificationIntent);
 
         initUI();
 
         initDavidGLView();
     }
 
-    public void scheduleNotifications() {
-        ArrayList<Long> times = David.ziskajCasyAktualizacie(this);
+    public static void scheduleNotifications(Context context, Intent intent) {
+        ArrayList<Long> times = David.ziskajCasyAktualizacie(context);
 
         Handler handler = new Handler(Looper.getMainLooper());
-        AlarmManager alarmManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
         for (int i = 0; i < times.size(); i++) {
             Log.d("cas", times.get(i) + "");
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(this.getApplicationContext(),
-                    i, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
+                    i, intent, PendingIntent.FLAG_IMMUTABLE);
             alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + times.get(i), pendingIntent);
 
-            handler.postDelayed(this::updateTimetableData, times.get(i));
+            if(context instanceof MainActivity) {
+                MainActivity mainActivity = (MainActivity) context;
+                handler.postDelayed(mainActivity::updateTimetableData, times.get(i));
+            }
             Log.d("timeMillis", times.get(i) + "");
         }
 
-        DavidNotifications.planMorningNotification(this, null);
+        DavidNotifications.planMorningNotification(context, null);
     }
 
     public void initUI() {
@@ -127,11 +132,12 @@ public class MainActivity extends AppCompatActivity implements AndroidFragmentAp
             startActivity(lunchIntent);
         });
 
-        LinearLayout github = findViewById(R.id.github);
-        github.setOnClickListener((View view) -> {
-            String url = "http://www.github.com/mtu4554";
+        LinearLayout location = findViewById(R.id.location);
+        location.setOnClickListener((View view) -> {
+            showClasroomInput();
+           /* String url = "http://www.github.com/mtu4554";
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-            startActivity(browserIntent);
+            startActivity(browserIntent);*/
         });
 
         sendBroadcast(notificationIntent);
@@ -150,23 +156,9 @@ public class MainActivity extends AppCompatActivity implements AndroidFragmentAp
             } else {
                 Pair<String, String> message = david.ziskajDalsiuHodinuEdupage(true);
                 description = String.format("%s\n%s", message.first, message.second);
-
-                if (message.second.contains("Zisťujem čo je na obed...")) {
-                    String finalDescription = description;
-                    david.zistiNovyObed().nastavObedoveNacuvadlo(new David.OnObedNajdenyNacuvadlo() {
-
-                        @Override
-                        public void onObedNajdeny(ArrayList<String> data) {
-                            String todayLunch = LunchActivity.formatLunch(data.get(DavidClockUtils.zistiDen() - 1), ", ");
-                            String formatLunch = getString(R.string.na_obed) + todayLunch;
-                            String newDescription = finalDescription.replace("Zisťujem čo je na obed...", formatLunch);
-                            TextView details = findViewById(R.id.details);
-                            details.post(() -> details.setText(newDescription));
-                        }
-                    });
-                }
-
             }
+
+            if (description.contains("Zisťujem čo je na obed...")) checkLunch(description);
 
             TextView timetableTextView = findViewById(R.id.timetable);
             timetableTextView.setText(header);
@@ -178,6 +170,26 @@ public class MainActivity extends AppCompatActivity implements AndroidFragmentAp
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void checkLunch(String description) {
+            david.zistiNovyObed().nastavObedoveNacuvadlo(new David.OnObedNajdenyNacuvadlo() {
+
+                @Override
+                public void onObedNajdeny(ArrayList<String> data) {
+                    int dayIndex = DavidClockUtils.zistiDen() - 1;
+                    String newDescription;
+                    Log.d("index", dayIndex + " " + data.size());
+                    if(dayIndex < data.size()) {
+                        String todayLunch = LunchActivity.formatLunch(data.get(dayIndex), ", ");
+                        String formatLunch = getString(R.string.na_obed) + todayLunch;
+                        newDescription = description.replace("Zisťujem čo je na obed...", formatLunch);
+                    }
+                    else newDescription = "Dneska obed nie je";
+                    TextView details = findViewById(R.id.details);
+                    details.post(() -> details.setText(newDescription));
+                }
+            });
     }
 
     private void startAnimations() {
@@ -215,6 +227,12 @@ public class MainActivity extends AppCompatActivity implements AndroidFragmentAp
         }
     }
 
+    private void showClasroomInput() {
+        LinearLayout layout = findViewById(R.id.davidWords);
+
+        classroomLocation = new ClassroomLocation(this);
+        classroomLocation.inflateView(layout);
+    }
 
     @Override
     protected void onDestroy() {
@@ -236,6 +254,15 @@ public class MainActivity extends AppCompatActivity implements AndroidFragmentAp
         // The activity must call the GL surface view's onPause() on activity onPause().
         super.onPause();
         mGLSurfaceView.onPause();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(classroomLocation != null && classroomLocation.isShowed()) {
+            classroomLocation.hide();
+        } else {
+            finish();
+        }
     }
 
     public void coming_soon() {

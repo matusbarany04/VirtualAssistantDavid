@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/severny_trakt_2"
+        android:width="40dp"
+        android:height="70dp">
+        <shape>
+            <solid android:color="?attr/schoolShapeColor"/>
+            <stroke android:color="@color/black" android:width="1dp"/>
+        </shape>
+    </item>
+
+    <item
+        android:id="@+id/juzny_trakt_2"
+        android:height="70dp"
+        android:width="40dp"
+        android:top="70dp">
+        <shape>
+            <solid android:color="?attr/schoolShapeColor"/>
+            <stroke android:color="@color/black" android:width="1dp"/>
+        </shape>
+    </item>
+
+    <item
+        android:height="20dp"
+        android:width="25dp"
+        android:start="40dp"
+        android:top="100dp">
+        <shape>
+            <solid android:color="?attr/schoolShapeColor"/>
+            <stroke android:color="@color/black" android:width="1dp"/>
+        </shape>
+    </item>
+
+
+    <item
+        android:id="@+id/severny_trakt_1"
+        android:width="45dp"
+        android:height="30dp"
+        android:top="10dp"
+        android:start="65dp">
+        <shape>
+            <solid android:color="?attr/schoolShapeColor"/>
+            <stroke android:color="@color/black" android:width="1dp"/>
+        </shape>
+    </item>
+
+    <item
+        android:id="@+id/juzny_trakt_1"
+        android:width="45dp"
+        android:height="30dp"
+        android:top="100dp"
+        android:start="65dp">
+        <shape>
+            <solid android:color="?attr/schoolShapeColor"/>
+            <stroke android:color="@color/black" android:width="1dp"/>
+        </shape>
+    </item>
+
+    <item
+        android:height="20dp"
+        android:width="25dp"
+        android:start="40dp"
+        android:top="20dp">
+        <shape>
+            <solid android:color="?attr/schoolShapeColor"/>
+            <stroke android:color="@color/black" android:width="1dp"/>
+        </shape>
+    </item>
+
+    <item
+        android:height="15dp"
+        android:width="15dp"
+        android:start="110dp"
+        android:top="25dp">
+        <shape>
+            <solid android:color="?attr/schoolShapeColor"/>
+            <stroke android:color="@color/black" android:width="1dp"/>
+        </shape>
+    </item>
+
+    <item
+        android:height="15dp"
+        android:width="15dp"
+        android:start="110dp"
+        android:top="100dp">
+        <shape>
+            <solid android:color="?attr/schoolShapeColor"/>
+            <stroke android:color="@color/black" android:width="1dp"/>
+        </shape>
+    </item>
+
+    <item
+        android:id="@+id/hlavna_budova"
+        android:width="50dp"
+        android:height="90dp"
+        android:top="25dp"
+        android:start="125dp">
+        <shape>
+            <solid android:color="?attr/schoolShapeColor"/>
+            <stroke android:color="@color/black" android:width="1dp"/>
+        </shape>
+    </item>
+
+    <item
+        android:id="@+id/telocvicna"
+        android:width="40dp"
+        android:height="30dp"
+        android:top="10dp"
+        android:start="175dp">
+        <shape>
+            <solid android:color="?attr/schoolShapeColor"/>
+            <stroke android:color="@color/black" android:width="1dp"/>
+        </shape>
+    </item>
+
+    <item
+        android:id="@+id/jedalen"
+        android:width="40dp"
+        android:height="30dp"
+        android:top="100dp"
+        android:start="175dp">
+        <shape>
+            <solid android:color="?attr/schoolShapeColor"/>
+            <stroke android:color="@color/black" android:width="1dp"/>
+        </shape>
+    </item>
+
+
+</layer-list>

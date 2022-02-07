@@ -1,5 +1,7 @@
 package com.david.game.davidnotifyme.notifications;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +14,7 @@ import androidx.preference.PreferenceManager;
 
 
 import com.david.game.R;
+import com.david.game.davidnotifyme.MainActivity;
 import com.david.game.davidnotifyme.david.David;
 import com.david.game.davidnotifyme.david.DavidClockUtils;
 import com.david.game.davidnotifyme.david.Timetable;
@@ -66,8 +69,13 @@ public class BroadCastReceiver extends BroadcastReceiver {
                 david.zistiNovyObed().nastavObedoveNacuvadlo(new David.OnObedNajdenyNacuvadlo() {
                     @Override
                     public void onObedNajdeny(ArrayList<String> data) {
-                        String todayLunch = LunchActivity.formatLunch(data.get( DavidClockUtils.zistiDen() - 1), ", ");
-                        String formatLunch = context.getString(R.string.na_obed) + todayLunch;
+                        int dayIndex = DavidClockUtils.zistiDen() - 1;
+                        String formatLunch;
+                        if (dayIndex < data.size()) {
+                            String todayLunch = LunchActivity.formatLunch(data.get(DavidClockUtils.zistiDen() - 1), ", ");
+                            formatLunch = context.getString(R.string.na_obed) + todayLunch;
+                        }
+                        else formatLunch = "Dneska obed nie je";
                         DavidNotifications.updateNotification(context, updatedNotification.first, formatLunch);
                     }
                 });
@@ -80,11 +88,22 @@ public class BroadCastReceiver extends BroadcastReceiver {
     }
 
     private void showMorningMessage(Context context) {
-        if(! DavidClockUtils.jeVikend()) {
+        if(!DavidClockUtils.jeVikend()) {
             String header = context.getString(R.string.good_morning);
             String message = David.ziskajRannuSpravu(context);
             DavidNotifications.showNotificationMessage(context, header, message, DavidNotifications.MORNING_NOTIFICATION);
+            scheduleNotificationsToday(context);
         }
+    }
+
+    private void scheduleNotificationsToday(Context context) {
+        Intent notificationIntent = new Intent(context, BroadCastReceiver.class);
+
+        Bundle extras = new Bundle();
+        extras.putString("notificationType", "update");
+        notificationIntent.putExtras(extras);
+
+        MainActivity.scheduleNotifications(context, notificationIntent);
     }
 
     public static boolean shouldShowNotification(Context context) {

@@ -27,6 +27,7 @@
         android:layout_height="match_parent">
 
     </FrameLayout>
+
     <LinearLayout
         android:id="@+id/davidWords"
         android:layout_marginTop="30dp"
@@ -114,7 +115,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/github"
+                android:id="@+id/location"
                 android:layout_marginHorizontal="10dp"
                 android:layout_width="80dp"
                 android:layout_height="80dp"

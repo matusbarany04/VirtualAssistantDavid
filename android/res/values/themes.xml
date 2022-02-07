@@ -12,7 +12,9 @@
         <!--        <item name="colorOnSecondary">@color/black</item>-->
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
-        <!-- Customize your theme here. -->
+
+        <!-- farba tvarov školy -->
+        <item name="schoolShapeColor">@color/white</item>
     </style>
 
     <style name="Theme.MainActivity" parent="Theme.MaterialComponents.DayNight.DarkActionBar">

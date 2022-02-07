@@ -64,6 +64,12 @@ public class SchoolNavigator {
 
     public String whereIs(String classNumber) {
 
+        if(classNumber.equals("OBED") || classNumber.equalsIgnoreCase("Jedáleň")
+                || classNumber.equalsIgnoreCase("jedalen")) return "Jedáleň";
+
+        if(classNumber.equalsIgnoreCase("Telocvičňa")
+                || classNumber.equalsIgnoreCase("telocvicna")) return "Telocvičňa";
+
         Log.d("classNumber", classNumber + " ");
         String almostInt= classNumber.replaceAll("[^\\d.]", "");
         Log.d("whereis", almostInt + " almostint ");
