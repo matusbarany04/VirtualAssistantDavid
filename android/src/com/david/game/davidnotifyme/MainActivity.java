@@ -184,6 +184,7 @@ public class MainActivity extends AppCompatActivity implements AndroidFragmentAp
                 public void onObedNajdeny(ArrayList<String> data) {
                     int dayIndex = DavidClockUtils.zistiDen() - 1;
                     String newDescription;
+                    Log.d("index", dayIndex + " " + data.size());
                     if(dayIndex < data.size()) {
                         String todayLunch = LunchActivity.formatLunch(data.get(dayIndex), ", ");
                         String formatLunch = getString(R.string.na_obed) + todayLunch;

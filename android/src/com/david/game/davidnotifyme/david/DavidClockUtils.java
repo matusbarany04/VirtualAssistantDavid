@@ -24,7 +24,7 @@ public class DavidClockUtils {
     public static String minutesToTime(int fullMinutes) {
         int hours = fullMinutes / 60;
         int minutes = fullMinutes - (hours * 60);
-        return String.valueOf(hours) + ":" + String.valueOf(minutes);
+        return hours + ":" + minutes;
     }
 
     public static int timeToMillis(String time) {
@@ -65,11 +65,8 @@ public class DavidClockUtils {
 
     public static int zistiDen() {
         int day = new Date().getDay();
-        if(day != 1){
-            return day;
-        }else {
-            return 7;
-        }
+
+        return day == 0 ? 6 : day;
     }
 
     public static boolean jeVikend() {
