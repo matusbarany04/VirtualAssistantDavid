@@ -1,24 +1,7 @@
 package com.david.game.davidnotifyme.edupage;
 
-import android.content.Context;
-import android.net.UrlQuerySanitizer;
 import android.os.AsyncTask;
-import android.util.Log;
-
-import com.david.game.davidnotifyme.david.lunch.LunchCallback;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.concurrent.Executor;
 
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -60,15 +43,10 @@ public class AsyncEdupageFetcher extends AsyncTask<String, Integer, String> {
         callback.onComplete(new Result.Success<>(s));
     }
 
-//    public void fetch() {
-//        try {
-////            post("https://spseke.edupage.org/timetable/server/currenttt.js?__func=curentttGetData",
-////            "{\"__args\":[null,{\"year\":2021,\"datefrom\":\"2022-01-31\",\"dateto\":\"2022-02-06\",\"table\":\"classes\",\"id\":\"887799\",\"showColors\":true,\"showIgroupsInClasses\":false,\"showOrig\":true}],\"__gsh\":\"00000000\"}"
-////            );
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
+    public void setCallback(EdupageCallback<String> callback) {
+        this.callback = callback;
+    }
+
 
     private String post(String url, String json) throws IOException {
         RequestBody body = RequestBody.create(JSON, json);

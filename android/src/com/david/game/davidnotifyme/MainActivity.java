@@ -2,7 +2,6 @@ package com.david.game.davidnotifyme;
 
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 
 import android.app.ActivityManager;
@@ -21,19 +20,17 @@ import android.os.Looper;
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
-import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.badlogic.gdx.backends.android.AndroidFragmentApplication;
 import com.david.game.AndroidLauncher;
 import com.david.game.R;
 import com.david.game.davidnotifyme.david.David;
 import com.david.game.davidnotifyme.david.DavidClockUtils;
-import com.david.game.davidnotifyme.edupage.EdupageScraper;
+import com.david.game.davidnotifyme.edupage.Edupage;
 import com.david.game.davidnotifyme.lunch.LunchActivity;
 import com.david.game.davidnotifyme.notifications.BroadCastReceiver;
 import com.david.game.davidnotifyme.notifications.DavidNotifications;
@@ -41,8 +38,6 @@ import com.david.game.davidnotifyme.opengl.OpenglRenderer;
 import com.david.game.davidnotifyme.settings.SettingsActivity;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
 import java.util.concurrent.Executor;
 
 public class MainActivity extends AppCompatActivity implements AndroidFragmentApplication.Callbacks {
@@ -64,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements AndroidFragmentAp
                 commit();
 
         try {
-            new EdupageScraper();//.scrape("smh");
+            new Edupage();//.scrape("smh");
         } catch (Exception e) {
             e.printStackTrace();
         }
