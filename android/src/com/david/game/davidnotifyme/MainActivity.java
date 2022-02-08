@@ -153,17 +153,23 @@ public class MainActivity extends AppCompatActivity implements AndroidFragmentAp
             david.zistiSkupiny(this);
 
             String header = david.prebiehaHodina() ? david.ziskajPrebiehajucuHodinu().first : "Prestávka";
-
             String description = "";
-            if(david.prebiehaHodina() && !david.bliziSaKoniecHodiny()) {
-                description = david.ziskajPrebiehajucuHodinu().second;
 
-            } else {
-                Pair<String, String> message = david.ziskajDalsiuHodinuEdupage(true);
-                description = String.format("%s\n%s", message.first, message.second);
+            if(david.ziskajRozvrh().isLessonsNow()) header = "Máš voľno";
+            else {
+                if(DavidClockUtils.afterEleven() || DavidClockUtils.beforeThree()) header = "Bež už spať ! Dobrú noc !";
+                else if(david.ziskajRozvrh().getIndexOfCurrentLesson() == -3) header = "Dobré ráno";
+
+                if(david.prebiehaHodina() && !david.bliziSaKoniecHodiny()) {
+                    description = david.ziskajPrebiehajucuHodinu().second;
+
+                } else {
+                    Pair<String, String> message = david.ziskajDalsiuHodinuEdupage(true);
+                    description = String.format("%s\n%s", message.first, message.second);
+                }
+
+                if (description.contains("Zisťujem čo je na obed...")) checkLunch(description);
             }
-
-            if (description.contains("Zisťujem čo je na obed...")) checkLunch(description);
 
             TextView timetableTextView = findViewById(R.id.timetable);
             timetableTextView.setText(header);

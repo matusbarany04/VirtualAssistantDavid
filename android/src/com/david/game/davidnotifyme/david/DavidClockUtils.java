@@ -32,6 +32,16 @@ public class DavidClockUtils {
         return (Integer.parseInt(list[0]) * 60 + Integer.parseInt(list[1])) * 60 * 100;
     }
 
+    public static boolean afterEleven() {
+        Date date = new Date();
+        return date.getHours() > 23;
+    }
+
+    public static boolean beforeThree() {
+        Date date = new Date();
+        return date.getHours() < 3;
+    }
+
     public static int millisFromNowTill(String tillTime) {
         SimpleDateFormat formatter;
         formatter = new SimpleDateFormat("HH:mm", Locale.ENGLISH);

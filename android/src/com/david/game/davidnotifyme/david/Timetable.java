@@ -145,7 +145,28 @@ public class Timetable {
         return -1;
     }
 
-    public int getIndexOfCurrentLesson() { // -1 nenajdené , -2 prestávka
+    public String getBeginOfFirstLesson() {
+        if(times.size() > 0) {
+            return times.get(0).split("-")[0];
+        }
+        else return "Dneska nie sú žiadne hodiny";
+    }
+
+    public String getEndOfAllLessons() {
+        if(times.size() > 0) {
+            return times.get(times.size() - 1).split("-")[0];
+        }
+        else return "Dneska nie sú žiadne hodiny";
+    }
+
+    public boolean isLessonsNow() {
+        if(DavidClockUtils.jeVikend()) return false;
+
+        int minutesEnd = stringTimeToMinutes(getEndOfAllLessons());
+        return DavidClockUtils.currentTimeInMinutes() > minutesEnd;
+    }
+
+    public int getIndexOfCurrentLesson() { // -1 nenajdené , -2 prestávka, -3 vyučovanie nezačal
         SimpleDateFormat format = new SimpleDateFormat("HH:mm", Locale.getDefault());
 
         int currentTime = stringTimeToMinutes(format.format(new Date()));
@@ -157,9 +178,13 @@ public class Timetable {
             int timeInMinutesStart = stringTimeToMinutes(timeSpan[0]);
             int timeInMinutesEnd = stringTimeToMinutes(timeSpan[1]);
 
-            if (currentTime < 8 * 60) {
-                return 0;
+
+            if (i == 0 && currentTime < timeInMinutesStart) {
+                return -3;
             }
+
+            Log.d("timeC", currentTime + "-" + 8 * 60 + "  " + i);
+
             if (timeInMinutesStart <= currentTime && timeInMinutesEnd >= currentTime) {
                 return i;
             } else if (timeInMinutesStart < currentTime && timeInMinutesEnd + breaks[i] > currentTime) {
