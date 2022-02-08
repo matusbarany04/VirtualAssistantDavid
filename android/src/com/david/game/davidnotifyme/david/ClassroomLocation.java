@@ -22,16 +22,20 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 
 import com.david.game.R;
+import com.david.game.davidnotifyme.MainActivity;
 
+import java.util.ArrayList;
 import java.util.logging.LogRecord;
 
 public class ClassroomLocation {
 
     private boolean showed;
     private final Activity activity;
+    private final ArrayList<View> previousViews = new ArrayList<>();
+    private ViewGroup layout;
+    private GradientDrawable activeSchoolPart;
     private View view;
     private View school;
-    private GradientDrawable activeSchoolPart;
 
     public ClassroomLocation(Activity activity) {
         this.activity = activity;
@@ -39,6 +43,10 @@ public class ClassroomLocation {
 
 
     public void inflateView(ViewGroup layout) {
+        for(int i = 0; i < layout.getChildCount(); i++) {
+            previousViews.add(layout.getChildAt(i));
+        }
+        this.layout = layout;
         layout.removeAllViews();
         view = activity.getLayoutInflater().inflate(R.layout.school_navigator, layout);
         view.setAlpha(0);
@@ -162,7 +170,18 @@ public class ClassroomLocation {
     }
 
     public void hide() {
-        activity.recreate();
+        layout.removeAllViews();
+        previousViews.forEach(previousView -> layout.addView(previousView));
+
+        if(school != null) {
+            school.findViewById(R.id.schoolLayout).setVisibility(View.INVISIBLE);
+        }
+
+        if(activity instanceof MainActivity) {
+            MainActivity mainActivity = (MainActivity) activity;
+            mainActivity.startAnimations();
+        }
+
         showed = false;
     }
 

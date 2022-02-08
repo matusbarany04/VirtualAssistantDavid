@@ -203,7 +203,7 @@ public class MainActivity extends AppCompatActivity implements AndroidFragmentAp
             });
     }
 
-    private void startAnimations() {
+    public void startAnimations() {
         LinearLayout layout = findViewById(R.id.linearLayout);
         for (int i = 0; i < layout.getChildCount(); i++) {
             View child = layout.getChildAt(i);
