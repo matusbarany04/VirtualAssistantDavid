@@ -159,9 +159,10 @@ public class Timetable {
         else return "Dneska nie sú žiadne hodiny";
     }
 
-    public boolean isLessonsNow() {
-        if(DavidClockUtils.jeVikend()) return false;
-
+    public boolean freeTime() {
+        if(DavidClockUtils.jeVikend()) return true;
+        Date date = new Date();
+        if(date.getHours() >= 23) return false;
         int minutesEnd = stringTimeToMinutes(getEndOfAllLessons());
         return DavidClockUtils.currentTimeInMinutes() > minutesEnd;
     }

@@ -155,7 +155,7 @@ public class MainActivity extends AppCompatActivity implements AndroidFragmentAp
             String header = david.prebiehaHodina() ? david.ziskajPrebiehajucuHodinu().first : "Prestávka";
             String description = "";
 
-            if(david.ziskajRozvrh().isLessonsNow()) header = "Máš voľno";
+            if(david.ziskajRozvrh().freeTime()) header = "Máš voľno";
             else {
                 if(DavidClockUtils.afterEleven() || DavidClockUtils.beforeThree()) header = "Bež už spať ! Dobrú noc !";
                 else if(david.ziskajRozvrh().getIndexOfCurrentLesson() == -3) header = "Dobré ráno";

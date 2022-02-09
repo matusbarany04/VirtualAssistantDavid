@@ -34,7 +34,7 @@ public class DavidClockUtils {
 
     public static boolean afterEleven() {
         Date date = new Date();
-        return date.getHours() > 23;
+        return date.getHours() >= 23;
     }
 
     public static boolean beforeThree() {
