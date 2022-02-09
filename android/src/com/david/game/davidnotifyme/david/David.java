@@ -239,10 +239,12 @@ public class David {
 
         String header = "Aktuálne prebieha " + lesson;
 
+        if(lesson.equals("-")) header = "Voľná hodina";
+
         String text = "hodina končí " + timetable.getEndOfCurrentLesson();
 
         if(lesson.equals("OBED")) {
-            header = "Nasleduje obed. Dobrú chuť !";
+            header = "Prebieha obed. Dobrú chuť !";
             text = "Zisťujem čo je na obed...";
         }
 

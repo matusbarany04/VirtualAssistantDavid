@@ -130,10 +130,11 @@ public class Timetable {
             int timeInMinutesStart = stringTimeToMinutes(timeSpan[0]);
             int timeInMinutesEnd = stringTimeToMinutes(timeSpan[1]);
 
-            if (timeInMinutesStart <= currentTime || !getLessonsToday()[i + 1].equals("-")) {
+            if (timeInMinutesStart <= currentTime || !getLessonsToday()[i].equals("-")) {
                 try {
                     if (timeInMinutesEnd >= currentTime || timeInMinutesEnd + breaks[i] >= currentTime) {
-                        return i + 1;
+                        int firstLesson = DavidClockUtils.timeToMinutes(getBeginOfFirstLesson());
+                        return currentTime < firstLesson ? i : i + 1;
                     }
                 } catch (IndexOutOfBoundsException ignored) {
                 }
@@ -145,9 +146,11 @@ public class Timetable {
     public String getBeginOfFirstLesson() {
         if(times.size() > 0) {
             String[] lessons = getLessonsToday();
+            int index = 0;
             for (String lesson : lessons) {
                 Log.d("lesson", lesson);
-                if(!lesson.equals("-")) return times.get(0).split("-")[0];
+                if(!lesson.equals("-")) return times.get(index).split("-")[0];
+                index++;
             }
         }
         return "Dneska nie sú žiadne hodiny";
@@ -190,6 +193,7 @@ public class Timetable {
             Log.d("timeC", currentTime + "-" + 8 * 60 + "  " + i);
 
             if (timeInMinutesStart <= currentTime && timeInMinutesEnd >= currentTime) {
+                Log.d("timeC", "true");
                 return i;
             } else if (timeInMinutesStart < currentTime && timeInMinutesEnd + breaks[i] > currentTime) {
                 return -2;
