@@ -1,5 +1,6 @@
 package com.david.game.davidnotifyme.david;
 
+import android.annotation.SuppressLint;
 import android.util.Log;
 
 import java.text.ParseException;
@@ -9,6 +10,7 @@ import java.util.Date;
 import java.util.Locale;
 
 public class DavidClockUtils {
+
     private static final SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
 
     public static String currentTimeInStringWithSeconds() {
