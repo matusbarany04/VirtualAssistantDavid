@@ -21,16 +21,13 @@ public class InternalStorageFile {
     public InternalStorageFile(Context context, String fileName) {
         this.context = Objects.requireNonNull(context);
         this.fileName = Objects.requireNonNull(fileName);
-
         init();
     }
 
     public InternalStorageFile(Context context, InternalFiles fileName) {
         this.context = Objects.requireNonNull(context);
         this.fileName = resolveEnum(fileName);
-
         init();
-
     }
 
     private String resolveEnum(InternalFiles fileName){
@@ -69,15 +66,20 @@ public class InternalStorageFile {
     }
 
 
-    public void append() {
+    public boolean isEmpty(){ // possible heavy operation
+        return read().isEmpty();
+    }
+
+    public InternalStorageFile append(String data) {
         FileWriter fr = null;
         try {
             fr = new FileWriter(internalFile, true);
-            fr.write("data");
+            fr.write(data);
             fr.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return this;
     }
 
     public String read() {
@@ -100,7 +102,7 @@ public class InternalStorageFile {
         return new String(char_array);
     }
 
-    public String[] readFile(String lineEnder) {
+    public String[] read(String lineEnder) {
         return read().split(lineEnder);
     }
 

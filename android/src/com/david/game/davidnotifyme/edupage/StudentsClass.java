@@ -1,11 +1,11 @@
 package com.david.game.davidnotifyme.edupage;
 
-public class Classroom {
-    public int id;
+public class StudentsClass {
+    public String id;
     public String label;
 
     // to add interface for position in school
-    public Classroom(int id, String label){
+    public StudentsClass(String id, String label){
         this.id = id;
         this.label = label;
     }
@@ -14,7 +14,7 @@ public class Classroom {
         return label;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 }

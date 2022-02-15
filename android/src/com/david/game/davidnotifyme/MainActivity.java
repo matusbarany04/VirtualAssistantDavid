@@ -36,6 +36,7 @@ import com.david.game.davidnotifyme.notifications.BroadCastReceiver;
 import com.david.game.davidnotifyme.notifications.DavidNotifications;
 import com.david.game.davidnotifyme.opengl.OpenglRenderer;
 import com.david.game.davidnotifyme.settings.SettingsActivity;
+import com.david.game.davidnotifyme.utils.InternalFiles;
 import com.david.game.davidnotifyme.utils.InternalStorageFile;
 
 import java.util.ArrayList;
@@ -61,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements AndroidFragmentAp
                 commit();
 
         try {
-            new Edupage();//.scrape("smh");
+            new Edupage(this);//.scrape("smh");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -84,7 +85,8 @@ public class MainActivity extends AppCompatActivity implements AndroidFragmentAp
         initDavidGLView();
 
 
-        new InternalStorageFile(this, "text.txt");
+
+
     }
 
     public static void scheduleNotifications(Context context, Intent intent) {

@@ -5,12 +5,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.telecom.CallAudioState;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceFragmentCompat;
@@ -18,9 +21,14 @@ import androidx.preference.PreferenceScreen;
 
 import com.david.game.R;
 import com.david.game.davidnotifyme.david.David;
+import com.david.game.davidnotifyme.edupage.ClassReader;
 import com.david.game.davidnotifyme.notifications.BroadCastReceiver;
 import com.david.game.davidnotifyme.notifications.DavidNotifications;
+import com.david.game.davidnotifyme.utils.InternalFiles;
+import com.david.game.davidnotifyme.utils.InternalStorageFile;
 import com.david.game.debug.DebugActivity;
+
+import java.util.Arrays;
 
 
 public class SettingsActivity extends AppCompatActivity {
@@ -100,6 +108,19 @@ public class SettingsActivity extends AppCompatActivity {
                 handler.post(() -> DavidNotifications.planMorningNotification(getContext(), null));
                 return true;
             });
+
+            ListPreference usersClass = findPreference("trieda");
+            ClassReader cr = new ClassReader(getContext());
+            usersClass.setEntries(cr.getClassNames());
+            usersClass.setEntryValues(cr.getIDs());
+            usersClass.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(@NonNull Preference preference, Object newValue) {
+                    return true;
+
+                }
+            });
+
 
             Preference showNotifications = findPreference("show_notify");
             showNotifications.setOnPreferenceChangeListener((preference, showValue) -> {

@@ -21,6 +21,13 @@
             app:title="Meno"
             app:useSimpleSummaryProvider="true" />
 
+        <ListPreference
+            app:defaultValue="I.A"
+
+            app:key="trieda"
+            app:title="Trieda"
+            app:useSimpleSummaryProvider="true" />
+
     </PreferenceCategory>
 
     <PreferenceCategory app:title="Skupiny">
