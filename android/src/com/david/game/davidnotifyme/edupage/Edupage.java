@@ -1,16 +1,14 @@
 package com.david.game.davidnotifyme.edupage;
 
-import android.content.Context;
 import android.util.Log;
 
-import com.badlogic.gdx.utils.Json;
+import com.david.game.davidnotifyme.david.DavidClockUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Calendar;
 
 public class Edupage {
     private final String TAG = "Edupage-scraper";
@@ -26,24 +24,31 @@ public class Edupage {
     public Edupage(String path) {
         this.path = path;
         init();
+
+
     }
+
+
+
 
     public void init() {
 
 
         asyncEdupageFetcher = new AsyncEdupageFetcher(result -> {
             String rawJSON = result.data;
-            String classId = parseFetchedData(rawJSON);
+            String classId = getClasses(rawJSON);
             timetableFetch(classId);
             return null;
         });
-
+//        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-dd-MM");
+//        LocalDateTime now = LocalDateTime.now(TimeZone.getTimeZone("UTC"));
+        Log.d(TAG, DavidClockUtils.getCurrentWeek(Calendar.getInstance()));
         try {
             asyncEdupageFetcher.execute(
                     "https://spseke.edupage.org/rpr/server/maindbi.js?__func=mainDBIAccessor",
                     "{\"__args\":[null,2021,{\"vt_filter\":{" +
-                            "\"datefrom\":\"2022-01-31\"," +
-                            "\"dateto\":\"2022-02-06\"}},{" +
+                            "\"datefrom\":\"2022-02-14\"," +
+                            "\"dateto\":\"2022-02-20\"}},{" +
                             "\"op\":\"fetch\",\"needed_part\":{" +
                             "\"classes\":[\"short\",\"name\",\"firstname\",\"lastname\",\"subname\",\"classroomid\"]," +
                             "\"classrooms\":[\"short\",\"name\",\"firstname\",\"lastname\",\"subname\",\"name\",\"short\"]}," +
@@ -78,6 +83,20 @@ public class Edupage {
         } catch (JSONException e) {
             e.printStackTrace();
             return "000";
+        }
+    }
+
+    public String getClasses(String rawJSON){
+        try {
+            JSONObject json = new JSONObject(rawJSON);
+            JSONArray j = json.getJSONObject("r").getJSONArray("tables");
+            Log.d(TAG, j.toString());
+            String id =  ((JSONObject) j.get(1)).getJSONArray("data_rows").toString();
+            Log.d("CLASSES DEBUG", id);
+            return id;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 

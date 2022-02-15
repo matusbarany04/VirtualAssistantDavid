@@ -12,7 +12,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ConfigurationInfo;
 
-import android.net.Uri;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.os.Handler;
@@ -37,6 +36,7 @@ import com.david.game.davidnotifyme.notifications.BroadCastReceiver;
 import com.david.game.davidnotifyme.notifications.DavidNotifications;
 import com.david.game.davidnotifyme.opengl.OpenglRenderer;
 import com.david.game.davidnotifyme.settings.SettingsActivity;
+import com.david.game.davidnotifyme.utils.InternalStorageFile;
 
 import java.util.ArrayList;
 import java.util.concurrent.Executor;
@@ -82,6 +82,9 @@ public class MainActivity extends AppCompatActivity implements AndroidFragmentAp
         initUI();
 
         initDavidGLView();
+
+
+        new InternalStorageFile(this, "text.txt");
     }
 
     public static void scheduleNotifications(Context context, Intent intent) {

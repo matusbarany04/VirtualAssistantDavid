@@ -78,4 +78,88 @@ public class DavidClockUtils {
         return format.format(new Date());
     }
 
+
+    public static String getLastWeek(Calendar mCalendar) {
+        // Monday
+        mCalendar.add(Calendar.DAY_OF_YEAR, -13);
+        Date mDateMonday = mCalendar.getTime();
+
+        // Sunday
+        mCalendar.add(Calendar.DAY_OF_YEAR, 6);
+        Date mDateSunday = mCalendar.getTime();
+
+        // Date format
+        String strDateFormat = "dd MMM";
+        SimpleDateFormat sdf = new SimpleDateFormat(strDateFormat);
+
+        String MONDAY = sdf.format(mDateMonday);
+        String SUNDAY = sdf.format(mDateSunday);
+
+        // Substring
+        if ((MONDAY.substring(3, 6)).equals(SUNDAY.substring(3, 6))) {
+            MONDAY = MONDAY.substring(0, 2);
+        }
+
+        return MONDAY + " - " + SUNDAY;
+    }
+
+    public static String getCurrentWeek(Calendar mCalendar) {
+        Date date = new Date();
+        mCalendar.setTime(date);
+
+        // 1 = Sunday, 2 = Monday, etc.
+        int day_of_week = mCalendar.get(Calendar.DAY_OF_WEEK);
+
+        int monday_offset;
+        if (day_of_week == 1) {
+            monday_offset = -6;
+        } else
+            monday_offset = (2 - day_of_week); // need to minus back
+        mCalendar.add(Calendar.DAY_OF_YEAR, monday_offset);
+
+        Date mDateMonday = mCalendar.getTime();
+
+        // return 6 the next days of current day (object cal save current day)
+        mCalendar.add(Calendar.DAY_OF_YEAR, 6);
+        Date mDateSunday = mCalendar.getTime();
+
+        //Get format date
+        String strDateFormat = "dd MMM";
+        SimpleDateFormat sdf = new SimpleDateFormat(strDateFormat);
+
+        String MONDAY = sdf.format(mDateMonday);
+        String SUNDAY = sdf.format(mDateSunday);
+
+        // Sub String
+        if ((MONDAY.substring(3, 6)).equals(SUNDAY.substring(3, 6))) {
+            MONDAY = MONDAY.substring(0, 2);
+        }
+
+        return MONDAY + " - " + SUNDAY;
+    }
+
+    public static String getNextWeek(Calendar mCalendar) {
+        // Monday
+        mCalendar.add(Calendar.DAY_OF_YEAR, 1);
+        Date mDateMonday = mCalendar.getTime();
+
+        // Sunday
+        mCalendar.add(Calendar.DAY_OF_YEAR, 6);
+        Date Week_Sunday_Date = mCalendar.getTime();
+
+        // Date format
+        String strDateFormat = "dd MMM";
+        SimpleDateFormat sdf = new SimpleDateFormat(strDateFormat);
+
+        String MONDAY = sdf.format(mDateMonday);
+        String SUNDAY = sdf.format(Week_Sunday_Date);
+
+        // Sub string
+        if ((MONDAY.substring(3, 6)).equals(SUNDAY.substring(3, 6))) {
+            MONDAY = MONDAY.substring(0, 2);
+        }
+
+        return MONDAY + " - " + SUNDAY;
+    }
+
 }
