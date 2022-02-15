@@ -1,5 +1,6 @@
 package com.david.game.davidnotifyme.david;
 
+import android.annotation.SuppressLint;
 import android.util.Log;
 
 import java.text.ParseException;
@@ -9,6 +10,7 @@ import java.util.Date;
 import java.util.Locale;
 
 public class DavidClockUtils {
+
     private static final SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
 
     public static String currentTimeInStringWithSeconds() {
@@ -30,6 +32,16 @@ public class DavidClockUtils {
     public static int timeToMillis(String time) {
         String[] list = time.split(":");
         return (Integer.parseInt(list[0]) * 60 + Integer.parseInt(list[1])) * 60 * 100;
+    }
+
+    public static boolean afterEleven() {
+        Date date = new Date();
+        return date.getHours() >= 23;
+    }
+
+    public static boolean beforeThree() {
+        Date date = new Date();
+        return date.getHours() < 3;
     }
 
     public static int millisFromNowTill(String tillTime) {

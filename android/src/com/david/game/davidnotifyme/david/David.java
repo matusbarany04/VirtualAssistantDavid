@@ -85,13 +85,13 @@ public class David {
 
     public boolean prebiehaHodina() {
         int index = timetable.getIndexOfCurrentLesson();
-        return index != -2;
+        return index >= 0;
     }
 
     public boolean bliziSaKoniecHodiny(){
         if(timetable.getIndexOfCurrentLesson() == -2) return false;
         int timeToEnd = DavidClockUtils.timeToMinutes(timetable.getEndOfCurrentLesson()) - DavidClockUtils.currentTimeInMinutes();
-        return timeToEnd < 5;
+        return timeToEnd <= 5;
     }
 
     public static ArrayList<Long> ziskajCasyAktualizacie(Context context) {
@@ -197,27 +197,35 @@ public class David {
     }
 
     public Pair<String, String> ziskajDalsiuHodinuEdupage(@Nullable Boolean verbose) {
+
         Pair<String, String> input = timetable.getNextClass();  // first : učebňa, second - názov hodiny
         String header;
         String text = "";
 
-        if(input.second.equals("OBED")) {
-           header = "Nasleduje obed. Dobrú chuť !";
-           text = "Zisťujem čo je na obed...";
-           verbose = null;
+        if(timetable.getIndexOfCurrentLesson() == -3) {
+            header = "Prvá hodina je " + input.second;
+            text = "Vyučovanie začína " + timetable.getBeginOfFirstLesson();
 
-        } else if (input.first != null) {
-            header = "Ďalšia hodina je " + input.second;
-            text = "Učebňa " + input.first;
+        } else {
 
-        } else if (input.second.equals("víkend")) {
-            header = "Je víkend";
+            if(input.second.equals("OBED")) {
+                header = "Nasleduje obed. Dobrú chuť !";
+                text = "Zisťujem čo je na obed...";
+                verbose = null;
 
-        } else header = "Máš voľno";
+            } else if (input.first != null) {
+                header = "Ďalšia hodina je " + input.second;
+                text = "Učebňa " + input.first;
 
-        if (verbose != null && Boolean.TRUE && input.first != null) {
-            Log.d("input", input.first + " : " + input.second);
-            text += " (" + navigator.whereIs(input.first) + ")";
+            } else if (input.second.equals("víkend")) {
+                header = "Je víkend";
+
+            } else header = "Máš voľno";
+
+            if (verbose != null && Boolean.TRUE && input.first != null) {
+                Log.d("input", input.first + " : " + input.second);
+                text += " (" + navigator.whereIs(input.first) + ")";
+            }
         }
 
         return new Pair<>(header, text);
@@ -231,10 +239,12 @@ public class David {
 
         String header = "Aktuálne prebieha " + lesson;
 
+        if(lesson.equals("-")) header = "Voľná hodina";
+
         String text = "hodina končí " + timetable.getEndOfCurrentLesson();
 
         if(lesson.equals("OBED")) {
-            header = "Nasleduje obed. Dobrú chuť !";
+            header = "Prebieha obed. Dobrú chuť !";
             text = "Zisťujem čo je na obed...";
         }
 
