@@ -1,6 +1,8 @@
 package com.david.game.davidnotifyme.edupage;
 
 public abstract class Result<T> {
+    
+
     private Result() {}
 
     public static final class Success<T> extends Result<T> {

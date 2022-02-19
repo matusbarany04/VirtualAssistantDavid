@@ -4,12 +4,14 @@ package com.david.game.davidnotifyme;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlarmManager;
 
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.ConfigurationInfo;
 
 import android.opengl.GLSurfaceView;
@@ -53,6 +55,8 @@ public class MainActivity extends AppCompatActivity implements AndroidFragmentAp
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity_with_david);
 
+        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
         // Create libgdx fragment
         AndroidLauncher libgdxFragment = new AndroidLauncher();
 
@@ -83,8 +87,6 @@ public class MainActivity extends AppCompatActivity implements AndroidFragmentAp
         initUI();
 
         initDavidGLView();
-
-
 
 
     }
