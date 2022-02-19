@@ -227,7 +227,7 @@ public class DavidRenderer extends ApplicationAdapter
         ModelBuilder modelBuilder = new ModelBuilder();
         model = new G3dModelLoader(
                 new JsonReader()).loadModel(
-                        Gdx.files.internal(animations.get(PseudoRandomIndex))
+                        Gdx.files.internal("Idle.g3dj")
         );
         instance = new ModelInstance(model);
 
@@ -235,27 +235,27 @@ public class DavidRenderer extends ApplicationAdapter
         Gdx.input.setInputProcessor(cameraController);
 
         animation = new AnimationController(instance);
-        animation.animate("mixamo.com",  -1, 1f, null, 0.2f);
+        animation.animate("mixamo.com",  1, 1f, null, 0.2f);
 
-       for (Animation a : instance.animations)
-       {
+        for (Animation a : instance.animations) {
            System.out.println(a.id);
-       }
+        }
 
-       // 2D setup
-       SpriteRenderer = new SpriteBatch();
-       BGTex = new Texture(Gdx.files.internal("Forest.jpg"));
-       BGsprite = new Sprite(BGTex);
+        // 2D setup
+        SpriteRenderer = new SpriteBatch();
+        BGTex = new Texture(Gdx.files.internal("Forest.jpg"));
+        BGsprite = new Sprite(BGTex);
 
-       // custom shaders
-       //shaders = new MYshader();
-       //shaders.init();
+        // custom shaders
+        //shaders = new MYshader();
+        //shaders.init();
 
     }
 
     @Override
     public void render() {
         cameraController.update();
+
 
 
         Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
