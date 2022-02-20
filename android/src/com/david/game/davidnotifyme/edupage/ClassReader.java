@@ -16,10 +16,18 @@ public class ClassReader {
         final String[] classArray = classes.read("/");
 
         studentsClasses = new StudentsClass[classArray.length];
-
-        for (int i = 0; i < classArray.length; i++) {
+        int error_count = 0;
+        for (int i = 0; i < classArray.length - error_count; i++) {
             String[] vals = classArray[i].split(":");
-            studentsClasses[i] = new StudentsClass(vals[0], vals[1]);
+            if(vals.length < 2){
+                error_count++;
+                continue;
+            }
+
+            StudentsClass student = new StudentsClass(vals[0], vals[1]);
+
+            Log.d("STUDENTCLASS", classArray[i] + "   " +  student);
+            studentsClasses[i - error_count] = student;
         }
     }
 
