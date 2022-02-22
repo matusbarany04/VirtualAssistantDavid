@@ -190,10 +190,10 @@ public class Timetable {
                 return -3;
             }
 
-            Log.d("timeC", currentTime + "-" + 8 * 60 + "  " + i);
+//            Log.d("timeC", currentTime + "-" + 8 * 60 + "  " + i);
 
             if (timeInMinutesStart <= currentTime && timeInMinutesEnd >= currentTime) {
-                Log.d("timeC", "true");
+//                Log.d("timeC", "true");
                 return i;
             } else if (timeInMinutesStart < currentTime && timeInMinutesEnd + breaks[i] > currentTime) {
                 return -2;

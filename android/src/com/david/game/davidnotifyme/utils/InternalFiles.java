@@ -4,5 +4,6 @@ public enum InternalFiles {
     CLASSES,
     TIMETABLE,
     LUNCH,
-    SUBJECTS
+    SUBJECTS,
+    CLASSROOM,
 }

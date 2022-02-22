@@ -1,8 +1,9 @@
-package com.david.game.davidnotifyme.edupage;
+package com.david.game.davidnotifyme.edupage.too_afraid_to_delete;
 
 import android.content.Context;
 import android.util.Log;
 
+import com.david.game.davidnotifyme.edupage.timetable_objects.StudentsClass;
 import com.david.game.davidnotifyme.utils.InternalFiles;
 import com.david.game.davidnotifyme.utils.InternalStorageFile;
 
@@ -24,7 +25,7 @@ public class ClassReader {
                 continue;
             }
 
-            StudentsClass student = new StudentsClass(vals[0], vals[1]);
+            StudentsClass student = new StudentsClass(vals[1], vals[0]);
 
             Log.d("STUDENTCLASS", classArray[i] + "   " +  student);
             studentsClasses[i - error_count] = student;
@@ -47,7 +48,7 @@ public class ClassReader {
     public String[] getClassNames(){
         String[] output = new String[studentsClasses.length];
         for (int i = 0; i < output.length;i++){
-            output[i] = studentsClasses[i].getLabel();
+            output[i] = studentsClasses[i].getName();
         }
         return output;
     }

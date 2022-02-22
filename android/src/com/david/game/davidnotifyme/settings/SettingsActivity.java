@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.telecom.CallAudioState;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -17,18 +16,17 @@ import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceFragmentCompat;
-import androidx.preference.PreferenceScreen;
 
 import com.david.game.R;
 import com.david.game.davidnotifyme.david.David;
-import com.david.game.davidnotifyme.edupage.ClassReader;
+
+import com.david.game.davidnotifyme.edupage.readers.EdupageSerializableReader;
+import com.david.game.davidnotifyme.edupage.timetable_objects.Classroom;
+import com.david.game.davidnotifyme.edupage.timetable_objects.StudentsClass;
 import com.david.game.davidnotifyme.notifications.BroadCastReceiver;
 import com.david.game.davidnotifyme.notifications.DavidNotifications;
 import com.david.game.davidnotifyme.utils.InternalFiles;
-import com.david.game.davidnotifyme.utils.InternalStorageFile;
 import com.david.game.debug.DebugActivity;
-
-import java.util.Arrays;
 
 
 public class SettingsActivity extends AppCompatActivity {
@@ -110,14 +108,14 @@ public class SettingsActivity extends AppCompatActivity {
             });
 
             ListPreference usersClass = findPreference("trieda");
-            ClassReader cr = new ClassReader(getContext());
-            usersClass.setEntries(cr.getClassNames());
-            usersClass.setEntryValues(cr.getIDs());
+            EdupageSerializableReader<StudentsClass> cr = new EdupageSerializableReader<>(getContext(), InternalFiles.CLASSES,StudentsClass::new);
+            usersClass.setEntries(cr.getNames());
+            usersClass.setEntryValues(cr.getIds());
+
             usersClass.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(@NonNull Preference preference, Object newValue) {
                     return true;
-
                 }
             });
 

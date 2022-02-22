@@ -1,22 +1,20 @@
 package com.david.game.davidnotifyme.edupage;
 
 import android.content.Context;
-import android.security.keystore.StrongBoxUnavailableException;
 import android.util.Log;
 
-import com.badlogic.gdx.utils.UBJsonReader;
-import com.david.game.davidnotifyme.david.DavidClockUtils;
+import com.david.game.davidnotifyme.edupage.internet.AsyncEdupageFetcher;
+import com.david.game.davidnotifyme.edupage.internet.EdupageCallback;
+import com.david.game.davidnotifyme.edupage.internet.Result;
+import com.david.game.davidnotifyme.edupage.timetable_objects.Classroom;
+import com.david.game.davidnotifyme.edupage.timetable_objects.SemiSubject;
+import com.david.game.davidnotifyme.edupage.timetable_objects.StudentsClass;
 import com.david.game.davidnotifyme.utils.InternalFiles;
 import com.david.game.davidnotifyme.utils.InternalStorageFile;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.ConcurrentModificationException;
 
 public class Edupage {
     private final String TAG = "Edupage-scraper";
@@ -37,8 +35,12 @@ public class Edupage {
             StudentsClass[] classArray = parseClasses(rawJSON);
             saveParsedData(classArray, InternalFiles.CLASSES);
 
-            Subject[] subjectsArray = parseSubjects(rawJSON);
+            SemiSubject[] subjectsArray = parseSubjects(rawJSON);
             saveParsedData(subjectsArray, InternalFiles.SUBJECTS);
+
+
+            Classroom[] classroomArray = parseClassrooms(rawJSON);
+            saveParsedData(classroomArray, InternalFiles.CLASSROOM);
 
             timetableFetch(String.valueOf(classArray[0].getId())); // change to dynamic class  chosen by user
             return null;
@@ -78,27 +80,18 @@ public class Edupage {
         }
     }
 
-    private Subject[] parseSubjects(String rawJSON) {
+    private SemiSubject[] parseSubjects(String rawJSON) {
         try {
-            JSONObject json = new JSONObject(rawJSON);
-            JSONArray j = json.getJSONObject("r").getJSONArray("tables");
+            JSONArray classesArray = getRow(rawJSON, "subjects");
 
-            JSONArray classesArray = null;
-            for (int i = 0; i < j.length(); i++) {
-                JSONObject obj = ((JSONObject) j.get(i));
-
-                if (obj.get("id").equals("subjects")) {
-                    classesArray = obj.getJSONArray("data_rows");
-                    break;
-                }
-            }
             if (classesArray == null) return null;
 
-            Subject[] output = new Subject[classesArray.length()];
+            SemiSubject[] output = new SemiSubject[classesArray.length()];
             for (int i = 0; i < classesArray.length(); i++) {
                 JSONObject jsonClassObject = (JSONObject) classesArray.get(i);
 
-                output[i] = new Subject(jsonClassObject.getString("name"), jsonClassObject.getString("id"), jsonClassObject.getString("short"));
+                output[i] = new SemiSubject(jsonClassObject.getString("name"), jsonClassObject.getString("id"), jsonClassObject.getString("short"));
+//                Log.d("SemiSubject", output[i].toString());
             }
 
             return output;
@@ -132,26 +125,51 @@ public class Edupage {
         }
     }
 
+    public Classroom[] parseClassrooms(String rawJSON){
+        try {
+
+            JSONArray classesArray = getRow(rawJSON, "classrooms");
+
+            Classroom[] output = new Classroom[classesArray.length()];
+            for (int i = 0; i < classesArray.length(); i++) {
+                JSONObject jsonClassObject = (JSONObject) classesArray.get(i);
+
+                output[i] = new Classroom( jsonClassObject.getString("short"),jsonClassObject.getString("id"));
+            }
+
+            return output;
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+        Log.d("error error!" ,"hey  you've got a problem man");
+        return null;
+    }
+
+    public JSONArray getRow(String rawJSON, String rowName) throws JSONException {
+        JSONObject json = new JSONObject(rawJSON);
+        JSONArray j = json.getJSONObject("r").getJSONArray("tables");
+
+        JSONArray classesArray = null;
+        for (int i = 0; i < j.length(); i++) {
+            JSONObject obj = ((JSONObject) j.get(i));
+
+            if (obj.get("id").equals(rowName)) {
+                classesArray = obj.getJSONArray("data_rows");
+                break;
+            }
+        }
+
+        return classesArray;
+    }
     public StudentsClass[] parseClasses(String rawJSON) {
         try {
-            JSONObject json = new JSONObject(rawJSON);
-            JSONArray j = json.getJSONObject("r").getJSONArray("tables");
-
-            JSONArray classesArray = null;
-            for (int i = 0; i < j.length(); i++) {
-                JSONObject obj = ((JSONObject) j.get(i));
-
-                if (obj.get("id").equals("classes")) {
-                    classesArray = obj.getJSONArray("data_rows");
-                    break;
-                }
-            }
+            JSONArray classesArray = getRow(rawJSON, "classes");
 
             StudentsClass[] output = new StudentsClass[classesArray.length()];
             for (int i = 0; i < classesArray.length(); i++) {
                 JSONObject jsonClassObject = (JSONObject) classesArray.get(i);
 
-                output[i] = new StudentsClass(jsonClassObject.getString("id"), jsonClassObject.getString("name"));
+                output[i] = new StudentsClass(jsonClassObject.getString("name"),jsonClassObject.getString("id"));
             }
 
             return output;

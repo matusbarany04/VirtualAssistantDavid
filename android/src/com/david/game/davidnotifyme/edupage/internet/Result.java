@@ -1,4 +1,4 @@
-package com.david.game.davidnotifyme.edupage;
+package com.david.game.davidnotifyme.edupage.internet;
 
 public abstract class Result<T> {
     

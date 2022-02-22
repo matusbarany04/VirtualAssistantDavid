@@ -3,23 +3,16 @@ package com.david.game.davidnotifyme.utils;
 import android.content.Context;
 import android.util.Log;
 
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.david.game.davidnotifyme.edupage.EdupageSerializable;
-import com.david.game.davidnotifyme.edupage.StudentsClass;
-import com.david.game.davidnotifyme.edupage.Subject;
+import com.david.game.davidnotifyme.edupage.timetable_objects.SemiSubject;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.util.Arrays;
 import java.util.Objects;
 
 public class InternalStorageFile {
@@ -55,6 +48,9 @@ public class InternalStorageFile {
                 break;
             case SUBJECTS:
                 outputFileName += "subjects";
+                break;
+            case CLASSROOM:
+                outputFileName += "classroom";
                 break;
             default:
                 try {
@@ -141,12 +137,12 @@ public class InternalStorageFile {
 
     public EdupageSerializable[] readDeserializableSubjects() {
         String[] lines = read().split("/");
-        Subject[] array = new Subject[lines.length];
+        SemiSubject[] array = new SemiSubject[lines.length];
 
         int errors = 0;
         for (int i = 0; i < lines.length - errors; i++) {
             String line = lines[i];
-            Subject s = Subject.mutate(line);
+            SemiSubject s = SemiSubject.mutate(line);
 
             if (s != null)
                 array[i - errors] = s;
