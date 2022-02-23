@@ -2,7 +2,11 @@ package com.david.game.davidnotifyme.david;
 
 import android.annotation.SuppressLint;
 import android.util.Log;
+import android.util.Pair;
 
+import org.jetbrains.annotations.Nullable;
+
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -66,8 +70,8 @@ public class DavidClockUtils {
 
     public static String currentTimeInString() {
         Date date = new Date();
-        Log.d("date.getHours()", new SimpleDateFormat("HH").format(date) + " " );
-        return  Integer.parseInt(new SimpleDateFormat("HH").format(date)) + ":"+ date.getMinutes();
+        Log.d("date.getHours()", new SimpleDateFormat("HH").format(date) + " ");
+        return Integer.parseInt(new SimpleDateFormat("HH").format(date)) + ":" + date.getMinutes();
     }
 
     public static int currentTimeInMinutes() {
@@ -91,87 +95,67 @@ public class DavidClockUtils {
     }
 
 
-    public static String getLastWeek(Calendar mCalendar) {
-        // Monday
-        mCalendar.add(Calendar.DAY_OF_YEAR, -13);
-        Date mDateMonday = mCalendar.getTime();
+    public static Pair<String,String> getLastWeek() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
 
-        // Sunday
-        mCalendar.add(Calendar.DAY_OF_YEAR, 6);
-        Date mDateSunday = mCalendar.getTime();
+        // Print dates of the current week starting on Sunday
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        String startDate = "", endDate = "";
 
-        // Date format
-        String strDateFormat = "dd MMM";
-        SimpleDateFormat sdf = new SimpleDateFormat(strDateFormat);
+        startDate = df.format(calendar.getTime());
+        calendar.add(Calendar.DATE, 6);
+        endDate = df.format(calendar.getTime());
 
-        String MONDAY = sdf.format(mDateMonday);
-        String SUNDAY = sdf.format(mDateSunday);
-
-        // Substring
-        if ((MONDAY.substring(3, 6)).equals(SUNDAY.substring(3, 6))) {
-            MONDAY = MONDAY.substring(0, 2);
-        }
-
-        return MONDAY + " - " + SUNDAY;
+        return new Pair<>(startDate, endDate);
     }
 
-    public static String getCurrentWeek(Calendar mCalendar) {
-        Date date = new Date();
-        mCalendar.setTime(date);
+    public static Pair<String,String> getNextWeek() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
 
-        // 1 = Sunday, 2 = Monday, etc.
-        int day_of_week = mCalendar.get(Calendar.DAY_OF_WEEK);
+        // Print dates of the current week starting on Sunday
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        String startDate = "", endDate = "";
+        calendar.add(Calendar.DATE, 7 * 2);
+        startDate = df.format(calendar.getTime());
+        calendar.add(Calendar.DATE, 6);
+        endDate = df.format(calendar.getTime());
 
-        int monday_offset;
-        if (day_of_week == 1) {
-            monday_offset = -6;
-        } else
-            monday_offset = (2 - day_of_week); // need to minus back
-        mCalendar.add(Calendar.DAY_OF_YEAR, monday_offset);
-
-        Date mDateMonday = mCalendar.getTime();
-
-        // return 6 the next days of current day (object cal save current day)
-        mCalendar.add(Calendar.DAY_OF_YEAR, 6);
-        Date mDateSunday = mCalendar.getTime();
-
-        //Get format date
-        String strDateFormat = "dd MMM";
-        SimpleDateFormat sdf = new SimpleDateFormat(strDateFormat);
-
-        String MONDAY = sdf.format(mDateMonday);
-        String SUNDAY = sdf.format(mDateSunday);
-
-        // Sub String
-        if ((MONDAY.substring(3, 6)).equals(SUNDAY.substring(3, 6))) {
-            MONDAY = MONDAY.substring(0, 2);
-        }
-
-        return MONDAY + " - " + SUNDAY;
+        return new Pair<>(startDate, endDate);
     }
 
-    public static String getNextWeek(Calendar mCalendar) {
-        // Monday
-        mCalendar.add(Calendar.DAY_OF_YEAR, 1);
-        Date mDateMonday = mCalendar.getTime();
+    public static Pair<String,String> getCurrentWeek() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
 
-        // Sunday
-        mCalendar.add(Calendar.DAY_OF_YEAR, 6);
-        Date Week_Sunday_Date = mCalendar.getTime();
+        // Print dates of the current week starting on Sunday
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        String startDate = "", endDate = "";
+        calendar.add(Calendar.DATE, 7);
+        startDate = df.format(calendar.getTime());
+        calendar.add(Calendar.DATE, 6);
+        endDate = df.format(calendar.getTime());
 
-        // Date format
-        String strDateFormat = "dd MMM";
-        SimpleDateFormat sdf = new SimpleDateFormat(strDateFormat);
+        return new Pair<>(startDate, endDate);
+    }
 
-        String MONDAY = sdf.format(mDateMonday);
-        String SUNDAY = sdf.format(Week_Sunday_Date);
+    public static String[] getCurrentWeekDates() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
 
-        // Sub string
-        if ((MONDAY.substring(3, 6)).equals(SUNDAY.substring(3, 6))) {
-            MONDAY = MONDAY.substring(0, 2);
+        // Print dates of the current week starting on Sunday
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        String startDate = "", endDate = "";
+      //  calendar.add(Calendar.DATE, 7);   // nezabudnut to odkomentovať
+
+        String[] dates = new String[7];
+        for (int i = 0; i < 7; i++){
+            dates[i] =  df.format(calendar.getTime());
+            calendar.add(Calendar.DATE, 1);
         }
 
-        return MONDAY + " - " + SUNDAY;
+       return dates;
     }
 
 }

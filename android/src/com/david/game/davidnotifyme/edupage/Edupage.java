@@ -2,7 +2,9 @@ package com.david.game.davidnotifyme.edupage;
 
 import android.content.Context;
 import android.util.Log;
+import android.util.Pair;
 
+import com.david.game.davidnotifyme.david.DavidClockUtils;
 import com.david.game.davidnotifyme.edupage.internet.AsyncEdupageFetcher;
 import com.david.game.davidnotifyme.edupage.internet.EdupageCallback;
 import com.david.game.davidnotifyme.edupage.internet.Result;
@@ -16,15 +18,21 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 public class Edupage {
     private final String TAG = "Edupage-scraper";
     AsyncEdupageFetcher asyncEdupageFetcher;
     Context context;
-
+    String startDate;
+    String endDate;
 
     public Edupage(Context context) {
         this.context = context;
         init();
+        Pair<String,String> dates = DavidClockUtils.getLastWeek(); // nezabudnut zmeniť na current week
+        startDate = dates.first;
+        endDate = dates.second;
     }
 
 
@@ -46,13 +54,12 @@ public class Edupage {
             return null;
         });
 
-//        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-dd-MM");
-//        LocalDateTime now = LocalDateTime.now(TimeZone.getTimeZone("UTC"));
-//        Log.d(TAG, DavidClockUtils.getCurrentWeek(Calendar.getInstance()));
         try {
             asyncEdupageFetcher.execute(
                     "https://spseke.edupage.org/rpr/server/maindbi.js?__func=mainDBIAccessor",
-                    "{\"__args\":[null,2021,{\"vt_filter\":{\"datefrom\":\"2022-02-07\",\"dateto\":\"2022-02-13\"}},{\"op\":\"fetch\"," +
+                    "{\"__args\":[null,2021,{\"vt_filter\":{"+
+                            "\"datefrom\":\""+ startDate +
+                            "\",\"dateto\":\""+ endDate + "\"}},{\"op\":\"fetch\"," +
                             "\"needed_part\":{" +
                             //  "\"teachers\":[\"short\",\"name\",\"firstname\",\"lastname\",\"subname\",\"cb_hidden\",\"expired\",\"firstname\",\"lastname\",\"short\"],"+
                             "\"classes\":[\"short\",\"name\",\"firstname\",\"lastname\",\"subname\",\"classroomid\"]," +
@@ -110,7 +117,7 @@ public class Edupage {
                 return null;
             }
         }).execute("https://spseke.edupage.org/timetable/server/currenttt.js?__func=curentttGetData",
-                "{\"__args\":[null,{\"year\":2021,\"datefrom\":\"2022-02-07\",\"dateto\":\"2022-02-13\",\"table\":\"classes\",\"id\":\"" + classId + "\",\"showColors\":true,\"showIgroupsInClasses\":false,\"showOrig\":true}],\"__gsh\":\"00000000\"}"
+                "{\"__args\":[null,{\"year\":2021,\"datefrom\":\"" + startDate + "\",\"dateto\":\"" + endDate + "\",\"table\":\"classes\",\"id\":\"" + classId + "\",\"showColors\":true,\"showIgroupsInClasses\":false,\"showOrig\":true}],\"__gsh\":\"00000000\"}"
         );
 
     }
@@ -119,7 +126,10 @@ public class Edupage {
         try {
             JSONObject json = new JSONObject(rawJSON);
             JSONArray j = json.getJSONObject("r").getJSONArray("ttitems");
-            String parsed = new TimetableParser(context).parse(j);
+            ArrayList<TimetableParser.Day> parsed = new TimetableParser(context).parse(j);
+
+            // save parsed data
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -183,9 +193,7 @@ public class Edupage {
         return false;
     }
 
-    private boolean saveFetchedData() {
-        return true;
-    }
+
 
 
 }

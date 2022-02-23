@@ -3,6 +3,9 @@ package com.david.game.davidnotifyme.edupage;
 import android.content.Context;
 import android.util.Log;
 
+import androidx.activity.result.ActivityResultRegistry;
+
+import com.david.game.davidnotifyme.david.DavidClockUtils;
 import com.david.game.davidnotifyme.edupage.readers.EdupageSerializableReader;
 import com.david.game.davidnotifyme.edupage.timetable_objects.Classroom;
 import com.david.game.davidnotifyme.edupage.timetable_objects.SemiSubject;
@@ -15,6 +18,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class TimetableParser {
@@ -24,7 +28,7 @@ public class TimetableParser {
     HashMap<Integer, Classroom> classroomHashMap;
     HashMap<Integer, StudentsClass> classHashMap;
 
-    ArrayList<Day> timetable;
+    HashMap<String, Day> timetable;
 
     public TimetableParser(Context context) {
         this.context = context;
@@ -35,14 +39,14 @@ public class TimetableParser {
         EdupageSerializableReader<SemiSubject> semiSubjectReader = new EdupageSerializableReader<>(context, InternalFiles.SUBJECTS, SemiSubject::new);
         EdupageSerializableReader<Classroom> classroomReader = new EdupageSerializableReader<>(context, InternalFiles.CLASSROOM, Classroom::new);
         EdupageSerializableReader<StudentsClass> studentClassReader = new EdupageSerializableReader<>(context, InternalFiles.CLASSES, StudentsClass::new);
-        this.subjectHashMap =  semiSubjectReader.getsAsHashMap();
-        this.classroomHashMap =  classroomReader.getsAsHashMap();
-        this.classHashMap =  studentClassReader.getsAsHashMap();
+        this.subjectHashMap = semiSubjectReader.getsAsHashMap();
+        this.classroomHashMap = classroomReader.getsAsHashMap();
+        this.classHashMap = studentClassReader.getsAsHashMap();
+        timetable = fillDays();
     }
 
-    public String parse(JSONArray arrayOfSubjects) throws JSONException {
-
-        // pridať classy na date aby som mohol rozdeliť predmety podľa dní
+    public  ArrayList<Day> parse(JSONArray arrayOfSubjects) throws JSONException {
+        DavidClockUtils.getCurrentWeek();
 
         Log.d("arrayOfSubjects", arrayOfSubjects.toString());
         for (int i = 0; i < arrayOfSubjects.length(); i++) {
@@ -57,33 +61,44 @@ public class TimetableParser {
                 subject = new Subject(
                         obj.getString("starttime"),
                         obj.getString("endtime"),
-                        s != null ? s.getName() : "iné" ,
+                        s != null ? s.getName() : "iné",
                         semiSubject);
 
 
-                timetable.get(0).append(subject); // !!! 0 vymeniť za vypočty pre deň
+                timetable.get(obj.getString("date")).append(subject);
 
 
-            } catch (NumberFormatException e) {
+            } catch (NumberFormatException | NullPointerException e) {
+                e.printStackTrace();
             }
         }
-        return null;
+
+        ArrayList<Day> output = new ArrayList<>(timetable.values());
+        return output;
+    }
+
+    private HashMap<String,Day> fillDays() {
+        HashMap<String, Day> out = new HashMap<>();
+        for (String date : DavidClockUtils.getCurrentWeekDates()) {
+            out.put(date, new Day(date));
+        }
+        return out;
     }
 
 
     class Day {
         ArrayList<Subject> subjectsArray;
+        String date;
 
-        public Day() {
-
+        public Day(String date) {
+            this.date = date;
         }
 
-        public Day append(Subject subject){
+        public void append(Subject subject) {
             subjectsArray.add(subject);
-            return this;
         }
 
-        public Subject get(int index){
+        public Subject get(int index) {
             return subjectsArray.get(index);
         }
     }
