@@ -34,37 +34,14 @@ public class InternalStorageFile {
     }
 
     private String resolveEnum(InternalFiles fileName) {
-        String outputFileName = "";
         String suffix = ".txt";
-        switch (fileName) {
-            case LUNCH:
-                outputFileName += "lunch";
-                break;
-            case CLASSES:
-                outputFileName += "classes";
-                break;
-            case TIMETABLE:
-                outputFileName += "timetable";
-                break;
-            case SUBJECTS:
-                outputFileName += "subjects";
-                break;
-            case CLASSROOM:
-                outputFileName += "classroom";
-                break;
-            default:
-                try {
-                    throw new CannotResolveFileEnumException("cannot resolve enum");
-                } catch (CannotResolveFileEnumException e) {
-                    e.printStackTrace();
-                }
-        }
-        return outputFileName + suffix;
+
+        return fileName.getFileName() + suffix;
     }
 
     public InternalStorageFile init() {
         internalFile = new File(context.getFilesDir(), fileName);
-        Log.d("FILES DIR", context.getFilesDir().toString());
+//        Log.d("FILES DIR", context.getFilesDir().toString());
         if (!internalFile.exists()) {
             try {
                 internalFile.createNewFile();
@@ -123,10 +100,8 @@ public class InternalStorageFile {
         } catch (IOException e) {
             e.printStackTrace();
         }
-//        for (char a:char_array) {
-//            System.out.println(a);
-//        }
-        return output.toString();//new String(char_array);
+
+        return output.toString();
     }
 
     public String[] read(String lineEnder) {

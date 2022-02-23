@@ -1,5 +1,8 @@
 package com.david.game.davidnotifyme.edupage.timetable_objects;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class Subject {
     private String startTime;
     private String endTime;
@@ -25,14 +28,21 @@ public class Subject {
 
     }
 
-    public Subject() {
-
-    }
 
     public Subject setTimes(String startTime, String endTime){
         this.startTime = startTime;
         this.endTime = endTime;
         return this;
+    }
+
+    public JSONObject toJsonObject() throws JSONException {
+        JSONObject json = new JSONObject();
+        json.put("classnum", classroomNumber);
+        json.put("name", shortName);
+        json.put("startTime" ,startTime);
+        json.put("endTime" ,endTime);
+
+        return json;
     }
 
 

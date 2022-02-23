@@ -31,8 +31,8 @@ public class Edupage {
         this.context = context;
         init();
         Pair<String,String> dates = DavidClockUtils.getLastWeek(); // nezabudnut zmeniť na current week
-        startDate = dates.first;
-        endDate = dates.second;
+        startDate =  dates.first;
+        endDate =  dates.second;
     }
 
 
@@ -112,6 +112,7 @@ public class Edupage {
         new AsyncEdupageFetcher(new EdupageCallback<String>() {
             @Override
             public String onComplete(Result.Success<String> result) {
+
                 parseTimetable(result.data);
 
                 return null;
@@ -126,7 +127,9 @@ public class Edupage {
         try {
             JSONObject json = new JSONObject(rawJSON);
             JSONArray j = json.getJSONObject("r").getJSONArray("ttitems");
-            ArrayList<TimetableParser.Day> parsed = new TimetableParser(context).parse(j);
+            TimetableParser parser = new TimetableParser(context);
+            ArrayList<TimetableParser.Day> parsed = parser.parse(j);
+            parser.save();
 
             // save parsed data
 

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import androidx.activity.result.ActivityResultRegistry;
+import androidx.appcompat.widget.AppCompatRadioButton$InspectionCompanion;
 
 import com.david.game.davidnotifyme.david.DavidClockUtils;
 import com.david.game.davidnotifyme.edupage.readers.EdupageSerializableReader;
@@ -12,6 +13,7 @@ import com.david.game.davidnotifyme.edupage.timetable_objects.SemiSubject;
 import com.david.game.davidnotifyme.edupage.timetable_objects.StudentsClass;
 import com.david.game.davidnotifyme.edupage.timetable_objects.Subject;
 import com.david.game.davidnotifyme.utils.InternalFiles;
+import com.david.game.davidnotifyme.utils.InternalStorageFile;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,7 +30,7 @@ public class TimetableParser {
     HashMap<Integer, Classroom> classroomHashMap;
     HashMap<Integer, StudentsClass> classHashMap;
 
-    HashMap<String, Day> timetable;
+    ArrayList<Day> timetable;
 
     public TimetableParser(Context context) {
         this.context = context;
@@ -45,19 +47,21 @@ public class TimetableParser {
         timetable = fillDays();
     }
 
-    public  ArrayList<Day> parse(JSONArray arrayOfSubjects) throws JSONException {
-        DavidClockUtils.getCurrentWeek();
 
-//        Log.d("arrayOfSubjects", arrayOfSubjects.toString());
+    public ArrayList<Day> parse(JSONArray arrayOfSubjects) throws JSONException {
+//      Log.d("arrayOfSubjects", arrayOfSubjects.toString());
+
+        // pridať filter pre skupiny
+
         for (int i = 0; i < arrayOfSubjects.length(); i++) {
             JSONObject obj = (JSONObject) arrayOfSubjects.get(i);
-//            Log.d("subject", obj.toString());
             try {
                 SemiSubject semiSubject = subjectHashMap.get(Integer.valueOf(obj.get("subjectid").toString()));
 
                 Subject subject;
-                String id2 = ((JSONArray) obj.get("classroomids")).getString(0);
-                EdupageSerializable s = classroomHashMap.get(id2);
+                JSONArray classroomIds = ((JSONArray) obj.get("classroomids"));
+                String id = classroomIds.length() > 0 ? classroomIds.getString(0) : "nemá";
+                EdupageSerializable s = classroomHashMap.get(Integer.parseInt(id));
                 subject = new Subject(
                         obj.getString("starttime"),
                         obj.getString("endtime"),
@@ -65,24 +69,53 @@ public class TimetableParser {
                         semiSubject);
 
 
-                timetable.get(obj.getString("date")).append(subject);
+                timetable.get(findIndexOfDay(obj.getString("date"))).append(subject);
 
 
             } catch (NumberFormatException | NullPointerException e) {
                 e.printStackTrace();
             }
         }
-
-        ArrayList<Day> output = new ArrayList<>(timetable.values());
-        return output;
+        return timetable;
     }
 
-    private HashMap<String,Day> fillDays() {
-        HashMap<String, Day> out = new HashMap<>();
-        for (String date : DavidClockUtils.getCurrentWeekDates()) {
-            out.put(date, new Day(date));
+    private ArrayList<Day> fillDays() {
+        ArrayList<Day> out = new ArrayList<>();
+        for (String date : DavidClockUtils.getCurrentWeekDates()) { // dávať pozor pri zmene current week na last week  v edupage classe
+            out.add(new Day(date));
         }
         return out;
+    }
+
+    private int findIndexOfDay(String date) {
+        for (int i = 0; i < timetable.size(); i++) {
+            Day day = timetable.get(i);
+            if (day.getDate().equals(date)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public int save() {
+        InternalStorageFile saver = new InternalStorageFile(context, InternalFiles.TIMETABLE);
+
+        JSONArray timetableArray = new JSONArray();
+        for (Day day : timetable) {
+            timetableArray.put(day.toJsonArray());
+        }
+
+        JSONObject finalJsonTimetable = new JSONObject();
+        try {
+            finalJsonTimetable.put("timetable", timetableArray);
+            saver.clear();
+            saver.append(finalJsonTimetable.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+        return 0;
     }
 
 
@@ -91,6 +124,7 @@ public class TimetableParser {
         String date;
 
         public Day(String date) {
+            subjectsArray = new ArrayList<>();
             this.date = date;
         }
 
@@ -101,6 +135,27 @@ public class TimetableParser {
         public Subject get(int index) {
             return subjectsArray.get(index);
         }
+
+        public String getDate() {
+            return date;
+        }
+
+        public JSONArray toJsonArray() {
+            JSONArray array = new JSONArray();
+            try {
+
+                for (Subject sub : subjectsArray) {
+                    array.put(sub.toJsonObject());
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+            return array;
+        }
     }
+
 
 }

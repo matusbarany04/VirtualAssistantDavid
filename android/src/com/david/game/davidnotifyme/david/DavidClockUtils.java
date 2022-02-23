@@ -102,7 +102,7 @@ public class DavidClockUtils {
         // Print dates of the current week starting on Sunday
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         String startDate = "", endDate = "";
-
+        calendar.add(Calendar.DATE, -7);
         startDate = df.format(calendar.getTime());
         calendar.add(Calendar.DATE, 6);
         endDate = df.format(calendar.getTime());
@@ -148,6 +148,7 @@ public class DavidClockUtils {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         String startDate = "", endDate = "";
       //  calendar.add(Calendar.DATE, 7);   // nezabudnut to odkomentovať
+          calendar.add(Calendar.DATE, -7);   // nezabudnut to odkomentovať
 
         String[] dates = new String[7];
         for (int i = 0; i < 7; i++){
