@@ -48,10 +48,10 @@ public class TimetableParser {
     public  ArrayList<Day> parse(JSONArray arrayOfSubjects) throws JSONException {
         DavidClockUtils.getCurrentWeek();
 
-        Log.d("arrayOfSubjects", arrayOfSubjects.toString());
+//        Log.d("arrayOfSubjects", arrayOfSubjects.toString());
         for (int i = 0; i < arrayOfSubjects.length(); i++) {
             JSONObject obj = (JSONObject) arrayOfSubjects.get(i);
-            Log.d("subject", obj.toString());
+//            Log.d("subject", obj.toString());
             try {
                 SemiSubject semiSubject = subjectHashMap.get(Integer.valueOf(obj.get("subjectid").toString()));
 

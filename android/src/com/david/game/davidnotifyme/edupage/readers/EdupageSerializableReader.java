@@ -1,7 +1,7 @@
 package com.david.game.davidnotifyme.edupage.readers;
 
 import android.content.Context;
-import android.util.Log;
+
 
 import com.david.game.davidnotifyme.edupage.EdupageSerializable;
 
@@ -39,7 +39,7 @@ public class EdupageSerializableReader<T extends EdupageSerializable> {
 
             this.edu_objects.add((T) ctor.get().init(vals));
         }
-        Log.d("finished", "yes");
+
     }
 
     public T[] getEdu_objects() {

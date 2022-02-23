@@ -151,7 +151,7 @@ public class Edupage {
         }catch (JSONException e){
             e.printStackTrace();
         }
-        Log.d("error error!" ,"hey  you've got a problem man");
+//        Log.d("error error!" ,"hey  you've got a problem man");
         return null;
     }
 
