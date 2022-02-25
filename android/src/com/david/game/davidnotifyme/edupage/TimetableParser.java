@@ -1,10 +1,6 @@
 package com.david.game.davidnotifyme.edupage;
 
 import android.content.Context;
-import android.util.Log;
-
-import androidx.activity.result.ActivityResultRegistry;
-import androidx.appcompat.widget.AppCompatRadioButton$InspectionCompanion;
 
 import com.david.game.davidnotifyme.david.DavidClockUtils;
 import com.david.game.davidnotifyme.edupage.readers.EdupageSerializableReader;
@@ -20,7 +16,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 
 public class TimetableParser {
@@ -37,6 +32,17 @@ public class TimetableParser {
         init();
     }
 
+    public static String[] toStringArray(JSONArray array) {
+        if (array == null)
+            return null;
+
+        String[] arr = new String[array.length()];
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = array.optString(i);
+        }
+        return arr;
+    }
+
     private void init() {
         EdupageSerializableReader<SemiSubject> semiSubjectReader = new EdupageSerializableReader<>(context, InternalFiles.SUBJECTS, SemiSubject::new);
         EdupageSerializableReader<Classroom> classroomReader = new EdupageSerializableReader<>(context, InternalFiles.CLASSROOM, Classroom::new);
@@ -46,7 +52,6 @@ public class TimetableParser {
         this.classHashMap = studentClassReader.getsAsHashMap();
         timetable = fillDays();
     }
-
 
     public ArrayList<Day> parse(JSONArray arrayOfSubjects) throws JSONException {
 //      Log.d("arrayOfSubjects", arrayOfSubjects.toString());
@@ -60,18 +65,17 @@ public class TimetableParser {
 
                 Subject subject;
                 JSONArray classroomIds = ((JSONArray) obj.get("classroomids"));
-                String id = classroomIds.length() > 0 ? classroomIds.getString(0) : "nemá";
+                String[] groupnames = toStringArray(obj.getJSONArray("groupnames"));
+
+                String id = classroomIds.length() > 0 ? classroomIds.getString(0) : "-1";
                 EdupageSerializable s = classroomHashMap.get(Integer.parseInt(id));
                 subject = new Subject(
                         obj.getString("starttime"),
                         obj.getString("endtime"),
                         s != null ? s.getName() : "iné",
-                        semiSubject);
-
-
+                        semiSubject,
+                        groupnames);
                 timetable.get(findIndexOfDay(obj.getString("date"))).append(subject);
-
-
             } catch (NumberFormatException | NullPointerException e) {
                 e.printStackTrace();
             }
@@ -97,7 +101,7 @@ public class TimetableParser {
         return -1;
     }
 
-    public int save() {
+    public void save() {
         InternalStorageFile saver = new InternalStorageFile(context, InternalFiles.TIMETABLE);
 
         JSONArray timetableArray = new JSONArray();
@@ -113,11 +117,24 @@ public class TimetableParser {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
-
-        return 0;
     }
 
+    public ArrayList<Day> read(String[] groupnames) {
+        ArrayList<Day> localArray = new ArrayList<>(timetable);
+        for (int j = 0; j < localArray.size(); j++) {
+            Day day = localArray.get(j);
+            Day localDay = new Day(day.getDate());
+            for (int i = 0; i < day.getSubjectsArray().size(); i++) {
+                Subject subject = day.get(i);
+                if (subject.containsSubjectGroups(groupnames)) {
+                    localDay.append(subject);
+                }
+
+            }
+            localArray.set(j, localDay);
+        }
+        return localArray;
+    }
 
     class Day {
         ArrayList<Subject> subjectsArray;
@@ -126,6 +143,20 @@ public class TimetableParser {
         public Day(String date) {
             subjectsArray = new ArrayList<>();
             this.date = date;
+        }
+
+        public Day(String date, ArrayList<Subject> subjectsArray) {
+            this.subjectsArray = subjectsArray;
+            this.date = date;
+        }
+
+        public Day(Day day) {
+            this.subjectsArray = day.getSubjectsArray();
+            this.date = day.getDate();
+        }
+
+        public ArrayList<Subject> getSubjectsArray() {
+            return subjectsArray;
         }
 
         public void append(Subject subject) {
@@ -143,7 +174,6 @@ public class TimetableParser {
         public JSONArray toJsonArray() {
             JSONArray array = new JSONArray();
             try {
-
                 for (Subject sub : subjectsArray) {
                     array.put(sub.toJsonObject());
                 }
@@ -151,8 +181,6 @@ public class TimetableParser {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
-
             return array;
         }
     }

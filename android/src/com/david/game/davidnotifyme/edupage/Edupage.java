@@ -97,7 +97,11 @@ public class Edupage {
             for (int i = 0; i < classesArray.length(); i++) {
                 JSONObject jsonClassObject = (JSONObject) classesArray.get(i);
 
-                output[i] = new SemiSubject(jsonClassObject.getString("name"), jsonClassObject.getString("id"), jsonClassObject.getString("short"));
+                output[i] = new SemiSubject(
+                        jsonClassObject.getString("name"),
+                        jsonClassObject.getString("id"),
+                        jsonClassObject.getString("short")
+                        );
 //                Log.d("SemiSubject", output[i].toString());
             }
 
@@ -130,9 +134,8 @@ public class Edupage {
             TimetableParser parser = new TimetableParser(context);
             ArrayList<TimetableParser.Day> parsed = parser.parse(j);
             parser.save();
-
+            ArrayList <TimetableParser.Day> data = parser.read(new String[]{"1. sk", "NBV", "A1"});
             // save parsed data
-
         } catch (JSONException e) {
             e.printStackTrace();
         }

@@ -31,12 +31,8 @@ public class SubjectsReader {
 //                Log.d("SUBJECTtik", subjectsData[i]);
                 continue;
             }
-
-            SemiSubject subject = new SemiSubject(vals[0], vals[1],vals[2]);
-
-
-
-            this.subjects.add(subject);
+//            SemiSubject subject = new SemiSubject(vals[0], vals[1],vals[2]);
+//            this.subjects.add(subject);
         }
         Log.d("finished" ,"yes");
     }

@@ -1,8 +1,13 @@
 package com.david.game.davidnotifyme.edupage.timetable_objects;
 
+import com.badlogic.gdx.utils.Null;
 import com.david.game.davidnotifyme.edupage.EdupageSerializable;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Objects;
+
+import javax.xml.transform.sax.SAXResult;
 
 public class SemiSubject extends EdupageSerializable {
     private String name;
@@ -12,6 +17,7 @@ public class SemiSubject extends EdupageSerializable {
     public SemiSubject(String name, String id, String nameShort) {
         this.name = Objects.requireNonNull(name);
         this.id = Objects.requireNonNull(id);
+
         this.nameShort = nameShort;
     }
 
@@ -26,6 +32,7 @@ public class SemiSubject extends EdupageSerializable {
         String name = data[0];
         String classroomNumber = data[1];
         String nameShort = data[2];
+
         return new SemiSubject(name, classroomNumber, nameShort);
     }
 
@@ -33,6 +40,7 @@ public class SemiSubject extends EdupageSerializable {
     public String getId() {
         return id;
     }
+
 
     public String getNameShort() {
         return nameShort;
@@ -58,7 +66,7 @@ public class SemiSubject extends EdupageSerializable {
 
     @Override
     public String serialize() {
-        return name + ":" + id + ":" + nameShort;
+        return name + ":" + id + ":" + nameShort; //  + ":" + String.join(";", subjectGroups);
     }
 
     @Override
