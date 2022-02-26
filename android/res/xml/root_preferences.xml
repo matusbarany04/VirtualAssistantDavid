@@ -114,12 +114,12 @@
             android:summary=""/>
 
         <SwitchPreferenceCompat
-            app:key="two_notify"
+            app:key="two_notify1"
             app:title="Smart David"
             android:summary=""/>
 
         <SwitchPreferenceCompat
-            app:key="two_notify"
+            app:key="two_notify2"
             app:title="David supervisions"
             android:summary=""/>
 
