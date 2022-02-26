@@ -27,6 +27,8 @@ public class Edupage {
     String startDate;
     String endDate;
 
+    // file pre skupiny
+
     public Edupage(Context context) {
         this.context = context;
         init();
@@ -134,7 +136,11 @@ public class Edupage {
             TimetableParser parser = new TimetableParser(context);
             ArrayList<TimetableParser.Day> parsed = parser.parse(j);
             parser.save();
-            ArrayList <TimetableParser.Day> data = parser.read(new String[]{"1. sk", "NBV", "A1"});
+
+            // pridať timetable reader
+
+            //ArrayList <TimetableParser.Day> data = parser.read(new String[]{"1. sk", "NBV", "A1"});
+
             // save parsed data
         } catch (JSONException e) {
             e.printStackTrace();

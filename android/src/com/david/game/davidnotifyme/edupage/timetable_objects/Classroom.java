@@ -15,7 +15,6 @@ public class Classroom extends EdupageSerializable {
 
     }
 
-
     public String getClassroomId() {
         return classroomId;
     }

@@ -16,6 +16,4 @@ public enum InternalFiles {
     public String getFileName(){
         return fileName;
     }
-
-
 }

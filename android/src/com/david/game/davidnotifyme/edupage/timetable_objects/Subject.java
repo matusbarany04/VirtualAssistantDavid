@@ -14,7 +14,7 @@ public class Subject {
     public String subjectName;
     public String[] subjectGroups;
 
-    public Subject(String startTime, String endTime, String classroomNumber, String shortName, String subjectName){
+    public Subject(String startTime, String endTime, String classroomNumber, String shortName, String subjectName,String[] subjectGroup){
         this.startTime = startTime;
         this.endTime = endTime;
         this.classroomNumber = classroomNumber;
@@ -53,6 +53,17 @@ public class Subject {
         json.put("groupNames",arr);
 
         return json;
+    }
+
+    public Subject fromJsonObject(JSONObject jsonObject) throws JSONException{
+     return new Subject(
+             jsonObject.getString("startTime"),
+             jsonObject.getString("endTime"),
+             jsonObject.getString("classNum"),
+             jsonObject.getString("name"),
+             jsonObject.getString("name"),
+
+             new String[0]); // dávať pozor lenivý Matúš tu bol
     }
 
     public boolean containsSubjectGroups(String[] subjectGroups){

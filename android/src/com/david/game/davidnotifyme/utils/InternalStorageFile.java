@@ -31,6 +31,7 @@ public class InternalStorageFile {
         this.context = Objects.requireNonNull(context);
         this.fileName = resolveEnum(fileName);
         init();
+
     }
 
     private String resolveEnum(InternalFiles fileName) {
