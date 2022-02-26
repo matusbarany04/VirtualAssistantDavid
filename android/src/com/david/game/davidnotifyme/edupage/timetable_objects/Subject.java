@@ -56,14 +56,19 @@ public class Subject {
     }
 
     public Subject fromJsonObject(JSONObject jsonObject) throws JSONException{
+        JSONArray jsonArray = jsonObject.getJSONArray("groupNames");
+        String[] groupNames = new String[jsonArray.length()];
+        for (int i = 0; i < jsonArray.length(); i++ ){
+            groupNames[i] = jsonArray.getString(i);
+        }
+
      return new Subject(
              jsonObject.getString("startTime"),
              jsonObject.getString("endTime"),
              jsonObject.getString("classNum"),
              jsonObject.getString("name"),
              jsonObject.getString("name"),
-
-             new String[0]); // dávať pozor lenivý Matúš tu bol
+             groupNames); // dávať pozor lenivý Matúš tu bol, usilovný matúš tu bol tiež
     }
 
     public boolean containsSubjectGroups(String[] subjectGroups){
