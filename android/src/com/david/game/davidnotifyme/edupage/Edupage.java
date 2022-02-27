@@ -12,7 +12,6 @@ import com.david.game.davidnotifyme.edupage.internet.AsyncEdupageFetcher;
 import com.david.game.davidnotifyme.edupage.internet.EdupageCallback;
 import com.david.game.davidnotifyme.edupage.internet.Result;
 import com.david.game.davidnotifyme.edupage.readers.EdupageSerializableReader;
-import com.david.game.davidnotifyme.edupage.readers.TimetableReader;
 import com.david.game.davidnotifyme.edupage.timetable_objects.Classroom;
 import com.david.game.davidnotifyme.edupage.timetable_objects.SemiSubject;
 import com.david.game.davidnotifyme.edupage.timetable_objects.StudentsClass;
@@ -172,7 +171,7 @@ public class Edupage {
             TimetableParser parser = new TimetableParser(context);
             ArrayList<TimetableParser.Day> parsed = parser.parse(j);
             parser.save();
-            parser.getGroupOfGroupnames();
+            parser.getGroupOfGroupNames();
             return parsed;
 
         } catch (JSONException e) {

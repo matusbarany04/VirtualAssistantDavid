@@ -29,7 +29,7 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="Skupiny">
+    <PreferenceCategory app:title="Skupiny" app:key="groups">
 
         <ListPreference
             app:defaultValue="Prvá"

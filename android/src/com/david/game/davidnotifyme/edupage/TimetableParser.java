@@ -138,7 +138,7 @@ public class TimetableParser {
         }
     }
 
-    private String[] getAllGroupnames() {
+    private String[] getAllGroupNames() {
         HashSet<String> groupNames = new HashSet<>();
 
         for (Day d : timetable) {
@@ -153,13 +153,13 @@ public class TimetableParser {
         return output;
     }
 
-    public String[][] getGroupOfGroupnames() {
-        String[] allGroupnames = getAllGroupnames();
+    public String[][] getGroupOfGroupNames() {
+        String[] allGroupNames = getAllGroupNames();
         HashSet<String> groups = new HashSet<>();
 
         String numbers = "0123456789";
 
-        for (String s : allGroupnames) {
+        for (String s : allGroupNames) {
             StringBuilder c = new StringBuilder(s);
             for (int i = s.length()-1  ; i > 0; i--) {
                 if (numbers.contains(s.split("")[i])) c = c.deleteCharAt(i);

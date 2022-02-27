@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.ListPreference;
@@ -20,6 +21,7 @@ import androidx.preference.PreferenceFragmentCompat;
 import com.david.game.R;
 import com.david.game.davidnotifyme.david.David;
 
+import com.david.game.davidnotifyme.edupage.TimetableParser;
 import com.david.game.davidnotifyme.edupage.readers.EdupageSerializableReader;
 import com.david.game.davidnotifyme.edupage.timetable_objects.Classroom;
 import com.david.game.davidnotifyme.edupage.timetable_objects.StudentsClass;
@@ -27,6 +29,9 @@ import com.david.game.davidnotifyme.notifications.BroadCastReceiver;
 import com.david.game.davidnotifyme.notifications.DavidNotifications;
 import com.david.game.davidnotifyme.utils.InternalFiles;
 import com.david.game.debug.DebugActivity;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 
 public class SettingsActivity extends AppCompatActivity {
@@ -111,6 +116,9 @@ public class SettingsActivity extends AppCompatActivity {
             usersClass.setEntries(cr.getNames());
             usersClass.setEntryValues(cr.getIds());
 
+            createGroupPreferences();
+
+
             usersClass.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(@NonNull Preference preference, Object newValue) {
@@ -165,10 +173,33 @@ public class SettingsActivity extends AppCompatActivity {
                      }
                      return true;
                  }
-             }
+             });
+        }
 
+        private void createGroupPreferences() {
+            TimetableParser timetableParser = new TimetableParser(getContext());
+            String[][] allGroups = timetableParser.getGroupOfGroupNames();
 
-            );
+            for (String[] allGroup : allGroups) {
+                Log.d("array", Arrays.toString(allGroup));
+                ListPreference groupPreference = new ListPreference(getContext());
+                groupPreference.setTitle(allGroups.toString());
+                groupPreference.setKey("nm");
+                groupPreference.setEntries(allGroup);
+                groupPreference.setEntryValues(allGroup);
+                setAutoSummaryProvider(groupPreference);
+
+                PreferenceCategory groups = findPreference("groups");
+                groups.addPreference(groupPreference);
+            }
+
+        }
+
+        private void setAutoSummaryProvider(ListPreference preference) {
+            preference.setSummaryProvider(preference1 -> {
+                ListPreference listPreference = (ListPreference) preference1;
+                return listPreference.getValue();
+            });
         }
     }
 }
