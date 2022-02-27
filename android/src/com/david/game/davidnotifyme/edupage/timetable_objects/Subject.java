@@ -9,7 +9,7 @@ import java.util.Arrays;
 public class Subject {
     private String startTime;
     private String endTime;
-    private String classroomNumber;
+    private final String classroomNumber;
     public String shortName;
     public String subjectName;
     public String[] subjectGroups;
@@ -82,5 +82,15 @@ public class Subject {
         return false;
     }
 
+    public String getClassroomNumber() {
+        return classroomNumber;
+    }
 
+    public String getStart() {
+        return startTime;
+    }
+
+    public String getEnd() {
+        return endTime;
+    }
 }

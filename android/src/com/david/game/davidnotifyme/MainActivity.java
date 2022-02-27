@@ -32,6 +32,7 @@ import com.david.game.R;
 import com.david.game.davidnotifyme.david.ClassroomLocation;
 import com.david.game.davidnotifyme.david.David;
 import com.david.game.davidnotifyme.david.DavidClockUtils;
+import com.david.game.davidnotifyme.david.Timetable;
 import com.david.game.davidnotifyme.edupage.Edupage;
 import com.david.game.davidnotifyme.lunch.LunchActivity;
 import com.david.game.davidnotifyme.notifications.BroadCastReceiver;
@@ -64,12 +65,6 @@ public class MainActivity extends AppCompatActivity implements AndroidFragmentAp
         getSupportFragmentManager().beginTransaction().
                 add(R.id.frame, libgdxFragment).
                 commit();
-
-        try {
-            new Edupage(this);//.scrape("smh");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
         notificationIntent = new Intent(this, BroadCastReceiver.class);
         Executor executor = runnable -> new Thread(runnable).start();
@@ -154,32 +149,44 @@ public class MainActivity extends AppCompatActivity implements AndroidFragmentAp
         try {
             david.zistiSkupiny(this);
 
-            String header = david.prebiehaHodina() ? david.ziskajPrebiehajucuHodinu().first : "Prestávka";
-            String description = "";
-
-            if(david.ziskajRozvrh().freeTime()) header = "Máš voľno";
-            else {
-                if(DavidClockUtils.afterEleven() || DavidClockUtils.beforeThree()) header = "Bež už spať ! Dobrú noc !";
-                else if(david.ziskajRozvrh().getIndexOfCurrentLesson() == -3) header = "Dobré ráno";
-
-                if(david.prebiehaHodina() && !david.bliziSaKoniecHodiny()) {
-                    description = david.ziskajPrebiehajucuHodinu().second;
-
-                } else {
-                    Pair<String, String> message = david.ziskajDalsiuHodinuEdupage(true);
-                    description = String.format("%s\n%s", message.first, message.second);
-                }
-
-                if (description.contains("Zisťujem čo je na obed...")) checkLunch(description);
-            }
-
             TextView timetableTextView = findViewById(R.id.timetable);
-            timetableTextView.setText(header);
+            timetableTextView.setText(R.string.edupage);
 
-            TextView details = findViewById(R.id.details);
-            details.setText(description);
+            Timetable timetable = david.ziskajRozvrh();
 
-            sendBroadcast(notificationIntent);
+            timetable.setOnLoadListener(new Timetable.OnLoadListener() {
+                @Override
+                public void onLoadTimetable(Timetable timetable) {
+                    String header = david.prebiehaHodina() ? david.ziskajPrebiehajucuHodinu().first : "Prestávka";
+
+                    Log.d("prH", david.ziskajPrebiehajucuHodinu().first + " " + david.ziskajPrebiehajucuHodinu().second);
+                    String description = "";
+
+                    if(david.ziskajRozvrh().freeTime()) header = "Máš voľno";
+                    else {
+                        if(DavidClockUtils.afterEleven() || DavidClockUtils.beforeThree()) header = "Bež už spať ! Dobrú noc !";
+                        else if(david.ziskajRozvrh().getIndexOfCurrentLesson() == -3) header = "Dobré ráno";
+
+                        if(david.prebiehaHodina() && !david.bliziSaKoniecHodiny()) {
+                            description = david.ziskajPrebiehajucuHodinu().second;
+
+                        } else {
+                            Pair<String, String> message = david.ziskajDalsiuHodinuEdupage(true);
+                            description = String.format("%s\n%s", message.first, message.second);
+                        }
+
+                        if (description.contains("Zisťujem čo je na obed...")) checkLunch(description);
+                    }
+
+                    timetableTextView.setText(header);
+
+                    TextView details = findViewById(R.id.details);
+                    details.setText(description);
+
+                    sendBroadcast(notificationIntent);
+                }
+            });
+
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -9,6 +9,10 @@ import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
 
 import com.david.game.R;
+import com.david.game.davidnotifyme.edupage.Edupage;
+import com.david.game.davidnotifyme.edupage.TimetableParser;
+import com.david.game.davidnotifyme.edupage.readers.TimetableReader;
+import com.david.game.davidnotifyme.edupage.timetable_objects.Subject;
 import com.david.game.davidnotifyme.utils.JSONparser;
 
 import org.json.JSONArray;
@@ -27,14 +31,51 @@ public class Timetable {
     int skupinaOdp;
     int skupinaEtvNbv;
     int[] breaks = {5, 10, 20, 5, 10, 10, 5, 0};
-    ArrayList<ArrayList<String>> timetable;
+    ArrayList<TimetableParser.Day> timetable;
+    private OnLoadListener onLoadListener;
+    private boolean loaded = false;
 
 
     public Timetable(Context context) {
         times = new ArrayList<>();
-        timetable = new ArrayList<>();
+     //   timetable = new ArrayList<>();
         initGroups(context);
-        parseTimetableJson(context);
+
+        TimetableReader timetableReader = new TimetableReader(context);
+
+        if(David.maPristupKInternetu(context) || timetableReader.isEmpty()) {
+
+            try {
+                Edupage edupage = new Edupage(context);//.scrape("smh");
+                edupage.setOnCompletionListener(new Edupage.OnCompletionListener() {
+
+                    @Override
+                    public void onComplete(ArrayList<TimetableParser.Day> timetable) {
+                        Timetable.this.timetable = timetable;
+                        if(onLoadListener != null) onLoadListener.onLoadTimetable(Timetable.this);
+                        loaded = true;
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        } else {
+            timetable = timetableReader.read().getTimetableArray();
+            loaded = true;
+        }
+        //parseTimetableJson(context);
+    }
+
+    public interface OnLoadListener {
+        void onLoadTimetable(Timetable timetable);
+    }
+
+    public void setOnLoadListener(OnLoadListener listener) {
+        onLoadListener = listener;
+        if(loaded) {
+            onLoadListener.onLoadTimetable(this);
+        }
     }
 
     public static int stringTimeToMinutes(String stringTime) {
@@ -57,6 +98,7 @@ public class Timetable {
         skupinaEtvNbv = pref.getString("etv_nbv", "Etika").equals("Etika") ? 1 : 2;
     }
 
+    @Deprecated
     private void parseTimetableJson(Context context) {
         String rawJsonData = JSONparser.getFileData(context, R.raw.timetable);
         JSONObject obj = null;
@@ -71,7 +113,7 @@ public class Timetable {
                 for (int j = 0; j < innerArray.length(); j++) {
                     dayArray.add(innerArray.getString(j));
                 }
-                timetable.add(dayArray);
+               // timetable.add(dayArray);
             }
             JSONArray timesJSON = obj.getJSONArray("times");
             for (int i = 0; i < timesJSON.length(); i++) {
@@ -90,11 +132,15 @@ public class Timetable {
 
         int index = getClassIndexBasedOnCurrentTime();
         //Log.d("index", index + " ");
-        ArrayList<String> timeTableToday = timetable.get(day - 1);
+        ArrayList<Subject> timeTableToday = getSubjectsToday();
 
         if (index != -1 && index < timeTableToday.size()) {
 
-            ArrayList<String> lesson = new ArrayList<>(Arrays.asList(timeTableToday.get(index).split("/")));
+            Subject lesson = timeTableToday.get(index);
+
+            return new Pair<>(lesson.subjectName, lesson.getClassroomNumber());
+
+            /*ArrayList<String> lesson = new ArrayList<>(Arrays.asList(timeTableToday.get(index).split("/")));
 
             if (lesson.size() == 1) { //normálka
                 lesson = new ArrayList<>(Arrays.asList(lesson.get(0).split(":")));
@@ -109,9 +155,7 @@ public class Timetable {
                 else
                     lesson = new ArrayList<>(Arrays.asList(lesson.get(skupinaNem - 1).split(":")));
 
-            }
-
-            return new Pair<>(lesson.get(0), lesson.get(1));
+            }*/
         }
 
         return new Pair<>(null, "voľno");
@@ -121,16 +165,16 @@ public class Timetable {
 
         SimpleDateFormat format = new SimpleDateFormat("HH:mm", Locale.getDefault());
 
+        ArrayList<Subject> subjects = getSubjectsToday();
         int currentTime = stringTimeToMinutes(format.format(new Date()));
         Log.d("debugging:::", currentTime + " " + format.format(new Date()));
-        for (int i = 0; i < times.size(); i++) {
-            String time = times.get(i);
-            String[] timeSpan = time.split("-");
+        for (int i = 0; i < subjects.size(); i++) {
+            Subject subject = subjects.get(i);
 
-            int timeInMinutesStart = stringTimeToMinutes(timeSpan[0]);
-            int timeInMinutesEnd = stringTimeToMinutes(timeSpan[1]);
+            int timeInMinutesStart = stringTimeToMinutes(subject.getStart());
+            int timeInMinutesEnd = stringTimeToMinutes(subject.getEnd());
 
-            if (timeInMinutesStart <= currentTime || !getLessonsToday()[i].equals("-")) {
+            if (timeInMinutesStart <= currentTime || !getLessonsToday(false)[i].equals("-")) {
                 try {
                     if (timeInMinutesEnd >= currentTime || timeInMinutesEnd + breaks[i] >= currentTime) {
                         int firstLesson = DavidClockUtils.timeToMinutes(getBeginOfFirstLesson());
@@ -144,21 +188,23 @@ public class Timetable {
     }
 
     public String getBeginOfFirstLesson() {
-        if(times.size() > 0) {
-            String[] lessons = getLessonsToday();
-            int index = 0;
-            for (String lesson : lessons) {
-                Log.d("lesson", lesson);
-                if(!lesson.equals("-")) return times.get(index).split("-")[0];
-                index++;
+        ArrayList<Subject> lessons = getSubjectsToday();
+        if(lessons.size() > 0) {
+
+            for (Subject lesson : lessons) {
+                if(!lesson.shortName.equals("-")) {
+                    return lesson.getStart();
+                }
             }
         }
         return "Dneska nie sú žiadne hodiny";
     }
 
     public String getEndOfAllLessons() {
-        if(times.size() > 0) {
-            return times.get(times.size() - 1).split("-")[0];
+        ArrayList<Subject> lessons = getSubjectsToday();
+
+        if(lessons.size() > 0) {
+            return lessons.get(lessons.size() - 1).getEnd();
         }
         else return "Dneska nie sú žiadne hodiny";
     }
@@ -166,11 +212,17 @@ public class Timetable {
     public boolean freeTime() {
         if(DavidClockUtils.jeVikend()) return true;
 
-        Date date = new Date();
-        if(date.getHours() >= 23) return false;
+        try {
+            Date date = new Date();
+            if (date.getHours() >= 23) return false;
 
-        int minutesEnd = stringTimeToMinutes(getEndOfAllLessons());
-        return DavidClockUtils.currentTimeInMinutes() > minutesEnd;
+            int minutesEnd = stringTimeToMinutes(getEndOfAllLessons());
+            return DavidClockUtils.currentTimeInMinutes() > minutesEnd;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return true;
+        }
     }
 
     public int getIndexOfCurrentLesson() { // -1 nenajdené , -2 prestávka, -3 vyučovanie nezačalo
@@ -178,23 +230,22 @@ public class Timetable {
 
         int currentTime = stringTimeToMinutes(format.format(new Date()));
 
-        for (int i = 0; i < times.size(); i++) {
-            String time = times.get(i);
-            String[] timeSpan = time.split("-");
+        ArrayList<Subject> lessons = getSubjectsToday();
 
-            int timeInMinutesStart = stringTimeToMinutes(timeSpan[0]);
-            int timeInMinutesEnd = stringTimeToMinutes(timeSpan[1]);
+        for (int i = 0; i < lessons.size(); i++) {
 
+            Subject subject = lessons.get(i);
+
+            int timeInMinutesStart = stringTimeToMinutes(subject.getStart());
+            int timeInMinutesEnd = stringTimeToMinutes(subject.getEnd());
 
             if (i == 0 && currentTime < timeInMinutesStart) {
                 return -3;
             }
 
-//            Log.d("timeC", currentTime + "-" + 8 * 60 + "  " + i);
-
             if (timeInMinutesStart <= currentTime && timeInMinutesEnd >= currentTime) {
-//                Log.d("timeC", "true");
                 return i;
+
             } else if (timeInMinutesStart < currentTime && timeInMinutesEnd + breaks[i] > currentTime) {
                 return -2;
             }
@@ -202,11 +253,15 @@ public class Timetable {
         return -1;
     }
 
+    public ArrayList<Subject> getSubjectsToday() {
+        int day = DavidClockUtils.zistiDen();
+        return timetable.get(day).getSubjectsArray();
+    }
+
     public String getEndOfCurrentLesson() {
-        int index = getIndexOfCurrentLesson();
-        if (index >= 0) {
-            String time = times.get(index);
-            return time.substring(time.indexOf("-") + 1);
+        Subject subject = getCurrentLesson();
+        if (subject != null) {
+            return subject.getEnd();
         }
         return "00:00";
     }
@@ -226,11 +281,13 @@ public class Timetable {
     }
 
 
-    public String getCurrentLesson() {
-        String[] lessonsToday = getLessonsToday();
+    public String getCurrentLessonName() {
+        String[] lessonsToday = getLessonsToday(false);
 
         if (lessonsToday.length > 0) { //nie je víkend
             int lessonIndex = getIndexOfCurrentLesson();
+
+            Log.d("lessons", lessonIndex + "");
             if (lessonIndex >= 0) {
                 return lessonsToday[lessonIndex];
             } else if (lessonIndex == -2) {
@@ -240,25 +297,25 @@ public class Timetable {
         return "voľno";
     }
 
+    public Subject getCurrentLesson() {
+        ArrayList<Subject> lessonsToday = getSubjectsToday();
+        int lessonIndex = getIndexOfCurrentLesson();
+        if (lessonsToday.size() > 0 && lessonIndex >= 0) { //nie je víkend
+            return lessonsToday.get(lessonIndex);
+        }
+        return null;
+    }
 
-    public String[] getLessonsToday() {
+    public String[] getLessonsToday(boolean shortNames) {
         Date date = new Date();
         int day = date.getDay();
-        if (day == 0 || day == 6) return new String[0];
+        if (day == 0 || day == 6 || timetable == null) return new String[0];
 
-        ArrayList<String> timetableToday = timetable.get(day - 1);
+        ArrayList<Subject> timetableToday = timetable.get(day - 1).getSubjectsArray();
         String[] lessons = new String[timetableToday.size()];
 
         for (int i = 0; i < timetableToday.size(); i++) {
-
-            String lesson = timetableToday.get(i);
-            if (lesson.contains("/")) {
-                String[] hodinaSkupiny = lesson.split("/");
-                if (hodinaSkupiny.length == 2) lesson = hodinaSkupiny[skupinaNem - 1];
-                else if (hodinaSkupiny.length == 3) lesson = hodinaSkupiny[skupinaOdp - 1];
-            }
-
-            lessons[i] = lesson.substring(lesson.indexOf(":") + 1);
+            lessons[i] = shortNames ? timetableToday.get(i).shortName : timetableToday.get(i).subjectName;
         }
         return lessons;
     }

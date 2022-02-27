@@ -1,11 +1,9 @@
 package com.david.game.davidnotifyme.david;
 import static com.david.game.davidnotifyme.david.DavidClockUtils.timeToMinutes;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.Executor;
@@ -155,7 +153,7 @@ public class David {
     public static String ziskajRannuSpravu(Context context) {
         StringBuilder text = new StringBuilder(context.getString(R.string.zbalene_veci));
         Timetable timetable = new Timetable(context);
-        String[] lessons = timetable.getLessonsToday();
+        String[] lessons = timetable.getLessonsToday(true);
         for (String lesson : lessons) {
             if (trebaPomocky(lesson) && !lesson.equals("-") && !text.toString().contains(lesson + ","))
                 text.append(lesson).append(", ");
@@ -214,8 +212,8 @@ public class David {
                 verbose = null;
 
             } else if (input.first != null) {
-                header = "Ďalšia hodina je " + input.second;
-                text = "Učebňa " + input.first;
+                header = "Ďalšia hodina je " + input.first;
+                text = "Učebňa " + input.second;
 
             } else if (input.second.equals("víkend")) {
                 header = "Je víkend";
@@ -223,8 +221,7 @@ public class David {
             } else header = "Máš voľno";
 
             if (verbose != null && Boolean.TRUE && input.first != null) {
-                Log.d("input", input.first + " : " + input.second);
-                text += " (" + navigator.whereIs(input.first) + ")";
+                text += " (" + navigator.whereIs(input.second) + ")";
             }
         }
 
@@ -233,7 +230,7 @@ public class David {
 
     public Pair<String, String> ziskajPrebiehajucuHodinu() {
 
-        String lesson = timetable.getCurrentLesson();
+        String lesson = timetable.getCurrentLessonName();
 
         if(lesson.equals("voľno")) return new Pair<>("Máš voľno", "");
 
