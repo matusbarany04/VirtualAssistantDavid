@@ -47,9 +47,9 @@ public class TimetableParser {
         EdupageSerializableReader<SemiSubject> semiSubjectReader = new EdupageSerializableReader<>(context, InternalFiles.SUBJECTS, SemiSubject::new);
         EdupageSerializableReader<Classroom> classroomReader = new EdupageSerializableReader<>(context, InternalFiles.CLASSROOM, Classroom::new);
         EdupageSerializableReader<StudentsClass> studentClassReader = new EdupageSerializableReader<>(context, InternalFiles.CLASSES, StudentsClass::new);
-        this.subjectHashMap = semiSubjectReader.getsAsHashMap();
-        this.classroomHashMap = classroomReader.getsAsHashMap();
-        this.classHashMap = studentClassReader.getsAsHashMap();
+        this.subjectHashMap = semiSubjectReader.getsAsHashMapIdName();
+        this.classroomHashMap = classroomReader.getsAsHashMapIdName();
+        this.classHashMap = studentClassReader.getsAsHashMapIdName();
         timetable = fillDays();
     }
 

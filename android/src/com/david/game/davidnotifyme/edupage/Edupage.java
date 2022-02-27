@@ -168,6 +168,7 @@ public class Edupage {
     }
 
     public JSONArray getRow(String rawJSON, String rowName) throws JSONException {
+        System.out.println(rawJSON);
         JSONObject json = new JSONObject(rawJSON);
         JSONArray j = json.getJSONObject("r").getJSONArray("tables");
 
