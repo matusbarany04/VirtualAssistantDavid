@@ -18,6 +18,8 @@ import org.json.JSONObject;
 import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 public class TimetableReader {
 
@@ -80,6 +82,8 @@ public class TimetableReader {
         }
         return subjectArray;
     }
+
+
 
     public String getJsonString() {
         return jsonOutput;

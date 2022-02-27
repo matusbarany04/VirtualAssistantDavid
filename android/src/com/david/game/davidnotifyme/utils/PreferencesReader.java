@@ -16,8 +16,11 @@ public class PreferencesReader {
     }
 
     public String[] getSavedGroups() {
-        return new String[]{preferences.getString("nemcina", ), preferences.getString("odp"), preferences.getString("etv_nbv")
-        }
+        return new String[]{
+                preferences.getString("nemcina", "1. sk"),
+                preferences.getString("odp", "A1"),
+                preferences.getString("etv_nbv", "ETV")
+        };
 
     }
 }

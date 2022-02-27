@@ -51,7 +51,7 @@ public class Timetable {
 
                     @Override
                     public void onComplete(ArrayList<TimetableParser.Day> timetable) {
-                        Timetable.this.timetable = TimetableParser.filter(timetable, ;
+                        Timetable.this.timetable = TimetableParser.filter(timetable,new String[]{}); // pridať dynamicé skupiny
                         if(onLoadListener != null) onLoadListener.onLoadTimetable(Timetable.this);
                         loaded = true;
                     }

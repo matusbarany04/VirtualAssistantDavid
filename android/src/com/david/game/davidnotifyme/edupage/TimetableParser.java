@@ -17,7 +17,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class TimetableParser {
     //    DavidClockUtils
@@ -135,6 +137,21 @@ public class TimetableParser {
         }
         return localArray;
     }
+
+    public String[] getAllGroupnames(){
+        HashSet<String> groupNames = new HashSet<>();
+
+        for (Day d : timetable) {
+            for (Subject s: d.getSubjectsArray()) {
+                groupNames.addAll(Arrays.asList(s.subjectGroups));
+            }
+        }
+        return (String[]) groupNames.toArray();
+    }
+
+
+
+
 
     public static class Day {
         ArrayList<Subject> subjectsArray;
