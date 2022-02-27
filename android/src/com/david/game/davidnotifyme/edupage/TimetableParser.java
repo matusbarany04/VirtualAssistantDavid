@@ -46,6 +46,23 @@ public class TimetableParser {
         return arr;
     }
 
+    public static ArrayList<Day> filter(ArrayList<Day> timetable, String[] groupnames) {
+        ArrayList<Day> localArray = new ArrayList<>(timetable);
+        for (int j = 0; j < localArray.size(); j++) {
+            Day day = localArray.get(j);
+            Day localDay = new Day(day.getDate());
+            for (int i = 0; i < day.getSubjectsArray().size(); i++) {
+                Subject subject = day.get(i);
+                if (subject.containsSubjectGroups(groupnames)) {
+                    localDay.append(subject);
+                }
+
+            }
+            localArray.set(j, localDay);
+        }
+        return localArray;
+    }
+
     private void init() {
         EdupageSerializableReader<SemiSubject> semiSubjectReader = new EdupageSerializableReader<>(context, InternalFiles.SUBJECTS, SemiSubject::new);
         EdupageSerializableReader<Classroom> classroomReader = new EdupageSerializableReader<>(context, InternalFiles.CLASSROOM, Classroom::new);
@@ -57,7 +74,7 @@ public class TimetableParser {
     }
 
     public ArrayList<Day> parse(JSONArray arrayOfSubjects) throws JSONException {
-      Log.d("arrayOfSubjects", arrayOfSubjects.toString());
+        Log.d("arrayOfSubjects", arrayOfSubjects.toString());
         // pridať filter pre skupiny
 
         for (int i = 0; i < arrayOfSubjects.length(); i++) {
@@ -121,36 +138,38 @@ public class TimetableParser {
         }
     }
 
-    public static ArrayList<Day> filter(ArrayList<Day> timetable, String[] groupnames) {
-        ArrayList<Day> localArray = new ArrayList<>(timetable);
-        for (int j = 0; j < localArray.size(); j++) {
-            Day day = localArray.get(j);
-            Day localDay = new Day(day.getDate());
-            for (int i = 0; i < day.getSubjectsArray().size(); i++) {
-                Subject subject = day.get(i);
-                if (subject.containsSubjectGroups(groupnames)) {
-                    localDay.append(subject);
-                }
-
-            }
-            localArray.set(j, localDay);
-        }
-        return localArray;
-    }
-
-    public String[] getAllGroupnames(){
+    private String[] getAllGroupnames() {
         HashSet<String> groupNames = new HashSet<>();
 
         for (Day d : timetable) {
-            for (Subject s: d.getSubjectsArray()) {
+            for (Subject s : d.getSubjectsArray()) {
                 groupNames.addAll(Arrays.asList(s.subjectGroups));
             }
         }
-        return (String[]) groupNames.toArray();
+
+        String[] output = new String[groupNames.size()];
+        groupNames.toArray(output);
+
+        return output;
     }
 
+    public String[][] getGroupOfGroupnames() {
+        String[] allGroupnames = getAllGroupnames();
+        HashSet<String> groups = new HashSet<>();
+
+        String numbers = "0123456789";
+
+        for (String s : allGroupnames) {
+            StringBuilder c = new StringBuilder(s);
+            for (int i = s.length()-1  ; i > 0; i--) {
+                if (numbers.contains(s.split("")[i])) c = c.deleteCharAt(i);
+            }
+            groups.add(c.toString());
+        }
 
 
+        return  new String[0][0];
+    }
 
 
     public static class Day {

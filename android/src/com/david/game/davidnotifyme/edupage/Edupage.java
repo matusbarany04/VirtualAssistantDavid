@@ -172,7 +172,7 @@ public class Edupage {
             TimetableParser parser = new TimetableParser(context);
             ArrayList<TimetableParser.Day> parsed = parser.parse(j);
             parser.save();
-
+            parser.getGroupOfGroupnames();
             return parsed;
 
         } catch (JSONException e) {
