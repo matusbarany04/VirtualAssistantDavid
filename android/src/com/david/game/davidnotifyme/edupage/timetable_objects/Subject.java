@@ -55,7 +55,7 @@ public class Subject {
         return json;
     }
 
-    public Subject fromJsonObject(JSONObject jsonObject) throws JSONException{
+    public static Subject fromJsonObject(JSONObject jsonObject) throws JSONException{
         JSONArray jsonArray = jsonObject.getJSONArray("groupNames");
         String[] groupNames = new String[jsonArray.length()];
         for (int i = 0; i < jsonArray.length(); i++ ){

@@ -96,7 +96,7 @@ public class DavidClockUtils {
 
 
     public static Pair<String,String> getLastWeek() {
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance(Locale.GERMAN);
         calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
 
         // Print dates of the current week starting on Sunday
@@ -111,7 +111,7 @@ public class DavidClockUtils {
     }
 
     public static Pair<String,String> getNextWeek() {
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance(Locale.GERMAN);
         calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
 
         // Print dates of the current week starting on Sunday
@@ -126,7 +126,7 @@ public class DavidClockUtils {
     }
 
     public static Pair<String,String> getCurrentWeek() {
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance(Locale.GERMAN);
         calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
 
         // Print dates of the current week starting on Sunday
@@ -141,7 +141,7 @@ public class DavidClockUtils {
     }
 
     public static String[] getCurrentWeekDates() {
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance(Locale.GERMAN);
         calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
 
         // Print dates of the current week starting on Sunday
