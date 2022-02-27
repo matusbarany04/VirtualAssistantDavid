@@ -1,6 +1,7 @@
 package com.david.game.davidnotifyme.edupage;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.david.game.davidnotifyme.david.DavidClockUtils;
 import com.david.game.davidnotifyme.edupage.readers.EdupageSerializableReader;
@@ -54,8 +55,7 @@ public class TimetableParser {
     }
 
     public ArrayList<Day> parse(JSONArray arrayOfSubjects) throws JSONException {
-//      Log.d("arrayOfSubjects", arrayOfSubjects.toString());
-
+      Log.d("arrayOfSubjects", arrayOfSubjects.toString());
         // pridať filter pre skupiny
 
         for (int i = 0; i < arrayOfSubjects.length(); i++) {
@@ -119,7 +119,7 @@ public class TimetableParser {
         }
     }
 
-    public ArrayList<Day> read(String[] groupnames) {
+    public ArrayList<Day> filter(String[] groupnames) {
         ArrayList<Day> localArray = new ArrayList<>(timetable);
         for (int j = 0; j < localArray.size(); j++) {
             Day day = localArray.get(j);
@@ -136,7 +136,7 @@ public class TimetableParser {
         return localArray;
     }
 
-    class Day {
+    public static class Day {
         ArrayList<Subject> subjectsArray;
         String date;
 

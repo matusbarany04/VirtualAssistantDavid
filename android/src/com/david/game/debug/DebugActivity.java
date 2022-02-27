@@ -34,26 +34,31 @@ public class DebugActivity extends AppCompatActivity {
 
         David david = new David(this, null);
 
-        Timetable timetable = new Timetable(this);
+        Timetable timetable = david.ziskajRozvrh();
 
-        for (String lesson : timetable.getLessonsToday()) {
+        timetable.setOnLoadListener(new Timetable.OnLoadListener() {
+            @Override
+            public void onLoadTimetable(Timetable timetable) {
+
+                addText(" ");
+                addText("ziskaj dalsiu hodinu z edupage:");
+                addText("SECOND: " + david.ziskajDalsiuHodinuEdupage(true).second);
+                addText("FIRST: " + david.ziskajDalsiuHodinuEdupage(true).first);
+                addText(" ");
+                addText("Práve prebieha: ");
+                addText(timetable.getCurrentLessonName());
+
+                addText(" ");
+                addText("End of current lesson");
+                addText(timetable.getEndOfCurrentLesson());
+
+                getCurrentLocation();
+            }
+        });
+
+        for (String lesson : timetable.getLessonsToday(true)) {
             addText(lesson);
         }
-
-        addText(" ");
-        addText("ziskaj dalsiu hodinu z edupage:");
-        addText("SECOND: " + david.ziskajDalsiuHodinuEdupage(true).second);
-        addText("FIRST: " + david.ziskajDalsiuHodinuEdupage(true).first);
-        addText(" ");
-        addText("Práve prebieha: ");
-        addText(timetable.getCurrentLesson());
-
-        addText(" ");
-        addText("End of current lesson");
-        addText(timetable.getEndOfCurrentLesson());
-
-        getCurrentLocation();
-
     }
 
     public void addText(String text) {

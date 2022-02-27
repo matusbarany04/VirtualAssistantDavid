@@ -57,31 +57,36 @@ public class BroadCastReceiver extends BroadcastReceiver {
         if(shouldShowNotification(context)){
             Timetable timetable = david.ziskajRozvrh();
 
-            boolean prebiehajucaNotifikacia = david.prebiehaHodina() && !david.bliziSaKoniecHodiny();
+            timetable.setOnLoadListener(new Timetable.OnLoadListener() {
+                @Override
+                public void onLoadTimetable(Timetable timetable) {
+                    boolean prebiehajucaNotifikacia = david.prebiehaHodina() && !david.bliziSaKoniecHodiny();
 
-            Log.d("compare", david.prebiehaHodina() + "." + david.bliziSaKoniecHodiny());
+                    Log.d("compare", david.prebiehaHodina() + "." + david.bliziSaKoniecHodiny());
 
-            Log.d("minutes", DavidClockUtils.timeToMinutes(timetable.getEndOfCurrentLesson()) + "-" + DavidClockUtils.currentTimeInMinutes());
+                   // Log.d("minutes", DavidClockUtils.timeToMinutes(timetable.getEndOfCurrentLesson()) + "-" + DavidClockUtils.currentTimeInMinutes());
 
-            Pair<String, String> updatedNotification = prebiehajucaNotifikacia ? david.ziskajPrebiehajucuHodinu() : david.ziskajDalsiuHodinuEdupage(true);
+                    Pair<String, String> updatedNotification = prebiehajucaNotifikacia ? david.ziskajPrebiehajucuHodinu() : david.ziskajDalsiuHodinuEdupage(true);
 
-            if(updatedNotification.second.equals("Zisťujem čo je na obed...")) {
-                david.zistiNovyObed().nastavObedoveNacuvadlo(new David.OnObedNajdenyNacuvadlo() {
-                    @Override
-                    public void onObedNajdeny(ArrayList<String> data) {
-                        int dayIndex = DavidClockUtils.zistiDen() - 1;
-                        String formatLunch;
-                        if (dayIndex < data.size()) {
-                            String todayLunch = LunchActivity.formatLunch(data.get(DavidClockUtils.zistiDen() - 1), ", ");
-                            formatLunch = context.getString(R.string.na_obed) + todayLunch;
-                        }
-                        else formatLunch = "Dneska obed nie je";
-                        DavidNotifications.updateNotification(context, updatedNotification.first, formatLunch);
+                    if(updatedNotification.second.equals("Zisťujem čo je na obed...")) {
+                        david.zistiNovyObed().nastavObedoveNacuvadlo(new David.OnObedNajdenyNacuvadlo() {
+                            @Override
+                            public void onObedNajdeny(ArrayList<String> data) {
+                                int dayIndex = DavidClockUtils.zistiDen() - 1;
+                                String formatLunch;
+                                if (dayIndex < data.size()) {
+                                    String todayLunch = LunchActivity.formatLunch(data.get(DavidClockUtils.zistiDen() - 1), ", ");
+                                    formatLunch = context.getString(R.string.na_obed) + todayLunch;
+                                }
+                                else formatLunch = "Dneska obed nie je";
+                                DavidNotifications.updateNotification(context, updatedNotification.first, formatLunch);
+                            }
+                        });
                     }
-                });
-            }
 
-            DavidNotifications.updateNotification(context, updatedNotification.first,  updatedNotification.second);
+                    DavidNotifications.updateNotification(context, updatedNotification.first,  updatedNotification.second);
+                }
+            });
         } else {
             DavidNotifications.stopNotification(context, DavidNotifications.LESSON_ONGOING_NOTIFICATION);
         }

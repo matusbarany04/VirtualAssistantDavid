@@ -8,6 +8,7 @@ import com.david.game.davidnotifyme.david.DavidClockUtils;
 import com.david.game.davidnotifyme.edupage.internet.AsyncEdupageFetcher;
 import com.david.game.davidnotifyme.edupage.internet.EdupageCallback;
 import com.david.game.davidnotifyme.edupage.internet.Result;
+import com.david.game.davidnotifyme.edupage.readers.TimetableReader;
 import com.david.game.davidnotifyme.edupage.timetable_objects.Classroom;
 import com.david.game.davidnotifyme.edupage.timetable_objects.SemiSubject;
 import com.david.game.davidnotifyme.edupage.timetable_objects.StudentsClass;
@@ -26,6 +27,7 @@ public class Edupage {
     Context context;
     String startDate;
     String endDate;
+    private OnCompletionListener onCompletionListener;
 
     // file pre skupiny
 
@@ -119,8 +121,11 @@ public class Edupage {
             @Override
             public String onComplete(Result.Success<String> result) {
 
-                parseTimetable(result.data);
+                ArrayList<TimetableParser.Day> timetable = parseTimetable(result.data);
 
+                if(onCompletionListener != null) {
+                    onCompletionListener.onComplete(timetable);
+                }
                 return null;
             }
         }).execute("https://spseke.edupage.org/timetable/server/currenttt.js?__func=curentttGetData",
@@ -129,21 +134,28 @@ public class Edupage {
 
     }
 
-    private void parseTimetable(String rawJSON) {
+    public interface OnCompletionListener {
+        void onComplete(ArrayList<TimetableParser.Day> timetable);
+    }
+
+    public void setOnCompletionListener(OnCompletionListener listener) {
+        this.onCompletionListener = listener;
+    }
+
+    private ArrayList<TimetableParser.Day> parseTimetable(String rawJSON) {
         try {
             JSONObject json = new JSONObject(rawJSON);
             JSONArray j = json.getJSONObject("r").getJSONArray("ttitems");
+
             TimetableParser parser = new TimetableParser(context);
             ArrayList<TimetableParser.Day> parsed = parser.parse(j);
             parser.save();
 
-            // pridať timetable reader
+            return parsed;
 
-            //ArrayList <TimetableParser.Day> data = parser.read(new String[]{"1. sk", "NBV", "A1"});
-
-            // save parsed data
         } catch (JSONException e) {
             e.printStackTrace();
+            return null;
         }
     }
 
