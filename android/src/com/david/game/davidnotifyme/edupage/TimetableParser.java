@@ -168,7 +168,7 @@ public class TimetableParser {
         }
 
 
-        return  new String[0][0];
+        return new String[0][0];
     }
 
 
