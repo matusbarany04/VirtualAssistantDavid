@@ -1,13 +1,17 @@
 package com.david.game.davidnotifyme.edupage;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.util.Pair;
+
+import androidx.preference.PreferenceManager;
 
 import com.david.game.davidnotifyme.david.DavidClockUtils;
 import com.david.game.davidnotifyme.edupage.internet.AsyncEdupageFetcher;
 import com.david.game.davidnotifyme.edupage.internet.EdupageCallback;
 import com.david.game.davidnotifyme.edupage.internet.Result;
+import com.david.game.davidnotifyme.edupage.readers.EdupageSerializableReader;
 import com.david.game.davidnotifyme.edupage.readers.TimetableReader;
 import com.david.game.davidnotifyme.edupage.timetable_objects.Classroom;
 import com.david.game.davidnotifyme.edupage.timetable_objects.SemiSubject;
@@ -20,6 +24,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Edupage {
     private final String TAG = "Edupage-scraper";
@@ -34,9 +39,9 @@ public class Edupage {
     public Edupage(Context context) {
         this.context = context;
         init();
-        Pair<String,String> dates = DavidClockUtils.getLastWeek(); // nezabudnut zmeniť na current week
-        startDate =  dates.first;
-        endDate =  dates.second;
+        Pair<String, String> dates = DavidClockUtils.getLastWeek(); // nezabudnut zmeniť na current week
+        startDate = dates.first;
+        endDate = dates.second;
     }
 
 
@@ -54,16 +59,21 @@ public class Edupage {
             Classroom[] classroomArray = parseClassrooms(rawJSON);
             saveParsedData(classroomArray, InternalFiles.CLASSROOM);
 
-            timetableFetch(String.valueOf(classArray[0].getId())); // change to dynamic class  chosen by user
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+
+            String classname = preferences.getString("trieda", "I.A");
+            StudentsClass classroom = findClassroomByName(classname);
+
+            timetableFetch(classroom.getId()); // change to dynamic class  chosen by user
             return null;
         });
 
         try {
             asyncEdupageFetcher.execute(
                     "https://spseke.edupage.org/rpr/server/maindbi.js?__func=mainDBIAccessor",
-                    "{\"__args\":[null,2021,{\"vt_filter\":{"+
-                            "\"datefrom\":\""+ startDate +
-                            "\",\"dateto\":\""+ endDate + "\"}},{\"op\":\"fetch\"," +
+                    "{\"__args\":[null,2021,{\"vt_filter\":{" +
+                            "\"datefrom\":\"" + startDate +
+                            "\",\"dateto\":\"" + endDate + "\"}},{\"op\":\"fetch\"," +
                             "\"needed_part\":{" +
                             //  "\"teachers\":[\"short\",\"name\",\"firstname\",\"lastname\",\"subname\",\"cb_hidden\",\"expired\",\"firstname\",\"lastname\",\"short\"],"+
                             "\"classes\":[\"short\",\"name\",\"firstname\",\"lastname\",\"subname\",\"classroomid\"]," +
@@ -91,6 +101,18 @@ public class Edupage {
         }
     }
 
+    public StudentsClass findClassroomByName(String id) {
+
+        EdupageSerializableReader reader = new EdupageSerializableReader(context, InternalFiles.CLASSES, StudentsClass::new);
+
+        HashMap<Integer, StudentsClass> classes = reader.getsAsHashMapIdObject();
+
+        Log.d("id", id);
+        Log.d("hash", classes + "");
+
+        return classes.get(Integer.valueOf(id));
+    }
+
     private SemiSubject[] parseSubjects(String rawJSON) {
         try {
             JSONArray classesArray = getRow(rawJSON, "subjects");
@@ -105,7 +127,7 @@ public class Edupage {
                         jsonClassObject.getString("name"),
                         jsonClassObject.getString("id"),
                         jsonClassObject.getString("short")
-                        );
+                );
 //                Log.d("SemiSubject", output[i].toString());
             }
 
@@ -123,7 +145,7 @@ public class Edupage {
 
                 ArrayList<TimetableParser.Day> timetable = parseTimetable(result.data);
 
-                if(onCompletionListener != null) {
+                if (onCompletionListener != null) {
                     onCompletionListener.onComplete(timetable);
                 }
                 return null;
@@ -159,7 +181,7 @@ public class Edupage {
         }
     }
 
-    public Classroom[] parseClassrooms(String rawJSON){
+    public Classroom[] parseClassrooms(String rawJSON) {
         try {
 
             JSONArray classesArray = getRow(rawJSON, "classrooms");
@@ -168,11 +190,11 @@ public class Edupage {
             for (int i = 0; i < classesArray.length(); i++) {
                 JSONObject jsonClassObject = (JSONObject) classesArray.get(i);
 
-                output[i] = new Classroom( jsonClassObject.getString("short"),jsonClassObject.getString("id"));
+                output[i] = new Classroom(jsonClassObject.getString("short"), jsonClassObject.getString("id"));
             }
 
             return output;
-        }catch (JSONException e){
+        } catch (JSONException e) {
             e.printStackTrace();
         }
 //        Log.d("error error!" ,"hey  you've got a problem man");
@@ -196,6 +218,7 @@ public class Edupage {
 
         return classesArray;
     }
+
     public StudentsClass[] parseClasses(String rawJSON) {
         try {
             JSONArray classesArray = getRow(rawJSON, "classes");
@@ -204,7 +227,7 @@ public class Edupage {
             for (int i = 0; i < classesArray.length(); i++) {
                 JSONObject jsonClassObject = (JSONObject) classesArray.get(i);
 
-                output[i] = new StudentsClass(jsonClassObject.getString("name"),jsonClassObject.getString("id"));
+                output[i] = new StudentsClass(jsonClassObject.getString("name"), jsonClassObject.getString("id"));
             }
 
             return output;
@@ -217,8 +240,6 @@ public class Edupage {
     private boolean isCached() { //to do
         return false;
     }
-
-
 
 
 }

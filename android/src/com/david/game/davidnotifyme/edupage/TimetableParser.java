@@ -48,9 +48,9 @@ public class TimetableParser {
         EdupageSerializableReader<SemiSubject> semiSubjectReader = new EdupageSerializableReader<>(context, InternalFiles.SUBJECTS, SemiSubject::new);
         EdupageSerializableReader<Classroom> classroomReader = new EdupageSerializableReader<>(context, InternalFiles.CLASSROOM, Classroom::new);
         EdupageSerializableReader<StudentsClass> studentClassReader = new EdupageSerializableReader<>(context, InternalFiles.CLASSES, StudentsClass::new);
-        this.subjectHashMap = semiSubjectReader.getsAsHashMapIdName();
-        this.classroomHashMap = classroomReader.getsAsHashMapIdName();
-        this.classHashMap = studentClassReader.getsAsHashMapIdName();
+        this.subjectHashMap = semiSubjectReader.getsAsHashMapIdObject();
+        this.classroomHashMap = classroomReader.getsAsHashMapIdObject();
+        this.classHashMap = studentClassReader.getsAsHashMapIdObject();
         timetable = fillDays();
     }
 
@@ -119,7 +119,7 @@ public class TimetableParser {
         }
     }
 
-    public ArrayList<Day> filter(String[] groupnames) {
+    public static ArrayList<Day> filter(ArrayList<Day> timetable, String[] groupnames) {
         ArrayList<Day> localArray = new ArrayList<>(timetable);
         for (int j = 0; j < localArray.size(); j++) {
             Day day = localArray.get(j);

@@ -23,7 +23,6 @@
 
         <ListPreference
             app:defaultValue="I.A"
-
             app:key="trieda"
             app:title="Trieda"
             app:useSimpleSummaryProvider="true" />

@@ -46,7 +46,7 @@
             android:id="@+id/timetable"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Pozerám edupage..."
+            android:text="@string/edupage"
             android:textAlignment="center"
             android:textColor="@color/white"
             android:textSize="20sp"/>

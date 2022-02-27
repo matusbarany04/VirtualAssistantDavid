@@ -6,8 +6,8 @@ public class Classroom extends EdupageSerializable {
     private String classroomId;
     private String classroomAnnotation;
 
-    public Classroom( String classroomAnnotation,String id) {
-        this.classroomAnnotation= classroomAnnotation;
+    public Classroom(String classroomAnnotation, String id) {
+        this.classroomAnnotation = classroomAnnotation;
         this.classroomId = id;
     }
 
@@ -26,7 +26,7 @@ public class Classroom extends EdupageSerializable {
 
     @Override
     public EdupageSerializable init(String[] data) {
-        this.classroomAnnotation= data[0];
+        this.classroomAnnotation = data[0];
         this.classroomId =  data[1];
         return this;
     }

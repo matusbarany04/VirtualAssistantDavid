@@ -51,7 +51,7 @@ public class Timetable {
 
                     @Override
                     public void onComplete(ArrayList<TimetableParser.Day> timetable) {
-                        Timetable.this.timetable = timetable;
+                        Timetable.this.timetable = TimetableParser.filter(timetable, ;
                         if(onLoadListener != null) onLoadListener.onLoadTimetable(Timetable.this);
                         loaded = true;
                     }
@@ -238,6 +238,7 @@ public class Timetable {
 
             int timeInMinutesStart = stringTimeToMinutes(subject.getStart());
             int timeInMinutesEnd = stringTimeToMinutes(subject.getEnd());
+            int nextLessonTime = i == lessons.size() - 1 ? 0 : stringTimeToMinutes(lessons.get(i + 1).getStart());
 
             if (i == 0 && currentTime < timeInMinutesStart) {
                 return -3;
@@ -246,7 +247,7 @@ public class Timetable {
             if (timeInMinutesStart <= currentTime && timeInMinutesEnd >= currentTime) {
                 return i;
 
-            } else if (timeInMinutesStart < currentTime && timeInMinutesEnd + breaks[i] > currentTime) {
+            } else if (timeInMinutesEnd < currentTime && nextLessonTime > currentTime) {
                 return -2;
             }
         }

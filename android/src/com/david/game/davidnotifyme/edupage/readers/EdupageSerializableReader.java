@@ -64,7 +64,7 @@ public class EdupageSerializableReader<T extends EdupageSerializable> {
     }
 
 
-    public HashMap<Integer, T> getsAsHashMapIdName() {
+    public HashMap<Integer, T> getsAsHashMapIdObject() {
 
         if (subjectsHashMap == null) {
             HashMap<Integer, T> output = new HashMap<>();
@@ -79,12 +79,12 @@ public class EdupageSerializableReader<T extends EdupageSerializable> {
             return subjectsHashMap;
     }
 
-    public HashMap<T, Integer> getsAsHashMapNameId() {
+    public HashMap<String, T> getsAsHashMapNameId() {
 
-        HashMap<T, Integer> output = new HashMap<>();
+        HashMap<String, T> output = new HashMap<>();
 
         for (T sub : this.edu_objects) {
-            output.put(sub, Integer.parseInt(sub.getId()));
+            output.put(sub.getName(), sub);
         }
 
         return output;
