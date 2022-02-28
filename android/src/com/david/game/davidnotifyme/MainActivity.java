@@ -133,6 +133,14 @@ public class MainActivity extends AppCompatActivity implements AndroidFragmentAp
             Intent lunchIntent = new Intent(this, LunchActivity.class);
             startActivity(lunchIntent);
         });
+        
+        /*
+        LinearLayout mhd = findViewById(R.id.mhd);
+        mhd.setOnClickListener((View view) -> {
+           String url = "https://mhdke.sk/#/odchody/najblizsie-zastavky";
+           Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+           startActivity(browserIntent);
+        });*/
 
         LinearLayout location = findViewById(R.id.location);
         location.setOnClickListener((View view) -> {
