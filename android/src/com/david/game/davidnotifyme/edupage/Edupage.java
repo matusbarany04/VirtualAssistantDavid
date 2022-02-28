@@ -38,7 +38,7 @@ public class Edupage {
     public Edupage(Context context) {
         this.context = context;
         init();
-        Pair<String, String> dates = DavidClockUtils.getLastWeek(); // nezabudnut zmeniť na current week
+        Pair<String, String> dates = DavidClockUtils.getCurrentWeek(); // nezabudnut zmeniť na current week
         startDate = dates.first;
         endDate = dates.second;
     }
