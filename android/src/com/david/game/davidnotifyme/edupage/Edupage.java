@@ -60,7 +60,7 @@ public class Edupage {
 
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
 
-            String classname = preferences.getString("trieda", "I.A");
+            String classname = preferences.getString("trieda", "887799");
             StudentsClass classroom = findClassroomByName(classname);
 
             timetableFetch(classroom.getId()); // change to dynamic class  chosen by user
