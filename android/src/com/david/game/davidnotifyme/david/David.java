@@ -150,9 +150,9 @@ public class David {
         return true;
     }
 
-    public static String ziskajRannuSpravu(Context context) {
+    public static String ziskajRannuSpravu(Context context, Timetable timetable) {
         StringBuilder text = new StringBuilder(context.getString(R.string.zbalene_veci));
-        Timetable timetable = new Timetable(context);
+
         String[] lessons = timetable.getLessonsToday(true);
         for (String lesson : lessons) {
             if (trebaPomocky(lesson) && !lesson.equals("-") && !text.toString().contains(lesson + ","))
@@ -165,7 +165,7 @@ public class David {
     private static boolean trebaPomocky(String hodina) {
         String[] hodinyBezPomocok = {"OBED", "TSV", "NBV"};
         for (String hodinaBezPomocok : hodinyBezPomocok) {
-            if (hodina.equals(hodinaBezPomocok)) return false;
+            if (hodina.equalsIgnoreCase(hodinaBezPomocok)) return false;
         }
         return true;
     }

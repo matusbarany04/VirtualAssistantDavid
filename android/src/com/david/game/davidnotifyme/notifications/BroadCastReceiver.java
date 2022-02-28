@@ -95,9 +95,15 @@ public class BroadCastReceiver extends BroadcastReceiver {
     private void showMorningMessage(Context context) {
         if(!DavidClockUtils.jeVikend()) {
             String header = context.getString(R.string.good_morning);
-            String message = David.ziskajRannuSpravu(context);
-            DavidNotifications.showNotificationMessage(context, header, message, DavidNotifications.MORNING_NOTIFICATION);
-            scheduleNotificationsToday(context);
+            Timetable timetable = new Timetable(context);
+            timetable.setOnLoadListener(new Timetable.OnLoadListener() {
+                @Override
+                public void onLoadTimetable(Timetable timetable) {
+                    String message = David.ziskajRannuSpravu(context, timetable);
+                    DavidNotifications.showNotificationMessage(context, header, message, DavidNotifications.MORNING_NOTIFICATION);
+                    scheduleNotificationsToday(context);
+                }
+            });
         }
     }
 
