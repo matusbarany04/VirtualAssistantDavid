@@ -51,7 +51,8 @@ public class Timetable {
 
                     @Override
                     public void onComplete(ArrayList<TimetableParser.Day> timetable) {
-                        Timetable.this.timetable = TimetableParser.filter(timetable, new String[]{}); // pridať dynamicé skupiny
+                        Timetable.this.timetable = timetable;
+                    //Timetable.this.timetable = TimetableParser.filter(timetable, new String[]{}); // pridať dynamické skupiny
                         if(onLoadListener != null) onLoadListener.onLoadTimetable(Timetable.this);
                         loaded = true;
                     }
@@ -134,6 +135,8 @@ public class Timetable {
         //Log.d("index", index + " ");
         ArrayList<Subject> timeTableToday = getSubjectsToday();
 
+        Log.d("timetable", timeTableToday.toString());
+
         if (index != -1 && index < timeTableToday.size()) {
 
             Subject lesson = timeTableToday.get(index);
@@ -173,10 +176,11 @@ public class Timetable {
 
             int timeInMinutesStart = stringTimeToMinutes(subject.getStart());
             int timeInMinutesEnd = stringTimeToMinutes(subject.getEnd());
+            int nextLessonTime = i == subjects.size() - 1 ? 0 : stringTimeToMinutes(subjects.get(i + 1).getStart());
 
             if (timeInMinutesStart <= currentTime || !getLessonsToday(false)[i].equals("-")) {
                 try {
-                    if (timeInMinutesEnd >= currentTime || timeInMinutesEnd + breaks[i] >= currentTime) {
+                    if (timeInMinutesEnd >= currentTime || nextLessonTime >= currentTime) {
                         int firstLesson = DavidClockUtils.timeToMinutes(getBeginOfFirstLesson());
                         return currentTime < firstLesson ? i : i + 1;
                     }
@@ -255,8 +259,10 @@ public class Timetable {
     }
 
     public ArrayList<Subject> getSubjectsToday() {
-        int day = DavidClockUtils.zistiDen();
-        return timetable.get(day).getSubjectsArray();
+        int dayIndex = DavidClockUtils.zistiDen() - 1;
+        timetable.forEach(day1 -> Log.d("day", day1.getSubjectsArray().toString()));
+        Log.d("timetable", timetable.get(dayIndex).getSubjectsArray().toString());
+        return timetable.get(dayIndex).getSubjectsArray();
     }
 
     public String getEndOfCurrentLesson() {
