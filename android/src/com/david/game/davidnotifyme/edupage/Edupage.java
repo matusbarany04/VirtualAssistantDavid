@@ -169,7 +169,7 @@ public class Edupage {
             JSONArray j = json.getJSONObject("r").getJSONArray("ttitems");
 
             TimetableParser parser = new TimetableParser(context);
-            ArrayList<TimetableParser.Day> parsed = parser.parse(j);
+            ArrayList<TimetableParser.Day> parsed =  TimetableParser.filter(parser.parse(j), new String[]{});
             parser.save();
             parser.getGroupOfGroupNames();
             return parsed;

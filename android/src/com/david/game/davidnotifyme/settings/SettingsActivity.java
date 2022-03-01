@@ -183,7 +183,7 @@ public class SettingsActivity extends AppCompatActivity {
             for (String[] allGroup : allGroups) {
                 Log.d("array", Arrays.toString(allGroup));
                 ListPreference groupPreference = new ListPreference(getContext());
-                groupPreference.setTitle(allGroups.toString());
+                groupPreference.setTitle(allGroups.toString()); // tomu nechápem
                 groupPreference.setKey("nm");
                 groupPreference.setEntries(allGroup);
                 groupPreference.setEntryValues(allGroup);

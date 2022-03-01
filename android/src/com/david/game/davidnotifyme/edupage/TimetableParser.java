@@ -161,8 +161,12 @@ public class TimetableParser {
 
         for (String s : allGroupNames) {
             StringBuilder c = new StringBuilder(s);
-            for (int i = s.length()-1  ; i > 0; i--) {
-                if (numbers.contains(s.split("")[i])) c = c.deleteCharAt(i);
+            for (int i = s.length(); i > 0; i--) {
+                String sx = s.split("")[i];
+                if (numbers.contains(sx)) {
+                    StringBuilder newBuilder = c.deleteCharAt(i-1);
+                    c = newBuilder;
+                }
             }
             groups.add(c.toString());
         }
@@ -170,7 +174,6 @@ public class TimetableParser {
 
         return new String[0][0];
     }
-
 
     public static class Day {
         ArrayList<Subject> subjectsArray;
@@ -218,6 +221,19 @@ public class TimetableParser {
                 e.printStackTrace();
             }
             return array;
+        }
+    }
+
+    public class GroupnameGroup {
+        private String[] groupnames;
+
+        public GroupnameGroup(String[] groupnames) {
+            this.groupnames = groupnames;
+        }
+
+
+        public String[] getGroupnames() {
+            return groupnames;
         }
     }
 
