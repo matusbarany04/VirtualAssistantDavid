@@ -201,17 +201,17 @@ public class David {
         String text = "";
 
         if(timetable.getIndexOfCurrentLesson() == -3) {
-            header = "Prvá hodina je " + input.second;
+            header = "Prvá hodina je " + input.first;
             text = "Vyučovanie začína " + timetable.getBeginOfFirstLesson();
 
         } else {
 
-            if(input.second.equals("OBED")) {
+            if(input.first.equalsIgnoreCase("OBED")) {
                 header = "Nasleduje obed. Dobrú chuť !";
                 text = "Zisťujem čo je na obed...";
                 verbose = null;
 
-            } else if (input.first != null) {
+            } else if (input.second != null) {
                 header = "Ďalšia hodina je " + input.first;
                 text = "Učebňa " + input.second;
 

@@ -169,9 +169,10 @@ public class Edupage {
             JSONArray j = json.getJSONObject("r").getJSONArray("ttitems");
 
             TimetableParser parser = new TimetableParser(context);
-            ArrayList<TimetableParser.Day> parsed =  TimetableParser.filter(parser.parse(j), new String[]{});
+            //ArrayList<TimetableParser.Day> parsed =  TimetableParser.filter(parser.parse(j), new String[]{}); //odkomentovat ked pojdu skupiny
+            ArrayList<TimetableParser.Day> parsed = parser.parse(j);
             parser.save();
-            parser.getGroupOfGroupNames();
+           // parser.getGroupOfGroupNames();
             return parsed;
 
         } catch (JSONException e) {

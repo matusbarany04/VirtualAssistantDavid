@@ -43,7 +43,7 @@ public class Timetable {
 
         TimetableReader timetableReader = new TimetableReader(context);
 
-        if(David.maPristupKInternetu(context) || timetableReader.isEmpty()) {
+        if(David.maPristupKInternetu(context) || timetableReader.read().isEmpty()) {
 
             try {
                 Edupage edupage = new Edupage(context);//.scrape("smh");
@@ -193,6 +193,7 @@ public class Timetable {
 
     public String getBeginOfFirstLesson() {
         ArrayList<Subject> lessons = getSubjectsToday();
+        lessons.forEach(lesson -> Log.d("les", lesson.shortName));
         if(lessons.size() > 0) {
 
             for (Subject lesson : lessons) {

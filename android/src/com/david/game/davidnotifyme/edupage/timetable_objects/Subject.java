@@ -44,6 +44,7 @@ public class Subject {
         JSONObject json = new JSONObject();
         json.put("classNum", classroomNumber);
         json.put("name", shortName);
+        json.put("subjectName", subjectName);
         json.put("startTime" ,startTime);
         json.put("endTime" ,endTime);
         JSONArray arr = new JSONArray();
@@ -67,7 +68,7 @@ public class Subject {
              jsonObject.getString("endTime"),
              jsonObject.getString("classNum"),
              jsonObject.getString("name"),
-             jsonObject.getString("name"),
+             jsonObject.getString("subjectName"),
              groupNames); // dávať pozor lenivý Matúš tu bol, usilovný matúš tu bol tiež
     }
 
