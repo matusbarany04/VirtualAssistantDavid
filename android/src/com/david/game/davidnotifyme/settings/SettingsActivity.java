@@ -24,6 +24,7 @@ import com.david.game.davidnotifyme.david.David;
 import com.david.game.davidnotifyme.edupage.TimetableParser;
 import com.david.game.davidnotifyme.edupage.readers.EdupageSerializableReader;
 import com.david.game.davidnotifyme.edupage.timetable_objects.Classroom;
+import com.david.game.davidnotifyme.edupage.timetable_objects.GroupnameGroup;
 import com.david.game.davidnotifyme.edupage.timetable_objects.StudentsClass;
 import com.david.game.davidnotifyme.notifications.BroadCastReceiver;
 import com.david.game.davidnotifyme.notifications.DavidNotifications;
@@ -178,15 +179,15 @@ public class SettingsActivity extends AppCompatActivity {
 
         private void createGroupPreferences() {
             TimetableParser timetableParser = new TimetableParser(getContext());
-            String[][] allGroups = timetableParser.getGroupOfGroupNames();
+            GroupnameGroup[] allGroups = timetableParser.getGroupOfGroupNames();
 
-            for (String[] allGroup : allGroups) {
-                Log.d("array", Arrays.toString(allGroup));
+            for (GroupnameGroup allGroup : allGroups) {
+//                Log.d("array", Arrays.toString(allGroup));
                 ListPreference groupPreference = new ListPreference(getContext());
-                groupPreference.setTitle(allGroups.toString()); // tomu nechápem
-                groupPreference.setKey("nm");
-                groupPreference.setEntries(allGroup);
-                groupPreference.setEntryValues(allGroup);
+                groupPreference.setTitle(allGroup.getLabel());
+                groupPreference.setKey(allGroup.getLabel()); // zatiaľ dávam label možno zmeníme neskor
+                groupPreference.setEntries(allGroup.getGroupnames());
+                groupPreference.setEntryValues(allGroup.getGroupnames());
                 setAutoSummaryProvider(groupPreference);
 
                 PreferenceCategory groups = findPreference("groups");

@@ -3,19 +3,23 @@ package com.david.game.davidnotifyme.edupage;
 import android.content.Context;
 import android.util.Log;
 
+import com.david.game.R;
 import com.david.game.davidnotifyme.david.DavidClockUtils;
 import com.david.game.davidnotifyme.edupage.readers.EdupageSerializableReader;
 import com.david.game.davidnotifyme.edupage.timetable_objects.Classroom;
+import com.david.game.davidnotifyme.edupage.timetable_objects.GroupnameGroup;
 import com.david.game.davidnotifyme.edupage.timetable_objects.SemiSubject;
 import com.david.game.davidnotifyme.edupage.timetable_objects.StudentsClass;
 import com.david.game.davidnotifyme.edupage.timetable_objects.Subject;
 import com.david.game.davidnotifyme.utils.InternalFiles;
 import com.david.game.davidnotifyme.utils.InternalStorageFile;
+import com.david.game.davidnotifyme.utils.JSONparser;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.security.acl.Group;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -153,26 +157,69 @@ public class TimetableParser {
         return output;
     }
 
-    public String[][] getGroupOfGroupNames() {
-        String[] allGroupNames = getAllGroupNames();
-        HashSet<String> groups = new HashSet<>();
+    private HashSet<GroupnameGroup> parseJSONGroupData() {
+        String data = JSONparser.getFileData(context, R.raw.groups);
+        try {
 
+            JSONArray container = new JSONArray(data);
+            HashSet<GroupnameGroup> outputArray = new HashSet<>();
+
+            for (int i = 0; i < container.length(); i++) {
+                JSONObject item = container.getJSONObject(i);
+
+                JSONArray groupsJSONArray = item.getJSONArray("groups_array");
+                String[] groupsArray = new String[groupsJSONArray.length()];
+                for (int j = 0; j < groupsJSONArray.length(); j++) {
+                    groupsArray[j] = groupsJSONArray.getString(j);
+                }
+
+                String label = item.getString("label");
+
+                outputArray.add(new GroupnameGroup(groupsArray, label));
+            }
+
+            return outputArray;
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        HashSet<GroupnameGroup> errorOutput = new HashSet<>();
+        errorOutput.add(new GroupnameGroup(new String[]{"ERROR"}, "ERROR"));
+        return errorOutput;
+    }
+
+    public GroupnameGroup[] getGroupOfGroupNames() {
+        String[] allGroupNames = getAllGroupNames();
+        HashSet<GroupnameGroup> groupsOutput = new HashSet<>();
+        HashSet<GroupnameGroup> fileGroupData = parseJSONGroupData();
         String numbers = "0123456789";
 
         for (String s : allGroupNames) {
-            StringBuilder c = new StringBuilder(s);
-            for (int i = s.length(); i > 0; i--) {
-                String sx = s.split("")[i];
-                if (numbers.contains(sx)) {
-                    StringBuilder newBuilder = c.deleteCharAt(i-1);
-                    c = newBuilder;
+//            StringBuilder c = new StringBuilder(s);
+//            for (int i = s.length(); i > 0; i--) {
+//                String sx = s.split("")[i];
+//                if (numbers.contains(sx)) {
+//                    StringBuilder newBuilder = c.deleteCharAt(i - 1);
+//                    c = newBuilder;
+//                }
+//            }
+            boolean found = false;
+            for (GroupnameGroup groupHolder: fileGroupData) {
+                for (String group: groupHolder.getGroupnames()) {
+                    if(group.equals(s)) {
+                        fileGroupData.remove(groupHolder);
+                        groupsOutput.add(groupHolder);
+                        found = true;
+                    }
+                    if (found) break;
                 }
+                if (found) break;
             }
-            groups.add(c.toString());
+//            groupsOutput.add(c.toString());
         }
 
 
-        return new String[0][0];
+        return groupsOutput.toArray(new GroupnameGroup[0]);
     }
 
     public static class Day {
@@ -221,19 +268,6 @@ public class TimetableParser {
                 e.printStackTrace();
             }
             return array;
-        }
-    }
-
-    public class GroupnameGroup {
-        private String[] groupnames;
-
-        public GroupnameGroup(String[] groupnames) {
-            this.groupnames = groupnames;
-        }
-
-
-        public String[] getGroupnames() {
-            return groupnames;
         }
     }
 

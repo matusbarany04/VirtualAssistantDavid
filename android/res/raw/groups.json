@@ -1,0 +1,9 @@
+{
+  "groups":[
+    {
+      "label": "hlavná",
+      "groups_array":["1. sk", "2. sk"]
+    }
+
+  ]
+}
