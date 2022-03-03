@@ -47,9 +47,6 @@ public class Edupage {
 
 
     public void init() {
-
-
-
         asyncEdupageFetcher = new AsyncEdupageFetcher(result -> {
             String rawJSON = result.data;
 

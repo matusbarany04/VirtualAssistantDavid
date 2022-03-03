@@ -26,13 +26,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 public class TimetableParser {
+    static ArrayList<Day> timetable;
     //    DavidClockUtils
     Context context;
     HashMap<Integer, SemiSubject> subjectHashMap;
     HashMap<Integer, Classroom> classroomHashMap;
     HashMap<Integer, StudentsClass> classHashMap;
-
-    ArrayList<Day> timetable;
 
     public TimetableParser(Context context) {
         this.context = context;
@@ -108,8 +107,13 @@ public class TimetableParser {
 
     private ArrayList<Day> fillDays() {
         ArrayList<Day> out = new ArrayList<>();
-        for (String date : DavidClockUtils.getCurrentWeekDates()) { // dávať pozor pri zmene current week na last week  v edupage classe
-            out.add(new Day(date));
+
+        if (timetable != null && timetable.size() > 0 && timetable.get(0).subjectsArray.size() > 0) {
+            return timetable;
+        } else {
+            for (String date : DavidClockUtils.getCurrentWeekDates()) { // dávať pozor pri zmene current week na last week  v edupage classe
+                out.add(new Day(date));
+            }
         }
         return out;
     }
@@ -158,10 +162,10 @@ public class TimetableParser {
     }
 
     private HashSet<GroupnameGroup> parseJSONGroupData() {
-        String data = JSONparser.getFileData(context, R.raw.groups);
+        String data = JSONparser.getFileData(context.getApplicationContext(), R.raw.groups);
         try {
-
-            JSONArray container = new JSONArray(data);
+            JSONObject dataObject = new JSONObject(data);
+            JSONArray container = dataObject.getJSONArray("groups");
             HashSet<GroupnameGroup> outputArray = new HashSet<>();
 
             for (int i = 0; i < container.length(); i++) {
@@ -179,10 +183,10 @@ public class TimetableParser {
             }
 
             return outputArray;
-
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
         HashSet<GroupnameGroup> errorOutput = new HashSet<>();
         errorOutput.add(new GroupnameGroup(new String[]{"ERROR"}, "ERROR"));
         return errorOutput;
@@ -195,18 +199,10 @@ public class TimetableParser {
         String numbers = "0123456789";
 
         for (String s : allGroupNames) {
-//            StringBuilder c = new StringBuilder(s);
-//            for (int i = s.length(); i > 0; i--) {
-//                String sx = s.split("")[i];
-//                if (numbers.contains(sx)) {
-//                    StringBuilder newBuilder = c.deleteCharAt(i - 1);
-//                    c = newBuilder;
-//                }
-//            }
             boolean found = false;
-            for (GroupnameGroup groupHolder: fileGroupData) {
-                for (String group: groupHolder.getGroupnames()) {
-                    if(group.equals(s)) {
+            for (GroupnameGroup groupHolder : fileGroupData) {
+                for (String group : groupHolder.getGroupnames()) {
+                    if (group.equals(s)) {
                         fileGroupData.remove(groupHolder);
                         groupsOutput.add(groupHolder);
                         found = true;

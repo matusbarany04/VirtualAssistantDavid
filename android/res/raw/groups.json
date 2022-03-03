@@ -3,6 +3,10 @@
     {
       "label": "hlavná",
       "groups_array":["1. sk", "2. sk"]
+    },
+    {
+      "label": "ODP",
+      "groups_array":["A1", "A2", "A3"]
     }
 
   ]
