@@ -37,14 +37,19 @@ public class Edupage {
 
     public Edupage(Context context) {
         this.context = context;
-        init();
         Pair<String, String> dates = DavidClockUtils.getCurrentWeek(); // nezabudnut zmeniť na current week
         startDate = dates.first;
         endDate = dates.second;
+
+        // init musí byť posledný
+        init();
     }
 
 
     public void init() {
+
+
+
         asyncEdupageFetcher = new AsyncEdupageFetcher(result -> {
             String rawJSON = result.data;
 
@@ -68,6 +73,7 @@ public class Edupage {
         });
 
         try {
+            System.out.println("dates  + " + startDate + " " + endDate);
             asyncEdupageFetcher.execute(
                     "https://spseke.edupage.org/rpr/server/maindbi.js?__func=mainDBIAccessor",
                     "{\"__args\":[null,2021,{\"vt_filter\":{" +
