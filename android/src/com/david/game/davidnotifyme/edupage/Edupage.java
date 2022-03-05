@@ -13,10 +13,12 @@ import com.david.game.davidnotifyme.edupage.internet.EdupageCallback;
 import com.david.game.davidnotifyme.edupage.internet.Result;
 import com.david.game.davidnotifyme.edupage.readers.EdupageSerializableReader;
 import com.david.game.davidnotifyme.edupage.timetable_objects.Classroom;
+import com.david.game.davidnotifyme.edupage.timetable_objects.GroupnameGroup;
 import com.david.game.davidnotifyme.edupage.timetable_objects.SemiSubject;
 import com.david.game.davidnotifyme.edupage.timetable_objects.StudentsClass;
 import com.david.game.davidnotifyme.utils.InternalFiles;
 import com.david.game.davidnotifyme.utils.InternalStorageFile;
+import com.david.game.davidnotifyme.utils.PreferencesReader;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -173,10 +175,16 @@ public class Edupage {
         try {
             JSONObject json = new JSONObject(rawJSON);
             JSONArray j = json.getJSONObject("r").getJSONArray("ttitems");
+            TimetableParser.resetTimetable();
 
             TimetableParser parser = new TimetableParser(context);
-            //ArrayList<TimetableParser.Day> parsed =  TimetableParser.filter(parser.parse(j), new String[]{}); //odkomentovat ked pojdu skupiny
             ArrayList<TimetableParser.Day> parsed = parser.parse(j);
+
+            PreferencesReader preferencesReader = new PreferencesReader(context);
+            String[] groups = preferencesReader.getSavedGroups();
+
+            parsed =  TimetableParser.filter(parsed, groups); //odkomentovat ked pojdu skupiny
+
             parser.save();
            // parser.getGroupOfGroupNames();
             return parsed;

@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 public class TimetableParser {
-    ArrayList<Day> timetable;
+    static ArrayList<Day> timetable;
     //    DavidClockUtils
     Context context;
     HashMap<Integer, SemiSubject> subjectHashMap;
@@ -116,6 +116,10 @@ public class TimetableParser {
             }
         }
         return out;
+    }
+
+    public static void resetTimetable() {
+        timetable = new ArrayList<>();
     }
 
     private int findIndexOfDay(String date) {
