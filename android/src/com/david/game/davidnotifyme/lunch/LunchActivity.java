@@ -23,6 +23,7 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
 import com.david.game.R;
+import com.david.game.davidnotifyme.MainActivity;
 import com.david.game.davidnotifyme.david.David;
 
 import org.w3c.dom.Text;
@@ -42,7 +43,11 @@ public class LunchActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lunch);
-        david = new David(this, null);
+
+        david = MainActivity.getDavid();
+        if(david == null) {
+            david = new David(this, null);
+        }
 
         ActionBar actionBar = getSupportActionBar();
         if(actionBar != null) actionBar.setTitle("Obedy");

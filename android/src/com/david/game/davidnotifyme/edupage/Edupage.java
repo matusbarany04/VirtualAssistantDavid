@@ -56,7 +56,6 @@ public class Edupage {
             SemiSubject[] subjectsArray = parseSubjects(rawJSON);
             saveParsedData(subjectsArray, InternalFiles.SUBJECTS);
 
-
             Classroom[] classroomArray = parseClassrooms(rawJSON);
             saveParsedData(classroomArray, InternalFiles.CLASSROOM);
 
@@ -64,6 +63,8 @@ public class Edupage {
 
             String classname = preferences.getString("trieda", "887799");
             StudentsClass classroom = findClassroomByName(classname);
+
+            Log.d("trieda", classroom.getName());
 
             timetableFetch(classroom.getId()); // change to dynamic class  chosen by user
             return null;
@@ -146,6 +147,8 @@ public class Edupage {
             public String onComplete(Result.Success<String> result) {
 
                 ArrayList<TimetableParser.Day> timetable = parseTimetable(result.data);
+
+                Log.d("result", result.data);
 
                 if (onCompletionListener != null) {
                     onCompletionListener.onComplete(timetable);

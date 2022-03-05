@@ -92,7 +92,7 @@ public class David {
         return timeToEnd <= 5;
     }
 
-    public static ArrayList<Long> ziskajCasyAktualizacie(Context context) {
+    public static ArrayList<Long> ziskajCasyAktualizacie(Context context, Timetable timetable) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String startTime = prefs.getString("time_on", "7:30");
         String endTime = prefs.getString("time_off", "15:30");
@@ -100,7 +100,6 @@ public class David {
 
         ArrayList<String> timeArray = new ArrayList<>();
 
-        Timetable timetable = new Timetable(context);
         ArrayList<String> times = timetable.times;
 
         timeArray.add(startTime);
@@ -171,6 +170,11 @@ public class David {
     }
 
     public Timetable ziskajRozvrh() {
+        return timetable;
+    }
+
+    public Timetable ziskajNovyRozvrh(Context context) {
+        timetable = new Timetable(context);
         return timetable;
     }
 

@@ -51,7 +51,7 @@ public class SchoolNavigator {
                 Pair<Integer, Integer> range = new Pair<>(numbers[0], numbers[1]);
                 classRanges.put(key, range);
 
-                Log.d("arayPoschodia ", key);
+                Log.d("arrayPoschodia ", key);
             }
         } catch (JSONException e) {
             e.printStackTrace();

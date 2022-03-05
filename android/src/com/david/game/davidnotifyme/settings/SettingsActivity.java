@@ -113,7 +113,7 @@ public class SettingsActivity extends AppCompatActivity {
             });
 
             ListPreference usersClass = findPreference("trieda");
-            EdupageSerializableReader<StudentsClass> cr = new EdupageSerializableReader<>(getContext(), InternalFiles.CLASSES,StudentsClass::new);
+            EdupageSerializableReader<StudentsClass> cr = new EdupageSerializableReader<>(getContext(), InternalFiles.CLASSES, StudentsClass::new);
             usersClass.setEntries(cr.getNames());
             usersClass.setEntryValues(cr.getIds());
 
@@ -150,7 +150,7 @@ public class SettingsActivity extends AppCompatActivity {
 
             PreferenceCategory developerOptions = findPreference("developer_category");
 
-            Preference version = (Preference) findPreference("about_version");
+            Preference version = findPreference("about_version");
 
             version.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                  Toast toast = Toast.makeText(getContext(), clickToDeveloper - versionClicks + " to become a developer!", Toast.LENGTH_LONG);
@@ -185,11 +185,12 @@ public class SettingsActivity extends AppCompatActivity {
 //                Log.d("array", Arrays.toString(allGroup));
                 ListPreference groupPreference = new ListPreference(getContext());
                 groupPreference.setTitle(allGroup.getLabel());
+                groupPreference.setValue(allGroup.getGroupnames()[0]);
+                groupPreference.setDialogTitle(groupPreference.getTitle());
                 groupPreference.setKey(allGroup.getLabel()); // zatiaľ dávam label možno zmeníme neskor
-                groupPreference.setEntries(allGroup.getGroupnames());
+                groupPreference.setEntries(allGroup.getFullGroupNames());
                 groupPreference.setEntryValues(allGroup.getGroupnames());
                 setAutoSummaryProvider(groupPreference);
-
                 PreferenceCategory groups = findPreference("groups");
                 groups.addPreference(groupPreference);
             }

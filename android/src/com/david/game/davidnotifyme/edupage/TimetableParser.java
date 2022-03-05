@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 public class TimetableParser {
-    static ArrayList<Day> timetable;
+    ArrayList<Day> timetable;
     //    DavidClockUtils
     Context context;
     HashMap<Integer, SemiSubject> subjectHashMap;

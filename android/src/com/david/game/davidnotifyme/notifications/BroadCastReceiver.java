@@ -1,7 +1,5 @@
 package com.david.game.davidnotifyme.notifications;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -21,6 +19,7 @@ import com.david.game.davidnotifyme.david.Timetable;
 import com.david.game.davidnotifyme.lunch.LunchActivity;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.Executor;
 
 public class BroadCastReceiver extends BroadcastReceiver {
@@ -50,17 +49,22 @@ public class BroadCastReceiver extends BroadcastReceiver {
 
     private void updateNotification(Context context) {
         Executor executor = runnable -> new Thread(runnable).start();
-        David david = new David(context,executor);
+
+        David activeDavid = MainActivity.getDavid();
+
+        David david = activeDavid == null ? new David(context, executor) : activeDavid;
 
         Log.d("show", shouldShowNotification(context) + "");
 
         if(shouldShowNotification(context)){
             Timetable timetable = david.ziskajRozvrh();
 
-            timetable.setOnLoadListener(new Timetable.OnLoadListener() {
+            timetable.addOnLoadListener(new Timetable.OnLoadListener() {
                 @Override
                 public void onLoadTimetable(Timetable timetable) {
                     boolean prebiehajucaNotifikacia = david.prebiehaHodina() && !david.bliziSaKoniecHodiny();
+
+                    timetable.getSubjectsToday();
 
                     Log.d("compare", david.prebiehaHodina() + "." + david.bliziSaKoniecHodiny());
 
@@ -96,25 +100,26 @@ public class BroadCastReceiver extends BroadcastReceiver {
         if(!DavidClockUtils.jeVikend()) {
             String header = context.getString(R.string.good_morning);
             Timetable timetable = new Timetable(context);
-            timetable.setOnLoadListener(new Timetable.OnLoadListener() {
+            timetable.addOnLoadListener(new Timetable.OnLoadListener() {
                 @Override
                 public void onLoadTimetable(Timetable timetable) {
                     String message = David.ziskajRannuSpravu(context, timetable);
                     DavidNotifications.showNotificationMessage(context, header, message, DavidNotifications.MORNING_NOTIFICATION);
-                    scheduleNotificationsToday(context);
+                    scheduleNotificationsToday(context, timetable);
                 }
             });
         }
     }
 
-    private void scheduleNotificationsToday(Context context) {
+    private void scheduleNotificationsToday(Context context, Timetable timetable) {
         Intent notificationIntent = new Intent(context, BroadCastReceiver.class);
 
         Bundle extras = new Bundle();
         extras.putString("notificationType", "update");
         notificationIntent.putExtras(extras);
 
-        MainActivity.scheduleNotifications(context, notificationIntent);
+        Executor executor = runnable -> new Thread(runnable).start();
+        MainActivity.scheduleNotifications(context, notificationIntent, timetable);
     }
 
     public static boolean shouldShowNotification(Context context) {

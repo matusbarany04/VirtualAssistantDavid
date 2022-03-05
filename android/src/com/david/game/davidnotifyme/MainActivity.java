@@ -4,7 +4,6 @@ package com.david.game.davidnotifyme;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 
-import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlarmManager;
 
@@ -33,20 +32,17 @@ import com.david.game.davidnotifyme.david.ClassroomLocation;
 import com.david.game.davidnotifyme.david.David;
 import com.david.game.davidnotifyme.david.DavidClockUtils;
 import com.david.game.davidnotifyme.david.Timetable;
-import com.david.game.davidnotifyme.edupage.Edupage;
 import com.david.game.davidnotifyme.lunch.LunchActivity;
 import com.david.game.davidnotifyme.notifications.BroadCastReceiver;
 import com.david.game.davidnotifyme.notifications.DavidNotifications;
 import com.david.game.davidnotifyme.opengl.OpenglRenderer;
 import com.david.game.davidnotifyme.settings.SettingsActivity;
-import com.david.game.davidnotifyme.utils.InternalFiles;
-import com.david.game.davidnotifyme.utils.InternalStorageFile;
 
 import java.util.ArrayList;
 import java.util.concurrent.Executor;
 
 public class MainActivity extends AppCompatActivity implements AndroidFragmentApplication.Callbacks {
-    David david;
+    static David david;
     Intent notificationIntent;
     private GLSurfaceView mGLSurfaceView;
     private ClassroomLocation classroomLocation;
@@ -67,17 +63,12 @@ public class MainActivity extends AppCompatActivity implements AndroidFragmentAp
                 commit();
 
         notificationIntent = new Intent(this, BroadCastReceiver.class);
-        Executor executor = runnable -> new Thread(runnable).start();
 
         startAnimations();
 
         Bundle extras = new Bundle();
         extras.putString("notificationType", "update");
         notificationIntent.putExtras(extras);
-
-        david = new David(this, executor);
-
-        scheduleNotifications(this, notificationIntent);
 
         initUI();
 
@@ -86,32 +77,35 @@ public class MainActivity extends AppCompatActivity implements AndroidFragmentAp
 
     }
 
-    public static void scheduleNotifications(Context context, Intent intent) {
-        ArrayList<Long> times = David.ziskajCasyAktualizacie(context);
+    public static void scheduleNotifications(Context context, Intent intent, Timetable timetable) {
+        timetable.addOnLoadListener(new Timetable.OnLoadListener() {
+            @Override
+            public void onLoadTimetable(Timetable timetable) {
+                ArrayList<Long> times = David.ziskajCasyAktualizacie(context, timetable);
 
-        Handler handler = new Handler(Looper.getMainLooper());
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+                Handler handler = new Handler(Looper.getMainLooper());
+                AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
-        for (int i = 0; i < times.size(); i++) {
-            Log.d("cas", times.get(i) + "");
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
-                    i, intent, PendingIntent.FLAG_IMMUTABLE);
-            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + times.get(i), pendingIntent);
+                for (int i = 0; i < times.size(); i++) {
+                    Log.d("cas", times.get(i) + "");
+                    PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
+                            i, intent, PendingIntent.FLAG_IMMUTABLE);
+                    alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + times.get(i), pendingIntent);
 
-            if(context instanceof MainActivity) {
-                MainActivity mainActivity = (MainActivity) context;
-                handler.postDelayed(mainActivity::updateTimetableData, times.get(i));
+                    if(context instanceof MainActivity) {
+                        MainActivity mainActivity = (MainActivity) context;
+                        handler.postDelayed(() -> mainActivity.updateTimetableData(true), times.get(i));
+                    }
+                    Log.d("timeMillis", times.get(i) + "");
+                }
+
+                DavidNotifications.planMorningNotification(context, null);
             }
-            Log.d("timeMillis", times.get(i) + "");
-        }
-
-        DavidNotifications.planMorningNotification(context, null);
+        });
     }
 
     public void initUI() {
         if (getSupportActionBar() != null) getSupportActionBar().hide();
-
-        updateTimetableData();
 
         LinearLayout settingsButton = findViewById(R.id.settingsButton);
 
@@ -122,7 +116,7 @@ public class MainActivity extends AppCompatActivity implements AndroidFragmentAp
 
         LinearLayout update = findViewById(R.id.updateNotification);
         update.setOnClickListener((View view) -> {
-            updateTimetableData();
+            updateTimetableData(true);
         });
         LinearLayout ulohy = findViewById(R.id.ulohy);
         ulohy.setOnClickListener((View view) -> {
@@ -149,22 +143,32 @@ public class MainActivity extends AppCompatActivity implements AndroidFragmentAp
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
             startActivity(browserIntent);*/
         });
-
-        sendBroadcast(notificationIntent);
     }
 
-    private void updateTimetableData() {
+    private void initDavid() {
+        Executor executor = runnable -> new Thread(runnable).start();
+        david = new David(this, executor);
+
+        updateTimetableData(false);
+    }
+
+    private void updateTimetableData(boolean resetTimetable) {
         try {
             david.zistiSkupiny(this);
 
             TextView timetableTextView = findViewById(R.id.timetable);
             timetableTextView.setText(R.string.edupage);
 
-            Timetable timetable = david.ziskajRozvrh();
 
-            timetable.setOnLoadListener(new Timetable.OnLoadListener() {
+            TextView details = findViewById(R.id.details);
+            details.setText("");
+
+            Timetable timetable = resetTimetable ? david.ziskajNovyRozvrh(this) : david.ziskajRozvrh();
+
+            timetable.addOnLoadListener(new Timetable.OnLoadListener() {
                 @Override
                 public void onLoadTimetable(Timetable timetable) {
+
                     String header = david.prebiehaHodina() ? david.ziskajPrebiehajucuHodinu().first : "Prestávka";
 
                     Log.d("prH", david.ziskajPrebiehajucuHodinu().first + " " + david.ziskajPrebiehajucuHodinu().second);
@@ -188,10 +192,9 @@ public class MainActivity extends AppCompatActivity implements AndroidFragmentAp
 
                     timetableTextView.setText(header);
 
-                    TextView details = findViewById(R.id.details);
                     details.setText(description);
 
-                    sendBroadcast(notificationIntent);
+                    scheduleNotifications(MainActivity.this, notificationIntent, timetable);
                 }
             });
 
@@ -272,7 +275,8 @@ public class MainActivity extends AppCompatActivity implements AndroidFragmentAp
     @Override
     protected void onResume() {
         super.onResume();
-        updateTimetableData();
+        Log.d("activity", "resume");
+        initDavid();
         mGLSurfaceView.onResume();
         sendBroadcast(notificationIntent);
     }
@@ -300,5 +304,9 @@ public class MainActivity extends AppCompatActivity implements AndroidFragmentAp
     @Override
     public void exit() {
 
+    }
+
+    public static David getDavid() {
+        return david;
     }
 }

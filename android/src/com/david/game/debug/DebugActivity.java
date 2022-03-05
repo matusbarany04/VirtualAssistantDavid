@@ -36,7 +36,7 @@ public class DebugActivity extends AppCompatActivity {
 
         Timetable timetable = david.ziskajRozvrh();
 
-        timetable.setOnLoadListener(new Timetable.OnLoadListener() {
+        timetable.addOnLoadListener(new Timetable.OnLoadListener() {
             @Override
             public void onLoadTimetable(Timetable timetable) {
 

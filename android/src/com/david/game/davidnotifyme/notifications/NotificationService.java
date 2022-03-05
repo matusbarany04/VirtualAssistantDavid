@@ -139,7 +139,7 @@ public class NotificationService extends Service {
             }
 
             Executor executor = runnable -> new Thread(runnable).start();
-            David david = new David(context,executor);
+          //  David david = new David(context,executor);
 
            // DavidNotifications.updateNotification(context, David.currentTimeInStringWithSeconds(), david.ziskajDalsiuHodinuEdupage(null));
 

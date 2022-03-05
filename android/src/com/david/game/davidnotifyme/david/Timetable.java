@@ -2,6 +2,8 @@ package com.david.game.davidnotifyme.david;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.util.Pair;
 
@@ -30,9 +32,8 @@ public class Timetable {
     int skupinaNem;
     int skupinaOdp;
     int skupinaEtvNbv;
-    int[] breaks = {5, 10, 20, 5, 10, 10, 5, 0};
     ArrayList<TimetableParser.Day> timetable;
-    private OnLoadListener onLoadListener;
+    private final ArrayList<OnLoadListener> onLoadListeners = new ArrayList<>();
     private boolean loaded = false;
 
 
@@ -52,8 +53,9 @@ public class Timetable {
                     @Override
                     public void onComplete(ArrayList<TimetableParser.Day> timetable) {
                         Timetable.this.timetable = timetable;
+                        getSubjectsToday().forEach(subject -> Log.d("subject", subject.shortName));
                     //Timetable.this.timetable = TimetableParser.filter(timetable, new String[]{}); // pridať dynamické skupiny
-                        if(onLoadListener != null) onLoadListener.onLoadTimetable(Timetable.this);
+                        invokeListeners();
                         loaded = true;
                     }
                 });
@@ -72,11 +74,17 @@ public class Timetable {
         void onLoadTimetable(Timetable timetable);
     }
 
-    public void setOnLoadListener(OnLoadListener listener) {
-        onLoadListener = listener;
+    public void addOnLoadListener(OnLoadListener listener) {
+        onLoadListeners.add(listener);
         if(loaded) {
-            onLoadListener.onLoadTimetable(this);
+            listener.onLoadTimetable(this);
         }
+    }
+
+    private void invokeListeners() {
+        Handler handler = new Handler(Looper.getMainLooper());
+        onLoadListeners.forEach(onLoadListener -> handler.post(()
+                -> onLoadListener.onLoadTimetable(Timetable.this)));
     }
 
     public static int stringTimeToMinutes(String stringTime) {
@@ -261,8 +269,6 @@ public class Timetable {
 
     public ArrayList<Subject> getSubjectsToday() {
         int dayIndex = DavidClockUtils.zistiDen() - 1;
-        timetable.forEach(day1 -> Log.d("day", day1.getSubjectsArray().toString()));
-        Log.d("timetable", timetable.get(dayIndex).getSubjectsArray().toString());
         return timetable.get(dayIndex).getSubjectsArray();
     }
 
