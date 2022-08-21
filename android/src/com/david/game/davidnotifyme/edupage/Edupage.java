@@ -63,8 +63,9 @@ public class Edupage {
 
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
 
-            String classname = preferences.getString("trieda", "887799");
-            StudentsClass classroom = findClassroomByName(classname);
+            String classname = preferences.getString("trieda", "870488");
+
+            StudentsClass classroom = findClassroomById(Integer.valueOf(classname));
 
             Log.d("trieda", classroom.getName());
 
