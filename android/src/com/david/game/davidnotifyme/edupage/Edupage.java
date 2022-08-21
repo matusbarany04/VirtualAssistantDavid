@@ -106,16 +106,28 @@ public class Edupage {
         }
     }
 
-    public StudentsClass findClassroomByName(String id) {
+    public StudentsClass findClassroomByName(String label) {
 
-        EdupageSerializableReader reader = new EdupageSerializableReader(context, InternalFiles.CLASSES, StudentsClass::new);
+        EdupageSerializableReader<StudentsClass> reader = new EdupageSerializableReader<>(context, InternalFiles.CLASSES, StudentsClass::new);
+
+        HashMap<String, StudentsClass> classes = reader.getsAsHashMapNameObject();
+
+        Log.d("label", label);
+        Log.d("all classes", classes + "");
+
+        return classes.get(label);
+    }
+
+    public StudentsClass findClassroomById(Integer id) {
+
+        EdupageSerializableReader<StudentsClass> reader = new EdupageSerializableReader<>(context, InternalFiles.CLASSES, StudentsClass::new);
 
         HashMap<Integer, StudentsClass> classes = reader.getsAsHashMapIdObject();
 
-        Log.d("id", id);
-        Log.d("hash", classes + "");
+        Log.d("id", id.toString());
+        Log.d("all classes", classes + "");
 
-        return classes.get(Integer.valueOf(id));
+        return classes.get(id);
     }
 
     private SemiSubject[] parseSubjects(String rawJSON) {
