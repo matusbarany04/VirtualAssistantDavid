@@ -69,7 +69,8 @@ public class ClassroomLocation {
         ViewGroup view = (ViewGroup) activity.findViewById(android.R.id.content).getRootView();
 
         if(school == null) {
-            school = activity.getLayoutInflater().inflate(R.layout.classroom_location, view);
+            school = activity.getLayoutInflater().inflate(R.layout.classroom_location, null);
+            view.addView(school);
         }
 
         school.setAlpha(0);
@@ -171,10 +172,13 @@ public class ClassroomLocation {
 
     public void hide() {
         layout.removeAllViews();
+        //layout.removeView();
         previousViews.forEach(previousView -> layout.addView(previousView));
 
+        ViewGroup view = (ViewGroup) activity.findViewById(android.R.id.content).getRootView();
+
         if(school != null) {
-            school.findViewById(R.id.schoolLayout).setVisibility(View.INVISIBLE);
+            view.removeView(school);
         }
 
         if(activity instanceof MainActivity) {

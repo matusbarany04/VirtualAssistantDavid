@@ -292,6 +292,7 @@ public class MainActivity extends AppCompatActivity implements AndroidFragmentAp
     public void onBackPressed() {
         if(classroomLocation != null && classroomLocation.isShowed()) {
             classroomLocation.hide();
+
         } else {
             finish();
         }
