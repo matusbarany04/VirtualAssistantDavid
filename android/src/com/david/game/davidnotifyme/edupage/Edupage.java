@@ -63,9 +63,15 @@ public class Edupage {
 
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
 
-            String classname = preferences.getString("trieda", "870488");
+            String classname = preferences.getString("trieda", "II.A");
 
-            StudentsClass classroom = findClassroomById(Integer.valueOf(classname));
+            StudentsClass classroom;
+            //niekde v kode je hardconduta II.A (nie ta hore) namiesto idecka, preto tie ify
+            if (classname.chars().allMatch( Character::isDigit )){
+                classroom = findClassroomById(Integer.valueOf(classname));
+            }else{
+                classroom = findClassroomByName(classname);
+            }
 
             Log.d("trieda", classroom.getName());
 
