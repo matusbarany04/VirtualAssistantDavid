@@ -201,33 +201,41 @@ public class David {
     public Pair<String, String> ziskajDalsiuHodinuEdupage(@Nullable Boolean verbose) {
 
         Pair<String, String> input = timetable.getNextClass();  // first : učebňa, second - názov hodiny
-        String header;
+        String header = "";
         String text = "";
+        if (input.first != null){
 
-        if(timetable.getIndexOfCurrentLesson() == -3) {
-            header = "Prvá hodina je " + input.first;
-            text = "Vyučovanie začína " + timetable.getBeginOfFirstLesson();
+            if(timetable.getIndexOfCurrentLesson() == -3) {
+                header = "Prvá hodina je " + input.first;
+                text = "Vyučovanie začína " + timetable.getBeginOfFirstLesson();
 
-        } else {
+            } else {
 
-            if(input.first.equalsIgnoreCase("OBED")) {
-                header = "Nasleduje obed. Dobrú chuť !";
-                text = "Zisťujem čo je na obed...";
-                verbose = null;
+                if(input.first.equalsIgnoreCase("OBED")) {
+                    header = "Nasleduje obed. Dobrú chuť !";
+                    text = "Zisťujem čo je na obed...";
+                    verbose = null;
 
-            } else if (input.second != null) {
-                header = "Ďalšia hodina je " + input.first;
-                text = "Učebňa " + input.second;
+                } else if (input.second != null) {
+                    header = "Ďalšia hodina je " + input.first;
+                    text = "Učebňa " + input.second;
 
-            } else if (input.second.equals("víkend")) {
-                header = "Je víkend";
+                } else if (input.second.equals("víkend")) {
+                    header = "Je víkend";
 
-            } else header = "Máš voľno";
+                } else header = "Máš voľno";
 
-            if (verbose != null && Boolean.TRUE && input.first != null) {
-                text += " (" + navigator.whereIs(input.second) + ")";
+                if (verbose != null && Boolean.TRUE && input.first != null) {
+                    text += " (" + navigator.whereIs(input.second) + ")";
+                }
             }
+
+        }else
+        {
+            header = "došlo k chybe :/ ";
+            text = "niečo sa pokazilo";
         }
+
 
         return new Pair<>(header, text);
     }
