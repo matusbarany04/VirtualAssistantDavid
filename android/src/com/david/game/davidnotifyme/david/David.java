@@ -22,6 +22,8 @@ import com.david.game.R;
 import com.david.game.davidnotifyme.david.lunch.LunchCallback;
 import com.david.game.davidnotifyme.david.lunch.LunchFetcher;
 import com.david.game.davidnotifyme.david.lunch.Result;
+import com.david.game.davidnotifyme.edupage.TimetableParser;
+import com.david.game.davidnotifyme.edupage.timetable_objects.Subject;
 
 //asi to uz ide
 public class David {
@@ -94,21 +96,23 @@ public class David {
 
     public static ArrayList<Long> ziskajCasyAktualizacie(Context context, Timetable timetable) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        String startTime = prefs.getString("time_on", "7:30");
+        String startTime = prefs.getString("time_on", "7:30");                      //hardcodnute hodnoty !!!
         String endTime = prefs.getString("time_off", "15:30");
         int aheadTime = Integer.parseInt(prefs.getString("time_ahead", "5"));
 
         ArrayList<String> timeArray = new ArrayList<>();
 
-        ArrayList<String> times = timetable.times;
+        TimetableParser.Day day = timetable.getCurrentDay();
+        ArrayList<Subject> subjects = day.getSubjectsArray();
 
         timeArray.add(startTime);
-        for (int i = 0; i < times.size(); i++) {
-            if (i == 0) {
-                timeArray.add( DavidClockUtils.minutesToTime( timeToMinutes(times.get(i).split("-")[0]) - aheadTime));
+
+        for (int i = 0; i < subjects.size(); i++) {
+            if (i == 0) { // checking for first day time margin
+                timeArray.add(DavidClockUtils.minutesToTime( timeToMinutes(subjects.get(i).getStart()) - aheadTime));
             }
-            timeArray.add(times.get(i).split("-")[0]);
-            timeArray.add( DavidClockUtils.minutesToTime( timeToMinutes(times.get(i).split("-")[1]) - aheadTime));
+            timeArray.add(subjects.get(i).getStart());
+            timeArray.add(DavidClockUtils.minutesToTime( timeToMinutes(subjects.get(i).getEnd()) - aheadTime));
         }
         timeArray.add(endTime);
 

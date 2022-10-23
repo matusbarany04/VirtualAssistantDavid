@@ -79,7 +79,6 @@ public class TimetableParser {
     public ArrayList<Day> parse(JSONArray arrayOfSubjects) throws JSONException {
         Log.d("arrayOfSubjects", arrayOfSubjects.toString());
         // pridať filter pre skupiny
-
         for (int i = 0; i < arrayOfSubjects.length(); i++) {
             JSONObject obj = (JSONObject) arrayOfSubjects.get(i);
             try {
@@ -165,6 +164,7 @@ public class TimetableParser {
         return output;
     }
 
+    @Deprecated //humus2 toto urcite nepisal matus
     private HashSet<GroupnameGroup> parseJSONGroupData() {
         String data = JSONparser.getFileData(context.getApplicationContext(), R.raw.groups);
         try {
@@ -196,6 +196,7 @@ public class TimetableParser {
         return errorOutput;
     }
 
+    @Deprecated //fujky humus
     public GroupnameGroup[] getGroupOfGroupNames() {
         String[] allGroupNames = getAllGroupNames();
         HashSet<GroupnameGroup> groupsOutput = new HashSet<>();
@@ -217,7 +218,6 @@ public class TimetableParser {
             }
 //            groupsOutput.add(c.toString());
         }
-
 
         return groupsOutput.toArray(new GroupnameGroup[0]);
     }

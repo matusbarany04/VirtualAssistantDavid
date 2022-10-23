@@ -210,9 +210,9 @@ public class Edupage {
             ArrayList<TimetableParser.Day> parsed = parser.parse(j);
 
             PreferencesReader preferencesReader = new PreferencesReader(context);
-            String[] groups = preferencesReader.getSavedGroups();
+            String[] groups = preferencesReader.getSavedGroups(); //TODO zamenit za dynamicke skupiny
 
-            parsed =  TimetableParser.filter(parsed, groups); //odkomentovat ked pojdu skupiny
+          //  parsed =  TimetableParser.filter(parsed, groups); //TODO odkomentovat ked pojdu skupiny
 
             parser.save();
            // parser.getGroupOfGroupNames();

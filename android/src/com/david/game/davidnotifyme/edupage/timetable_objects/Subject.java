@@ -20,7 +20,7 @@ public class Subject {
         this.classroomNumber = classroomNumber;
         this.shortName = shortName;
         this.subjectName = subjectName;
-        this.subjectGroups = subjectGroups == null ? new String[0] : subjectGroups;
+        this.subjectGroups = subjectGroup == null ? new String[0] : subjectGroup;
     }
 
 

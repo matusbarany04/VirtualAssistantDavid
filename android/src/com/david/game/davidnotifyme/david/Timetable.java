@@ -32,7 +32,7 @@ public class Timetable {
     int skupinaNem;
     int skupinaOdp;
     int skupinaEtvNbv;
-    ArrayList<TimetableParser.Day> timetable;
+    public ArrayList<TimetableParser.Day> timetable;
     private final ArrayList<OnLoadListener> onLoadListeners = new ArrayList<>();
     private boolean loaded = false;
 
@@ -67,6 +67,7 @@ public class Timetable {
 
         } else {
             timetable = timetableReader.read().getTimetableArray();
+            invokeListeners();
             loaded = true;
         }
         //parseTimetableJson(context);
@@ -176,10 +177,10 @@ public class Timetable {
 
     public int getClassIndexBasedOnCurrentTime() {
 
-        SimpleDateFormat format = new SimpleDateFormat("HH:mm", Locale.getDefault());
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm", Locale.GERMANY);
 
         ArrayList<Subject> subjects = getSubjectsToday();
-        int currentTime = stringTimeToMinutes(format.format(new Date()));
+        int currentTime = stringTimeToMinutes(format.format(new Date()));  // pri americkych telefonoch nefunguje
         Log.d("debugging:::", currentTime + " " + format.format(new Date()));
         for (int i = 0; i < subjects.size(); i++) {
             Subject subject = subjects.get(i);
@@ -334,5 +335,11 @@ public class Timetable {
             lessons[i] = shortNames ? timetableToday.get(i).shortName : timetableToday.get(i).subjectName;
         }
         return lessons;
+    }
+
+    public TimetableParser.Day getCurrentDay() {
+
+        int day = DavidClockUtils.zistiDen();
+        return timetable.get(day);
     }
 }
