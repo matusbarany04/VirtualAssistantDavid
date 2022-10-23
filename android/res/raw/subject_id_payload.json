@@ -1,0 +1,67 @@
+{
+  "__args": [
+    null,
+    2022,
+    {
+      "vt_filter": {
+        "datefrom": "",
+        "dateto": ""
+      }
+    },
+    {
+      "op": "fetch",
+      "needed_part": {
+        "classes": [
+          "short",
+          "name",
+          "firstname",
+          "lastname",
+          "subname",
+          "classroomid"
+        ],
+        "classrooms": [
+          "short",
+          "name",
+          "firstname",
+          "lastname",
+          "subname",
+          "name",
+          "short"
+        ],
+        "students": [
+          "short",
+          "name",
+          "firstname",
+          "lastname",
+          "subname",
+          "classid"
+        ],
+        "subjects": [
+          "short",
+          "name",
+          "firstname",
+          "lastname",
+          "subname",
+          "name",
+          "short"
+        ],
+        "periods": [
+          "short",
+          "name",
+          "firstname",
+          "lastname",
+          "subname",
+          "period",
+          "starttime",
+          "endtime"
+        ],
+        "dayparts": [
+          "starttime",
+          "endtime"
+        ]
+      },
+      "needed_combos": {}
+    }
+  ],
+  "__gsh": "00000000"
+}

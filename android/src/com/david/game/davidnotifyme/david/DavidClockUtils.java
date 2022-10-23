@@ -160,4 +160,9 @@ public class DavidClockUtils {
        return dates;
     }
 
+    public static int getSchoolYear() {
+        Date date = new Date();
+        return date.getMonth() > 8 ? date.getYear() : date.getYear() - 1;       //O ROK MOZNO ERROR !!! VELA STASTIA
+    }
+
 }

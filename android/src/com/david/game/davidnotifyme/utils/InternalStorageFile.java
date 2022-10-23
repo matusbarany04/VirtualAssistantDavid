@@ -6,6 +6,7 @@ import android.util.Log;
 import com.david.game.davidnotifyme.edupage.EdupageSerializable;
 import com.david.game.davidnotifyme.edupage.timetable_objects.SemiSubject;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -120,10 +121,7 @@ public class InternalStorageFile {
             String line = lines[i];
             SemiSubject s = SemiSubject.mutate(line);
 
-            if (s != null)
-                array[i - errors] = s;
-            else
-                errors++;
+            array[i - errors] = s;
         }
 
         return array;
@@ -137,6 +135,22 @@ public class InternalStorageFile {
     public class CannotResolveFileEnumException extends Exception {
         public CannotResolveFileEnumException(String errorMessage) {
             super(errorMessage);
+        }
+    }
+
+    public static String readFromResource(Context context, int resId) {
+        try {
+
+            BufferedInputStream bReader = new BufferedInputStream(context.getResources().openRawResource(resId));
+
+            int size = bReader.available();
+            byte[] buffer = new byte[size];
+            bReader.read(buffer);
+            return new String(buffer);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
     }
 }

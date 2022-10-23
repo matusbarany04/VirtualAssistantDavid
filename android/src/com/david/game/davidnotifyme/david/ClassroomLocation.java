@@ -41,7 +41,6 @@ public class ClassroomLocation {
         this.activity = activity;
     }
 
-
     public void inflateView(ViewGroup layout) {
         for(int i = 0; i < layout.getChildCount(); i++) {
             previousViews.add(layout.getChildAt(i));

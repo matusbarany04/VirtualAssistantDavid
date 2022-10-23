@@ -7,15 +7,16 @@ import android.util.Pair;
 
 import androidx.preference.PreferenceManager;
 
+import com.david.game.R;
 import com.david.game.davidnotifyme.david.DavidClockUtils;
 import com.david.game.davidnotifyme.edupage.internet.AsyncEdupageFetcher;
 import com.david.game.davidnotifyme.edupage.internet.EdupageCallback;
 import com.david.game.davidnotifyme.edupage.internet.Result;
 import com.david.game.davidnotifyme.edupage.readers.EdupageSerializableReader;
 import com.david.game.davidnotifyme.edupage.timetable_objects.Classroom;
-import com.david.game.davidnotifyme.edupage.timetable_objects.GroupnameGroup;
 import com.david.game.davidnotifyme.edupage.timetable_objects.SemiSubject;
 import com.david.game.davidnotifyme.edupage.timetable_objects.StudentsClass;
+import com.david.game.davidnotifyme.utils.EdupageRoutes;
 import com.david.game.davidnotifyme.utils.InternalFiles;
 import com.david.game.davidnotifyme.utils.InternalStorageFile;
 import com.david.game.davidnotifyme.utils.PreferencesReader;
@@ -29,6 +30,7 @@ import java.util.HashMap;
 
 public class Edupage {
     private final String TAG = "Edupage-scraper";
+
     AsyncEdupageFetcher asyncEdupageFetcher;
     Context context;
     String startDate;
@@ -81,21 +83,18 @@ public class Edupage {
 
         try {
             System.out.println("dates  + " + startDate + " " + endDate);
-            asyncEdupageFetcher.execute(
-                    "https://spseke.edupage.org/rpr/server/maindbi.js?__func=mainDBIAccessor",
-                    "{\"__args\":[null,2021,{\"vt_filter\":{" +
-                            "\"datefrom\":\"" + startDate +
-                            "\",\"dateto\":\"" + endDate + "\"}},{\"op\":\"fetch\"," +
-                            "\"needed_part\":{" +
-                            //  "\"teachers\":[\"short\",\"name\",\"firstname\",\"lastname\",\"subname\",\"cb_hidden\",\"expired\",\"firstname\",\"lastname\",\"short\"],"+
-                            "\"classes\":[\"short\",\"name\",\"firstname\",\"lastname\",\"subname\",\"classroomid\"]," +
-                            "\"classrooms\":[\"short\",\"name\",\"firstname\",\"lastname\",\"subname\",\"name\",\"short\"]," +
-                            "\"students\":[\"short\",\"name\",\"firstname\",\"lastname\",\"subname\",\"classid\"]," + // nemazať
-                            "\"subjects\":[\"short\",\"name\",\"firstname\",\"lastname\",\"subname\",\"name\",\"short\"]," + // nemazať
-                            // "\"events\":[\"typ\",\"name\"],\"event_types\":[\"name\",\"icon\"],"+ // zatiaľ zakomentované ale písomky sú tu
-                            "\"periods\":[\"short\",\"name\",\"firstname\",\"lastname\",\"subname\",\"period\",\"starttime\",\"endtime\"],\"dayparts\":[\"starttime\",\"endtime\"]" +
-                            "},\"needed_combos\":{}}],\"__gsh\":\"00000000\"}"
-            );
+            String content = InternalStorageFile.readFromResource(context, R.raw.subject_id_payload);
+            JSONObject payload = new JSONObject(content);
+            payload.getJSONArray("__args").put(1, DavidClockUtils.getSchoolYear());
+
+            JSONObject vt_filter = payload.getJSONArray("__args").getJSONObject(2).getJSONObject("vt_filter");
+            vt_filter.put("datefrom", startDate);
+            vt_filter.put("dateto", endDate);
+
+            Log.d("payload", payload.toString());
+
+            asyncEdupageFetcher.execute(EdupageRoutes.SUBJECT_ID_URL.getEdupageRoute(), payload.toString());
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -163,23 +162,34 @@ public class Edupage {
     }
 
     private void timetableFetch(String classId) {
-        new AsyncEdupageFetcher(new EdupageCallback<String>() {
-            @Override
-            public String onComplete(Result.Success<String> result) {
+        try {
+            String content = InternalStorageFile.readFromResource(context, R.raw.timetable_payload);
+            JSONObject payload = new JSONObject(content);
+            JSONObject params = payload.getJSONArray("__args").getJSONObject(1);
+            params.put("datefrom", startDate);
+            params.put("dateto", endDate);
+            params.put("year", DavidClockUtils.getSchoolYear());
+            params.put("id", classId);
 
-                ArrayList<TimetableParser.Day> timetable = parseTimetable(result.data);
+            new AsyncEdupageFetcher(new EdupageCallback<String>() {
+                @Override
+                public String onComplete(Result.Success<String> result) {
 
-                Log.d("result", result.data);
+                    ArrayList<TimetableParser.Day> timetable = parseTimetable(result.data);
 
-                if (onCompletionListener != null) {
-                    onCompletionListener.onComplete(timetable);
+                    Log.d("result", result.data);
+
+                    if (onCompletionListener != null) {
+                        onCompletionListener.onComplete(timetable);
+                    }
+                    return null;
                 }
-                return null;
-            }
-        }).execute("https://spseke.edupage.org/timetable/server/currenttt.js?__func=curentttGetData",
-                "{\"__args\":[null,{\"year\":2021,\"datefrom\":\"" + startDate + "\",\"dateto\":\"" + endDate + "\",\"table\":\"classes\",\"id\":\"" + classId + "\",\"showColors\":true,\"showIgroupsInClasses\":false,\"showOrig\":true}],\"__gsh\":\"00000000\"}"
-        );
 
+            }).execute(EdupageRoutes.TIMETABLE_URL.getEdupageRoute(), payload.toString());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public interface OnCompletionListener {

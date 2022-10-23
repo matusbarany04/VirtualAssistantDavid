@@ -1,6 +1,8 @@
 package com.david.game.davidnotifyme.edupage.internet;
 
 import android.os.AsyncTask;
+import android.util.Log;
+
 import java.io.IOException;
 
 import okhttp3.MediaType;
@@ -40,6 +42,7 @@ public class AsyncEdupageFetcher extends AsyncTask<String, Integer, String> {
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
+        Log.d("response", s);
         callback.onComplete(new Result.Success<>(s));
     }
 

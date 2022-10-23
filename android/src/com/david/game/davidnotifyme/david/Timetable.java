@@ -44,7 +44,9 @@ public class Timetable {
 
         TimetableReader timetableReader = new TimetableReader(context);
 
-        if(David.maPristupKInternetu(context) || timetableReader.read().isEmpty()) {
+        //|| timetableReader.read().isEmpty()       //toto bolo totalne nanič
+
+        if(David.maPristupKInternetu(context)) {
 
             try {
                 Edupage edupage = new Edupage(context);//.scrape("smh");
