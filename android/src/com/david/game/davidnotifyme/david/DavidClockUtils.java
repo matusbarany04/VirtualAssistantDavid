@@ -161,8 +161,7 @@ public class DavidClockUtils {
     }
 
     public static int getSchoolYear() {
-        Date date = new Date();
-        return date.getMonth() > 8 ? date.getYear() : date.getYear() - 1;       //O ROK MOZNO ERROR !!! VELA STASTIA
+        Calendar c = Calendar.getInstance(Locale.GERMAN);
+        return c.get(Calendar.DAY_OF_MONTH) > 8 ? c.get(Calendar.YEAR) : c.get(Calendar.YEAR) - 1;       //O ROK MOZNO ERROR !!! VELA STASTIA
     }
-
 }
