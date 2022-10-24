@@ -2,6 +2,7 @@ package com.david.game.davidnotifyme.edupage.timetable_objects;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 import android.util.Pair;
 
 import androidx.preference.PreferenceCategory;
@@ -70,5 +71,14 @@ public class Groups {
         }
 
         return groups.toArray(new String[0]);
+    }
+
+    public static void deleteSavedData(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        Map<String, ?> allPrefs = prefs.getAll();
+        Set<String> keys = allPrefs.keySet();
+        for(String key : keys.toArray(new String[0])) {
+            if(key.startsWith("group-")) prefs.edit().remove(key).apply();
+        }
     }
 }

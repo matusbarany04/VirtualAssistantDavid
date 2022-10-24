@@ -1,7 +1,12 @@
 package com.david.game.davidnotifyme.settings;
 
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
+
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -129,7 +134,7 @@ public class SettingsActivity extends AppCompatActivity {
             usersClass.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(@NonNull Preference preference, Object newValue) {
-                    updateClass();
+                    showRestartDialog();
                     return true;
                 }
             });
@@ -212,8 +217,21 @@ public class SettingsActivity extends AppCompatActivity {
             });
         }
 
-        private void updateClass() {
+        private void showRestartDialog() {
+            AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
+            dialog.setMessage("Zmenil si triedu. Aplikácia sa teraz reštartuje.");
+            dialog.setPositiveButton("OK", (dialogInterface, i) -> {
+                Groups.deleteSavedData(getContext());
+                Intent intent = new Intent(getContext(), MainActivity.class);
+                intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
+                getContext().startActivity(intent);
+                if (getContext() instanceof Activity) {
+                    ((Activity) getContext()).finish();
+                }
 
+                Runtime.getRuntime().exit(0);
+            });
+            dialog.show();
         }
     }
 }
