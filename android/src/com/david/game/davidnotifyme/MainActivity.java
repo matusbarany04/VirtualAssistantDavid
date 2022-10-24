@@ -32,6 +32,7 @@ import com.david.game.davidnotifyme.david.ClassroomLocation;
 import com.david.game.davidnotifyme.david.David;
 import com.david.game.davidnotifyme.david.DavidClockUtils;
 import com.david.game.davidnotifyme.david.Timetable;
+import com.david.game.davidnotifyme.edupage.timetable_objects.Groups;
 import com.david.game.davidnotifyme.lunch.LunchActivity;
 import com.david.game.davidnotifyme.notifications.BroadCastReceiver;
 import com.david.game.davidnotifyme.notifications.DavidNotifications;
@@ -39,6 +40,7 @@ import com.david.game.davidnotifyme.opengl.OpenglRenderer;
 import com.david.game.davidnotifyme.settings.SettingsActivity;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.Executor;
 
 public class MainActivity extends AppCompatActivity implements AndroidFragmentApplication.Callbacks {
@@ -73,8 +75,6 @@ public class MainActivity extends AppCompatActivity implements AndroidFragmentAp
         initUI();
 
         initDavidGLView();
-
-
     }
 
     public static void scheduleNotifications(Context context, Intent intent, Timetable timetable) {

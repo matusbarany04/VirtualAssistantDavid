@@ -31,30 +31,6 @@
 
     <PreferenceCategory app:title="Skupiny" app:key="groups">
 
-        <ListPreference
-            app:defaultValue="Prvá"
-            app:entries="@array/nem_skupina"
-            app:entryValues="@array/nem_skupina"
-            app:key="nemcina"
-            app:title="Skupina nemčiny"
-            app:useSimpleSummaryProvider="true" />
-
-        <ListPreference
-            app:defaultValue="Prvá"
-            app:entries="@array/odp_skupina"
-            app:entryValues="@array/odp_skupina"
-            app:key="odp"
-            app:title="Skupina ODP"
-            app:useSimpleSummaryProvider="true" />
-
-        <ListPreference
-            app:defaultValue="Etika"
-            app:entries="@array/etv_nbv"
-            app:entryValues="@array/etv_nbv"
-            app:key="etv_nbv"
-            app:title="Skupina ETV / NBV"
-            app:useSimpleSummaryProvider="true" />
-
     </PreferenceCategory>
 
     <PreferenceCategory app:title="Notifikácia">

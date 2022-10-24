@@ -14,6 +14,7 @@ import com.david.game.R;
 import com.david.game.davidnotifyme.edupage.Edupage;
 import com.david.game.davidnotifyme.edupage.TimetableParser;
 import com.david.game.davidnotifyme.edupage.readers.TimetableReader;
+import com.david.game.davidnotifyme.edupage.timetable_objects.Groups;
 import com.david.game.davidnotifyme.edupage.timetable_objects.Subject;
 import com.david.game.davidnotifyme.utils.JSONparser;
 
@@ -33,6 +34,7 @@ public class Timetable {
     int skupinaOdp;
     int skupinaEtvNbv;
     public ArrayList<TimetableParser.Day> timetable;
+    private ArrayList<TimetableParser.Day> fullTimetable;
     private final ArrayList<OnLoadListener> onLoadListeners = new ArrayList<>();
     private boolean loaded = false;
 
@@ -54,9 +56,10 @@ public class Timetable {
 
                     @Override
                     public void onComplete(ArrayList<TimetableParser.Day> timetable) {
-                        Timetable.this.timetable = timetable;
-                        getSubjectsToday().forEach(subject -> Log.d("subject", subject.shortName));
-                    //Timetable.this.timetable = TimetableParser.filter(timetable, new String[]{}); // pridať dynamické skupiny
+                        fullTimetable = timetable;
+                        String[] groups = Groups.getSavedGroups(context);
+                        Timetable.this.timetable =  TimetableParser.filterGroups(fullTimetable, groups);
+
                         invokeListeners();
                         loaded = true;
                     }
@@ -341,5 +344,9 @@ public class Timetable {
 
         int day = DavidClockUtils.zistiDen();
         return timetable.get(day);
+    }
+
+    public ArrayList<TimetableParser.Day> getFullTimetable() {
+        return fullTimetable;
     }
 }

@@ -1,5 +1,7 @@
 package com.david.game.davidnotifyme.edupage.timetable_objects;
 
+import androidx.annotation.NonNull;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -76,7 +78,7 @@ public class Subject {
         if (this.subjectGroups.length == 0) return true;
         if (this.subjectGroups[0].equals("")) return true;
         for (String outer : subjectGroups){
-            for (String inner: this.subjectGroups) {
+            for (String inner : this.subjectGroups) {
                 if (outer.equals(inner)) return true;
             }
         }
@@ -93,5 +95,11 @@ public class Subject {
 
     public String getEnd() {
         return endTime;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return shortName;
     }
 }

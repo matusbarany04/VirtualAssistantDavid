@@ -1,5 +1,6 @@
 package com.david.game.davidnotifyme.settings;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,6 +8,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -19,12 +21,15 @@ import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceFragmentCompat;
 
 import com.david.game.R;
+import com.david.game.davidnotifyme.MainActivity;
 import com.david.game.davidnotifyme.david.David;
 
+import com.david.game.davidnotifyme.david.Timetable;
 import com.david.game.davidnotifyme.edupage.TimetableParser;
 import com.david.game.davidnotifyme.edupage.readers.EdupageSerializableReader;
 import com.david.game.davidnotifyme.edupage.timetable_objects.Classroom;
 import com.david.game.davidnotifyme.edupage.timetable_objects.GroupnameGroup;
+import com.david.game.davidnotifyme.edupage.timetable_objects.Groups;
 import com.david.game.davidnotifyme.edupage.timetable_objects.StudentsClass;
 import com.david.game.davidnotifyme.notifications.BroadCastReceiver;
 import com.david.game.davidnotifyme.notifications.DavidNotifications;
@@ -33,6 +38,7 @@ import com.david.game.debug.DebugActivity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Set;
 
 
 public class SettingsActivity extends AppCompatActivity {
@@ -117,12 +123,13 @@ public class SettingsActivity extends AppCompatActivity {
             usersClass.setEntries(cr.getNames());
             usersClass.setEntryValues(cr.getIds());
 
-            createGroupPreferences();
-
+            Timetable timetable = MainActivity.getDavid().ziskajRozvrh();
+            createGroupPreferences(timetable);
 
             usersClass.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(@NonNull Preference preference, Object newValue) {
+                    updateClass();
                     return true;
                 }
             });
@@ -177,22 +184,23 @@ public class SettingsActivity extends AppCompatActivity {
              });
         }
 
-        private void createGroupPreferences() {
-            TimetableParser timetableParser = new TimetableParser(getContext());
-            GroupnameGroup[] allGroups = timetableParser.getGroupOfGroupNames();
+        private void createGroupPreferences(Timetable timetable) {
+            PreferenceCategory category = findPreference("groups");
+            category.removeAll();
 
-            for (GroupnameGroup allGroup : allGroups) {
-//                Log.d("array", Arrays.toString(allGroup));
+            Set<String> groups = Groups.loadFromTimetable(timetable);
+
+            for (String division : groups) {
+                String[] divisionArray = division.split("/");
                 ListPreference groupPreference = new ListPreference(getContext());
-                groupPreference.setTitle(allGroup.getLabel());
-                groupPreference.setValue(allGroup.getGroupnames()[0]);
+                groupPreference.setTitle(division);
+                groupPreference.setValue(divisionArray[0]);
                 groupPreference.setDialogTitle(groupPreference.getTitle());
-                groupPreference.setKey(allGroup.getLabel()); // zatiaľ dávam label možno zmeníme neskor
-                groupPreference.setEntries(allGroup.getFullGroupNames());
-                groupPreference.setEntryValues(allGroup.getGroupnames());
+                groupPreference.setKey("group-" + division); // zatiaľ dávam label možno zmeníme neskor
+                groupPreference.setEntries(divisionArray);
+                groupPreference.setEntryValues(divisionArray);
                 setAutoSummaryProvider(groupPreference);
-                PreferenceCategory groups = findPreference("groups");
-                groups.addPreference(groupPreference);
+                category.addPreference(groupPreference);
             }
 
         }
@@ -202,6 +210,10 @@ public class SettingsActivity extends AppCompatActivity {
                 ListPreference listPreference = (ListPreference) preference1;
                 return listPreference.getValue();
             });
+        }
+
+        private void updateClass() {
+
         }
     }
 }

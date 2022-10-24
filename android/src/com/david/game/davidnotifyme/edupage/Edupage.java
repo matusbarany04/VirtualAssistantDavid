@@ -14,6 +14,7 @@ import com.david.game.davidnotifyme.edupage.internet.EdupageCallback;
 import com.david.game.davidnotifyme.edupage.internet.Result;
 import com.david.game.davidnotifyme.edupage.readers.EdupageSerializableReader;
 import com.david.game.davidnotifyme.edupage.timetable_objects.Classroom;
+import com.david.game.davidnotifyme.edupage.timetable_objects.Groups;
 import com.david.game.davidnotifyme.edupage.timetable_objects.SemiSubject;
 import com.david.game.davidnotifyme.edupage.timetable_objects.StudentsClass;
 import com.david.game.davidnotifyme.utils.EdupageRoutes;
@@ -208,11 +209,6 @@ public class Edupage {
 
             TimetableParser parser = new TimetableParser(context);
             ArrayList<TimetableParser.Day> parsed = parser.parse(j);
-
-            PreferencesReader preferencesReader = new PreferencesReader(context);
-            String[] groups = preferencesReader.getSavedGroups(); //TODO zamenit za dynamicke skupiny
-
-          //  parsed =  TimetableParser.filter(parsed, groups); //TODO odkomentovat ked pojdu skupiny
 
             parser.save();
            // parser.getGroupOfGroupNames();

@@ -3,11 +3,14 @@ package com.david.game.davidnotifyme.edupage;
 import android.content.Context;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.david.game.R;
 import com.david.game.davidnotifyme.david.DavidClockUtils;
 import com.david.game.davidnotifyme.edupage.readers.EdupageSerializableReader;
 import com.david.game.davidnotifyme.edupage.timetable_objects.Classroom;
 import com.david.game.davidnotifyme.edupage.timetable_objects.GroupnameGroup;
+import com.david.game.davidnotifyme.edupage.timetable_objects.Groups;
 import com.david.game.davidnotifyme.edupage.timetable_objects.SemiSubject;
 import com.david.game.davidnotifyme.edupage.timetable_objects.StudentsClass;
 import com.david.game.davidnotifyme.edupage.timetable_objects.Subject;
@@ -49,20 +52,22 @@ public class TimetableParser {
         return arr;
     }
 
-    public static ArrayList<Day> filter(ArrayList<Day> timetable, String[] groupnames) {
+    public static ArrayList<Day> filterGroups(ArrayList<Day> timetable, String[] groupNames) {
         ArrayList<Day> localArray = new ArrayList<>(timetable);
+
         for (int j = 0; j < localArray.size(); j++) {
             Day day = localArray.get(j);
             Day localDay = new Day(day.getDate());
+
             for (int i = 0; i < day.getSubjectsArray().size(); i++) {
                 Subject subject = day.get(i);
-                if (subject.containsSubjectGroups(groupnames)) {
+                if (subject.containsSubjectGroups(groupNames)) {
                     localDay.append(subject);
                 }
-
             }
             localArray.set(j, localDay);
         }
+
         return localArray;
     }
 
@@ -78,7 +83,7 @@ public class TimetableParser {
 
     public ArrayList<Day> parse(JSONArray arrayOfSubjects) throws JSONException {
         Log.d("arrayOfSubjects", arrayOfSubjects.toString());
-        // pridať filter pre skupiny
+
         for (int i = 0; i < arrayOfSubjects.length(); i++) {
             JSONObject obj = (JSONObject) arrayOfSubjects.get(i);
             try {
@@ -269,7 +274,12 @@ public class TimetableParser {
             }
             return array;
         }
-    }
 
+        @NonNull
+        @Override
+        public String toString() {
+            return subjectsArray.toString();
+        }
+    }
 
 }
