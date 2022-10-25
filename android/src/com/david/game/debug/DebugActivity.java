@@ -19,6 +19,13 @@ import android.widget.TextView;
 import com.david.game.R;
 import com.david.game.davidnotifyme.david.David;
 import com.david.game.davidnotifyme.david.Timetable;
+import com.david.game.davidnotifyme.edupage.TimetableParser;
+import com.david.game.davidnotifyme.edupage.timetable_objects.Groups;
+import com.david.game.davidnotifyme.edupage.timetable_objects.Subject;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 
 public class DebugActivity extends AppCompatActivity {
@@ -51,6 +58,29 @@ public class DebugActivity extends AppCompatActivity {
                 addText(" ");
                 addText("End of current lesson");
                 addText(timetable.getEndOfCurrentLesson());
+
+                addText("rozvrh bez skupin");
+                StringBuilder timetableText = new StringBuilder();
+                timetable.getFullTimetable()
+                        .forEach(day -> {
+                            day.getSubjectsArray().forEach((Subject s)-> timetableText.append(s.shortName).append(" "));
+                            timetableText.append("\n");
+                        });
+
+                addText(timetableText.toString());
+
+                String[] groups = Groups.getSavedGroups(DebugActivity.this);
+                ArrayList<TimetableParser.Day> filtered  =  TimetableParser.filterGroups(timetable.getFullTimetable(), groups);
+                addText("rozvrh so skupinami");
+                addText("skupiny> " + String.join(" ", groups));
+                StringBuilder filteredTimetableText = new StringBuilder();
+                filtered
+                        .forEach(day -> {
+                            day.getSubjectsArray().forEach((Subject s)-> filteredTimetableText.append(s.shortName).append(" "));
+                            filteredTimetableText.append("\n");
+                        });
+
+                addText(filteredTimetableText.toString());
 
                 getCurrentLocation();
             }

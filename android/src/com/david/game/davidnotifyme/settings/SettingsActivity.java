@@ -216,7 +216,6 @@ public class SettingsActivity extends AppCompatActivity {
                 return listPreference.getValue();
             });
         }
-
         private void showRestartDialog() {
             AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
             dialog.setMessage("Zmenil si triedu. Aplikácia sa teraz reštartuje.");

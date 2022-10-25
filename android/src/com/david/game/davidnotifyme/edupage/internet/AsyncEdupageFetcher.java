@@ -42,7 +42,7 @@ public class AsyncEdupageFetcher extends AsyncTask<String, Integer, String> {
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
-        Log.d("response", s);
+        Log.d("fetchresponse", s + " ");
         callback.onComplete(new Result.Success<>(s));
     }
 
