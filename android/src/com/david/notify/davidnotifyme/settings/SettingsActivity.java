@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -20,6 +21,7 @@ import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceManager;
 
 import com.david.notify.R;
 import com.david.notify.davidnotifyme.MainActivity;
@@ -34,6 +36,7 @@ import com.david.notify.davidnotifyme.notifications.DavidNotifications;
 import com.david.notify.davidnotifyme.utils.InternalFiles;
 import com.david.notify.debug.DebugActivity;
 
+import java.util.Map;
 import java.util.Set;
 
 
@@ -197,6 +200,16 @@ public class SettingsActivity extends AppCompatActivity {
                 groupPreference.setEntryValues(divisionArray);
                 setAutoSummaryProvider(groupPreference);
                 category.addPreference(groupPreference);
+                checkDefaultGroup(groupPreference);
+            }
+        }
+
+        private void checkDefaultGroup(ListPreference group) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+            Map<String, ?> allPrefs = prefs.getAll();
+            Set<String> keys = allPrefs.keySet();
+            if(!keys.contains(group.getKey())) {
+                prefs.edit().putString(group.getKey(), group.getValue()).apply();
             }
 
         }

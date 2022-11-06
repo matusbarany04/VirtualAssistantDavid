@@ -2,6 +2,7 @@ package com.david.notify.davidnotifyme.edupage.timetable_objects;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import androidx.preference.PreferenceManager;
 
@@ -63,6 +64,7 @@ public class Groups {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         Map<String, ?> allPrefs = prefs.getAll();
         for(String key : allPrefs.keySet()) {
+            Log.d("prefKey", key);
             if(key.startsWith("group-")) groups.add(allPrefs.get(key).toString());
         }
 

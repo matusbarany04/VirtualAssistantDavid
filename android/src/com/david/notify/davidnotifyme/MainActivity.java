@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements AndroidFragmentAp
     private ClassroomLocation classroomLocation;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {        //TODO: Redirect to settings on first launch
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity_with_david);
 
