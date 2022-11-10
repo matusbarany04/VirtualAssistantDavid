@@ -12,6 +12,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -36,6 +37,9 @@ import com.david.notify.davidnotifyme.notifications.DavidNotifications;
 import com.david.notify.davidnotifyme.utils.InternalFiles;
 import com.david.notify.debug.DebugActivity;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Map;
 import java.util.Set;
 
@@ -57,6 +61,8 @@ public class SettingsActivity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+
+
     }
 
     @Override
@@ -181,6 +187,9 @@ public class SettingsActivity extends AppCompatActivity {
                      return true;
                  }
              });
+
+
+
         }
 
         private void createGroupPreferences(Timetable timetable) {

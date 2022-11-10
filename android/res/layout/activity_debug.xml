@@ -8,14 +8,44 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
         <LinearLayout
-            android:orientation="vertical"
-            android:id="@+id/debugLinearLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
+            <LinearLayout
+                android:orientation="vertical"
+                android:id="@+id/debugLinearLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="///MANUAL LOGY///">
+
+                </TextView>
+            </LinearLayout>
+
+            <com.google.android.material.slider.Slider
+                android:id="@+id/slider"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:valueFrom="10"
+                android:valueTo="50"
+                android:stepSize="5"
+                android:value="20"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/logs"
+                android:text="logs should be here">
+
+            </TextView>
         </LinearLayout>
+
+
 
     </ScrollView>
 
