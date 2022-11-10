@@ -6,9 +6,11 @@ import static com.badlogic.gdx.graphics.GL20.GL_LEQUAL;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Camera;
 
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -35,8 +37,14 @@ import com.badlogic.gdx.utils.GdxRuntimeException;
 
 import com.badlogic.gdx.utils.JsonReader;
 
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.logging.FileHandler;
+
+import javax.imageio.ImageIO;
 
 
 public class DavidRenderer extends ApplicationAdapter
@@ -225,7 +233,21 @@ public class DavidRenderer extends ApplicationAdapter
 
         // 2D setup
         SpriteRenderer = new SpriteBatch();
-        BGTex = new Texture(Gdx.files.internal("Forest.jpg"));
+
+        Pixmap file = new Pixmap(Gdx.files.internal("CubeSchool.png"));
+        Pixmap scaled = new Pixmap(
+                (int)( file.getWidth() * (Gdx.graphics.getHeight()*1.0f/file.getHeight())),
+                Gdx.graphics.getHeight()
+                , file.getFormat());
+        scaled.drawPixmap(file,
+                0, 0, file.getWidth(), file.getHeight(),
+                0, 0, scaled.getWidth(), scaled.getHeight()
+        );
+        Texture texture = new Texture(scaled);
+        file.dispose();
+        scaled.dispose();
+
+        BGTex = texture;
         BGsprite = new Sprite(BGTex);
 
         // custom shaders
