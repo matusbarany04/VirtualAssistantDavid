@@ -42,7 +42,6 @@ public class Timetable {
     public Timetable(Context context) {
         times = new ArrayList<>();
      //   timetable = new ArrayList<>();
-        initGroups(context);
 
         TimetableReader timetableReader = new TimetableReader(context);
 
@@ -59,7 +58,7 @@ public class Timetable {
                         fullTimetable = timetable;
                         String[] groups = Groups.getSavedGroups(context);
                         Timetable.this.timetable =  TimetableParser.filterGroups(fullTimetable, groups);
-
+                        initGroups(context);
                         invokeListeners();
                         loaded = true;
                     }
@@ -69,11 +68,17 @@ public class Timetable {
             }
 
         } else {
-            timetable = timetableReader.read().getTimetableArray();
+            fullTimetable = timetableReader.read().getTimetableArray();
+            initGroups(context);
             invokeListeners();
             loaded = true;
         }
         //parseTimetableJson(context);
+    }
+
+    private void initGroups(Context context) {
+        String[] groups = Groups.getSavedGroups(context);
+        Timetable.this.timetable =  TimetableParser.filterGroups(fullTimetable, groups);
     }
 
     public interface OnLoadListener {
@@ -96,21 +101,6 @@ public class Timetable {
     public static int stringTimeToMinutes(String stringTime) {
         int[] s = Arrays.stream(stringTime.split(":")).mapToInt(Integer::parseInt).toArray();
         return s[0] * 60 + s[1];
-    }
-
-    public void initGroups(Context context) {
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
-        Log.d("nemcina", pref.getString("nemcina", "Prvá"));
-
-        skupinaNem = pref.getString("nemcina", "Prvá").equals("Prvá") ? 1 : 2;
-
-        String prax = pref.getString("odp", "Prvá");
-
-        if (prax.equals("Prvá")) skupinaOdp = 1;
-        else if (prax.equals("Druhá")) skupinaOdp = 2;
-        else skupinaOdp = 3;
-
-        skupinaEtvNbv = pref.getString("etv_nbv", "Etika").equals("Etika") ? 1 : 2;
     }
 
     @Deprecated
@@ -343,7 +333,7 @@ public class Timetable {
     public TimetableParser.Day getCurrentDay() {
 
         int day = DavidClockUtils.zistiDen();
-        return timetable.get(day);
+        return timetable.get(day - 1);
     }
 
     public ArrayList<TimetableParser.Day> getFullTimetable() {

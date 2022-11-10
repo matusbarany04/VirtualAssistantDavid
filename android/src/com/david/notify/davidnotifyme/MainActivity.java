@@ -73,6 +73,8 @@ public class MainActivity extends AppCompatActivity implements AndroidFragmentAp
         initUI();
 
         initDavidGLView();
+
+        BroadCastReceiver.updateNotification(this);
     }
 
     public static void scheduleNotifications(Context context, Intent intent, Timetable timetable) {
@@ -152,7 +154,6 @@ public class MainActivity extends AppCompatActivity implements AndroidFragmentAp
 
     private void updateTimetableData(boolean resetTimetable) {
         try {
-            david.zistiSkupiny(this);
 
             TextView timetableTextView = findViewById(R.id.timetable);
             timetableTextView.setText(R.string.edupage);

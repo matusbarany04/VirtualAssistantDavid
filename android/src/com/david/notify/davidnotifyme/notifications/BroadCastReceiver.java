@@ -46,7 +46,7 @@ public class BroadCastReceiver extends BroadcastReceiver {
         }
     }
 
-    private void updateNotification(Context context) {
+    public static void updateNotification(Context context) {
         Executor executor = runnable -> new Thread(runnable).start();
 
         David activeDavid = MainActivity.getDavid();

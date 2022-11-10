@@ -53,10 +53,6 @@ public class David {
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-    public void zistiSkupiny(Context context) {
-        timetable.initGroups(context);
-    }
-
     //unused
     public static int findNearestNotificationChange(@Nullable String startTime) {
         if (startTime == null) {
@@ -104,6 +100,8 @@ public class David {
 
         TimetableParser.Day day = timetable.getCurrentDay();
         ArrayList<Subject> subjects = day.getSubjectsArray();
+
+        Log.d("subjects", subjects.toString());
 
         timeArray.add(startTime);
 
