@@ -11,6 +11,7 @@
         <EditTextPreference
             android:defaultValue="5"
             app:key="time-ahead"
+            android:inputType="number"
             android:dependency="show_notify"
             app:title="Čas aktualizácie pred koncom hodiny"
             android:dialogMessage="(v minútach)"
@@ -81,7 +82,7 @@
     <PreferenceCategory
         app:title="Advanced"
         android:key="developer_category"
-        app:isPreferenceVisible="false">
+        app:isPreferenceVisible="true">
 
         <SwitchPreferenceCompat
             app:key="two_notify"
@@ -93,8 +94,8 @@
             app:title="Smart David"
             android:summary=""/>
 
-        <SwitchPreferenceCompat
-            app:key="two_notify2"
+        <Preference
+            app:key="logs"
             app:title="David supervisions"
             android:summary=""/>
 

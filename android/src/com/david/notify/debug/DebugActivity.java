@@ -98,14 +98,14 @@ public class DebugActivity extends AppCompatActivity {
         for (String lesson : timetable.getLessonsToday(true)) {
             addText(lesson);
         }
-        handler.postDelayed(runnable = new Runnable() {
+      /*  handler.postDelayed(runnable = new Runnable() {
             public void run() {
                 handler.postDelayed(runnable, delay);
                 readLogs();
 
 //                Toast.makeText(DebugActivity.this, "This method is run every 0.5 seconds", Toast.LENGTH_SHORT).show();
             }
-        }, delay);
+        }, delay);*/
     }
 
     @Override
@@ -122,32 +122,7 @@ public class DebugActivity extends AppCompatActivity {
 
     }
 
-    public void readLogs(){
-       // new Thread(() -> {
-            try {
-                Process process = Runtime.getRuntime().exec("logcat -t " +(int) slider.getValue());
-                BufferedReader bufferedReader = new BufferedReader(
-                        new InputStreamReader(process.getInputStream()));
 
-                StringBuilder log=new StringBuilder();
-                String line = "";
-                while ((line = bufferedReader.readLine()) != null) {
-                    log.append(line);
-                }
-
-//                runOnUiThread(()->{
-
-                    TextView tv = (TextView) findViewById(R.id.logs);
-                    tv.setText(log.toString());
-
-//                });
-
-            }
-            catch (IOException e) {
-                Log.e("Debugerror", e.getMessage().toString());
-            }
-       // }).start();
-    }
     public void addText(String text) {
         TextView textView = new TextView(this);
         textView.setText(text);

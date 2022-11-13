@@ -217,7 +217,7 @@ public class DavidRenderer extends ApplicationAdapter
         ModelBuilder modelBuilder = new ModelBuilder();
         model = new G3dModelLoader(
                 new JsonReader()).loadModel(
-                        Gdx.files.internal("Idle.g3dj")
+                        Gdx.files.internal(animations.get(PseudoRandomIndex))
         );
         instance = new ModelInstance(model);
 

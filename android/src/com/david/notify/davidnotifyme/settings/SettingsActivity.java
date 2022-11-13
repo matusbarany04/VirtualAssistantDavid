@@ -10,14 +10,18 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.InputType;
+import android.text.method.DigitsKeyListener;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.EditTextPreference;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceCategory;
@@ -36,6 +40,7 @@ import com.david.notify.davidnotifyme.notifications.BroadCastReceiver;
 import com.david.notify.davidnotifyme.notifications.DavidNotifications;
 import com.david.notify.davidnotifyme.utils.InternalFiles;
 import com.david.notify.debug.DebugActivity;
+import com.david.notify.debug.Debugger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -188,8 +193,15 @@ public class SettingsActivity extends AppCompatActivity {
                  }
              });
 
+            Preference preference = findPreference("logs");
+            preference.setOnPreferenceClickListener(preference1 -> {
+                startActivity(new Intent(getContext(), Debugger.class));
+                return true;
+            });
 
-
+            EditTextPreference aheadTime = findPreference("time-ahead");
+            aheadTime.setOnBindEditTextListener( editText ->
+                    editText.setInputType(InputType.TYPE_CLASS_NUMBER));
         }
 
         private void createGroupPreferences(Timetable timetable) {
