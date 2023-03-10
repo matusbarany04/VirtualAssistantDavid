@@ -6,7 +6,6 @@ import static com.badlogic.gdx.graphics.GL20.GL_LEQUAL;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Camera;
 
 import com.badlogic.gdx.graphics.GL20;
@@ -33,18 +32,13 @@ import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.graphics.g3d.model.Animation;
 
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 
 import com.badlogic.gdx.utils.JsonReader;
 
-import java.awt.Image;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.logging.FileHandler;
-
-import javax.imageio.ImageIO;
 
 
 public class DavidRenderer extends ApplicationAdapter
@@ -177,17 +171,16 @@ public class DavidRenderer extends ApplicationAdapter
 
     private AnimationController animation;
 
-    ArrayList<String> animations;
+    ArrayList<String> animations = new ArrayList<>();;
 
-    public static Texture BGTex;
-    public static Sprite BGsprite;
-    public SpriteBatch SpriteRenderer;
+    public static Texture backgroundTexture;
+    public static Sprite backgroundSprite;
+    public SpriteBatch spriteRenderer;
 
 
     @Override
     public void create() {
 
-        animations = new ArrayList<String>();
         animations.addAll(Arrays.asList("Idle.g3dj", "Ninja_Idle_1.g3dj", "Situps.g3dj", "Hanging_Idle.g3dj", "Swing_To_Land.g3dj"));
 
         environment = new Environment();
@@ -217,7 +210,8 @@ public class DavidRenderer extends ApplicationAdapter
         ModelBuilder modelBuilder = new ModelBuilder();
         model = new G3dModelLoader(
                 new JsonReader()).loadModel(
-                        Gdx.files.internal(animations.get(PseudoRandomIndex))
+//                Gdx.files.internal(animations.get(PseudoRandomIndex))
+                        Gdx.files.internal("Idle.g3dj")
         );
         instance = new ModelInstance(model);
 
@@ -225,14 +219,14 @@ public class DavidRenderer extends ApplicationAdapter
         Gdx.input.setInputProcessor(cameraController);
 
         animation = new AnimationController(instance);
-        animation.animate("mixamo.com",  1, 1f, null, 0.2f);
+        animation.animate("mixamo.com",  500, 1f, null, 0.2f);
 
         for (Animation a : instance.animations) {
            System.out.println(a.id);
         }
 
         // 2D setup
-        SpriteRenderer = new SpriteBatch();
+        spriteRenderer = new SpriteBatch();
 
         Pixmap file = new Pixmap(Gdx.files.internal("CubeSchool.png"));
         Pixmap scaled = new Pixmap(
@@ -247,8 +241,8 @@ public class DavidRenderer extends ApplicationAdapter
         file.dispose();
         scaled.dispose();
 
-        BGTex = texture;
-        BGsprite = new Sprite(BGTex);
+        backgroundTexture = texture;
+        backgroundSprite = new Sprite(backgroundTexture);
 
         // custom shaders
         //shaders = new MYshader();
@@ -260,21 +254,20 @@ public class DavidRenderer extends ApplicationAdapter
     public void render() {
         cameraController.update();
 
-
-
         Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
         float delta = Gdx.graphics.getDeltaTime();
 
-        SpriteRenderer.begin();
+        spriteRenderer.begin();
         {
-            BGsprite.draw(SpriteRenderer);
+            backgroundSprite.draw(spriteRenderer);
         }
-        SpriteRenderer.end();
+        spriteRenderer.end();
 
         modelBatch.begin(camera);
         {
+//            System.out.println(delta);
             animation.update(delta);
             modelBatch.render(instance, environment);
         }
@@ -283,6 +276,7 @@ public class DavidRenderer extends ApplicationAdapter
 
     @Override
     public void dispose() {
+        System.out.println("disposed the model");
         modelBatch.dispose();
         model.dispose();
     }

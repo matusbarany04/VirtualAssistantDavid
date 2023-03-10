@@ -54,11 +54,11 @@ public class Debugger extends AppCompatActivity {
             while ((line = bufferedReader.readLine()) != null) {
                 int offset = 0;
                 while(!Character.isAlphabetic(line.charAt(offset))) offset++;
-                line = line.substring(offset);
+                //line = line.substring(offset);
 
                 SpannableStringBuilder logLine = new SpannableStringBuilder(line);
                 int color = Color.WHITE;
-                switch(line.charAt(0)){
+                switch(line.substring(offset).charAt(0)){
                     case 'W':
                         color = Color.YELLOW;
                         break;

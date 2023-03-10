@@ -37,24 +37,19 @@ public class Timetable {
     private ArrayList<TimetableParser.Day> fullTimetable;
     private final ArrayList<OnLoadListener> onLoadListeners = new ArrayList<>();
     private boolean loaded = false;
-
+    Context context;
 
     public Timetable(Context context) {
         times = new ArrayList<>();
-     //   timetable = new ArrayList<>();
-
-        TimetableReader timetableReader = new TimetableReader(context);
-
-        //|| timetableReader.read().isEmpty()       //toto bolo totalne nanič
-
+        this.context = context;
         if(David.maPristupKInternetu(context)) {
 
             try {
-                Edupage edupage = new Edupage(context);//.scrape("smh");
+                Edupage edupage = new Edupage(context);
                 edupage.setOnCompletionListener(new Edupage.OnCompletionListener() {
 
                     @Override
-                    public void onComplete(ArrayList<TimetableParser.Day> timetable) {
+                    public void onComplete(ArrayList<TimetableParser.Day> timetable, int status) {
                         fullTimetable = timetable;
                         String[] groups = Groups.getSavedGroups(context);
                         Timetable.this.timetable =  TimetableParser.filterGroups(fullTimetable, groups);
@@ -65,15 +60,20 @@ public class Timetable {
                 });
             } catch (Exception e) {
                 e.printStackTrace();
+                fallback();
             }
 
         } else {
-            fullTimetable = timetableReader.read().getTimetableArray();
-            initGroups(context);
-            invokeListeners();
-            loaded = true;
+            fallback();
         }
-        //parseTimetableJson(context);
+    }
+
+    private void fallback(){
+        TimetableReader timetableReader = new TimetableReader(context);
+        fullTimetable = timetableReader.read().getTimetableArray();
+        initGroups(context);
+        invokeListeners();
+        loaded = true;
     }
 
     private void initGroups(Context context) {
@@ -99,6 +99,7 @@ public class Timetable {
     }
 
     public static int stringTimeToMinutes(String stringTime) {
+        System.out.println("stringtimetominutes" + stringTime);
         int[] s = Arrays.stream(stringTime.split(":")).mapToInt(Integer::parseInt).toArray();
         return s[0] * 60 + s[1];
     }
@@ -106,7 +107,7 @@ public class Timetable {
     @Deprecated
     private void parseTimetableJson(Context context) {
         String rawJsonData = JSONparser.getFileData(context, R.raw.timetable);
-        JSONObject obj = null;
+        JSONObject obj;
         try {
             obj = new JSONObject(rawJsonData);
             JSONArray array = obj.getJSONArray("timetable");
@@ -185,8 +186,14 @@ public class Timetable {
             if (timeInMinutesStart <= currentTime || !getLessonsToday(false)[i].equals("-")) {
                 try {
                     if (timeInMinutesEnd >= currentTime || nextLessonTime >= currentTime) {
-                        int firstLesson = DavidClockUtils.timeToMinutes(getBeginOfFirstLesson());
-                        return currentTime < firstLesson ? i : i + 1;
+                        String output = getBeginOfFirstLesson();
+                        if(output.matches("-?\\d+")){ // minus sign ot not with one or more digits
+                            int firstLesson = DavidClockUtils.timeToMinutes(output);
+                            return currentTime < firstLesson ? i : i + 1;
+                        }else{
+                            System.err.println("Timetable.class 194: was not a digit!");
+                        }
+
                     }
                 } catch (IndexOutOfBoundsException ignored) {
                 }
@@ -225,7 +232,15 @@ public class Timetable {
             Date date = new Date();
             if (date.getHours() >= 23) return false;
 
-            int minutesEnd = stringTimeToMinutes(getEndOfAllLessons());
+            int minutesEnd= Integer.MIN_VALUE; //defaultne je skola u konca
+            String output = getEndOfAllLessons();
+            if(output.matches("-?\\d+")){ // minus sign ot not with one or more digits
+                minutesEnd = DavidClockUtils.timeToMinutes(output);
+            }else{
+                System.err.println("Timetable.class 240: was not a digit!");
+            }
+
+            //int minutesEnd = stringTimeToMinutes(getEndOfAllLessons());
             return DavidClockUtils.currentTimeInMinutes() > minutesEnd;
 
         } catch (Exception e) {

@@ -8,11 +8,13 @@ import android.util.Pair;
 import androidx.preference.PreferenceManager;
 
 import com.david.notify.R;
+import com.david.notify.davidnotifyme.david.David;
 import com.david.notify.davidnotifyme.david.DavidClockUtils;
 import com.david.notify.davidnotifyme.edupage.internet.AsyncEdupageFetcher;
 import com.david.notify.davidnotifyme.edupage.internet.EdupageCallback;
 import com.david.notify.davidnotifyme.edupage.internet.Result;
 import com.david.notify.davidnotifyme.edupage.readers.EdupageSerializableReader;
+import com.david.notify.davidnotifyme.edupage.readers.TimetableReader;
 import com.david.notify.davidnotifyme.edupage.timetable_objects.Classroom;
 import com.david.notify.davidnotifyme.edupage.timetable_objects.SemiSubject;
 import com.david.notify.davidnotifyme.edupage.timetable_objects.StudentsClass;
@@ -50,39 +52,44 @@ public class Edupage {
 
 
     public void init() {
-        asyncEdupageFetcher = new AsyncEdupageFetcher(result -> {
-            String rawJSON = result.data;
+        asyncEdupageFetcher = new AsyncEdupageFetcher(new EdupageCallback<String>() {
+            @Override
+            public String onComplete(Result.Success<String> result) {
 
-            StudentsClass[] classArray = parseClasses(rawJSON);
-            saveParsedData(classArray, InternalFiles.CLASSES);
+                String rawJSON = result.data;
 
-            SemiSubject[] subjectsArray = parseSubjects(rawJSON);
-            saveParsedData(subjectsArray, InternalFiles.SUBJECTS);
+                StudentsClass[] classArray = Edupage.this.parseClasses(rawJSON);
+                Edupage.this.saveParsedData(classArray, InternalFiles.CLASSES);
 
-            Classroom[] classroomArray = parseClassrooms(rawJSON);
-            saveParsedData(classroomArray, InternalFiles.CLASSROOM);
+                SemiSubject[] subjectsArray = Edupage.this.parseSubjects(rawJSON);
+                Edupage.this.saveParsedData(subjectsArray, InternalFiles.SUBJECTS);
 
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+                Classroom[] classroomArray = Edupage.this.parseClassrooms(rawJSON);
+                Edupage.this.saveParsedData(classroomArray, InternalFiles.CLASSROOM);
 
-            String classname = preferences.getString("trieda", "II.A");
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
 
-            StudentsClass classroom;
-            //niekde v kode je hardconduta II.A (nie ta hore) namiesto idecka, preto tie ify
-            if (classname.chars().allMatch( Character::isDigit )){
-                classroom = findClassroomById(Integer.valueOf(classname));
-            }else{
-                classroom = findClassroomByName(classname);
+                String classname = preferences.getString("trieda", "II.A");
+
+                StudentsClass classroom;
+                //niekde v kode je hardconduta II.A (nie ta hore) namiesto idecka, preto tie ify
+                if (classname.chars().allMatch(Character::isDigit)) {
+                    classroom = Edupage.this.findClassroomById(Integer.valueOf(classname));
+                } else {
+                    classroom = Edupage.this.findClassroomByName(classname);
+                }
+
+                Log.d("trieda", classroom.getName());
+
+                Edupage.this.timetableFetch(classroom.getId());
+                return null;
             }
-
-            Log.d("trieda", classroom.getName());
-
-            timetableFetch(classroom.getId()); // change to dynamic class  chosen by user
-            return null;
         });
 
         try {
             System.out.println("dates  + " + startDate + " " + endDate);
             String content = InternalStorageFile.readFromResource(context, R.raw.subject_id_payload);
+            assert content != null;
             JSONObject payload = new JSONObject(content);
             payload.getJSONArray("__args").put(1, DavidClockUtils.getSchoolYear());
 
@@ -91,9 +98,11 @@ public class Edupage {
             vt_filter.put("dateto", endDate);
 
             Log.d("payload", payload.toString());
-
-            asyncEdupageFetcher.execute(EdupageRoutes.SUBJECT_ID_URL.getEdupageRoute(), payload.toString());
-
+            if(David.maPristupKInternetu(context))
+                asyncEdupageFetcher.execute(EdupageRoutes.SUBJECT_ID_URL.getEdupageRoute(), payload.toString());
+            else {
+                //TODO zase citaj zo suboru ?????
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -173,13 +182,18 @@ public class Edupage {
             new AsyncEdupageFetcher(new EdupageCallback<String>() {
                 @Override
                 public String onComplete(Result.Success<String> result) {
+                    if(!result.data.equals("fallback")){
 
-                    ArrayList<TimetableParser.Day> timetable = parseTimetable(result.data);
+                        ArrayList<TimetableParser.Day> timetable = parseTimetable(result.data);
 
-                    Log.d("result", result.data);
+                        Log.d("result", result.data);
 
-                    if (onCompletionListener != null) {
-                        onCompletionListener.onComplete(timetable);
+                        if (onCompletionListener != null) {
+                            onCompletionListener.onComplete(timetable, 0);
+                        }
+                    }else{
+                        //TODO mozno tiez skontrolovat ci mame aj nieco ulozene
+                        onCompletionListener.onComplete(new TimetableReader(context).read().getTimetableArray(),0); //making a fallback to saved timetable
                     }
                     return null;
                 }
@@ -192,7 +206,7 @@ public class Edupage {
     }
 
     public interface OnCompletionListener {
-        void onComplete(ArrayList<TimetableParser.Day> timetable);
+        void onComplete(ArrayList<TimetableParser.Day> timetable, int status);
     }
 
     public void setOnCompletionListener(OnCompletionListener listener) {

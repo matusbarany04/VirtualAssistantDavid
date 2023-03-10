@@ -118,10 +118,10 @@ public class MainActivity extends AppCompatActivity implements AndroidFragmentAp
         update.setOnClickListener((View view) -> {
             updateTimetableData(true);
         });
-        LinearLayout ulohy = findViewById(R.id.ulohy);
-        ulohy.setOnClickListener((View view) -> {
-            coming_soon();
-        });
+//        LinearLayout ulohy = findViewById(R.id.ulohy);
+//        ulohy.setOnClickListener((View view) -> {
+//            coming_soon();
+//        });
         LinearLayout obedy = findViewById(R.id.obedy);
         obedy.setOnClickListener((View view) -> {
             Intent lunchIntent = new Intent(this, LunchActivity.class);

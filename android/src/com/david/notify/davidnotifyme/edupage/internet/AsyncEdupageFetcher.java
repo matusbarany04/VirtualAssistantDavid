@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -16,7 +17,7 @@ public class AsyncEdupageFetcher extends AsyncTask<String, Integer, String> {
 
     private static final String TAG = "EDUPAGE_FETCHER";
 
-    OkHttpClient client = new OkHttpClient();
+    OkHttpClient client;
 
     EdupageCallback<String> callback;
 
@@ -26,7 +27,14 @@ public class AsyncEdupageFetcher extends AsyncTask<String, Integer, String> {
 
     @Override
     protected void onPreExecute() {
-        super.onPreExecute();
+        super.onPreExecute();//TODO change timeout dynamically
+        client = new OkHttpClient.Builder()
+                .connectTimeout(3, TimeUnit.SECONDS)
+                .writeTimeout(3, TimeUnit.SECONDS)
+                .readTimeout(5, TimeUnit.SECONDS)
+                .retryOnConnectionFailure(false)
+                .build();
+
     }
 
     @Override
@@ -58,10 +66,15 @@ public class AsyncEdupageFetcher extends AsyncTask<String, Integer, String> {
                 .post(body)
                 .build();
         try (Response response = client.newCall(request).execute()) {
-            return response.body().string();
+            if(response.code() == 200){
+                assert response.body() != null;
+                return response.body().string();
+            }
+            return "fallback"; //WARNING make an interface
+
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            return "fallback";
         }
     }
 
