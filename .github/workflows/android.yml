@@ -26,15 +26,29 @@ jobs:
       - name: Build Debug APK
         run: ./gradlew assembleDebug
 
-      # Extract version details from build.gradle and rename APK
-      - name: Rename APK with versioning
+      - name: Extract version details and rename APK
         run: |
-          VERSION_NAME=$(grep "versionName" app/build.gradle | awk '{print $2}' | tr -d \")
-          VERSION_CODE=$(grep "versionCode" app/build.gradle | awk '{print $2}')
-          mv app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/debug/app-$VERSION_NAME-$VERSION_CODE.apk
+          # Use the "android" directory instead of "app"
+          BUILD_GRADLE_PATH="android/build.gradle"
+          if [[ ! -f "$BUILD_GRADLE_PATH" ]]; then
+            echo "Error: $BUILD_GRADLE_PATH not found"
+            exit 1
+          fi
+
+          VERSION_NAME=$(grep "versionName" $BUILD_GRADLE_PATH | awk '{print $2}' | tr -d \")
+          VERSION_CODE=$(grep "versionCode" $BUILD_GRADLE_PATH | awk '{print $2}')
+          
+          # Adjust the APK path based on the "android" directory
+          APK_PATH="android/build/outputs/apk/debug/android-debug.apk"
+          if [[ ! -f "$APK_PATH" ]]; then
+            echo "Error: $APK_PATH not found"
+            exit 1
+          fi
+
+          mv $APK_PATH android/build/outputs/apk/debug/android-$VERSION_NAME-$VERSION_CODE.apk
 
       - name: Upload APK
         uses: actions/upload-artifact@v2
         with:
-          name: app-versioned-debug
-          path: app/build/outputs/apk/debug/app-*.apk
+          name: android-versioned-debug
+          path: android/build/outputs/apk/debug/android-*.apk
