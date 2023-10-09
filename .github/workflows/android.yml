@@ -2,8 +2,13 @@ name: Build APK and Create Release
 
 on:
   push:
-    tags:
-      - 'v*'
+    branches:
+      - master
+      
+# on:
+#   push:
+#     tags:
+#       - 'v*'
 
 jobs:
   build:
