@@ -1,9 +1,9 @@
-name: Build and Rename APK with Versioning
+name: Build APK and Create Release
 
 on:
   push:
-    branches:
-      - master # Or any branch you want the action to run on
+    tags:
+      - 'v*'
 
 jobs:
   build:
@@ -11,44 +11,36 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v2
-        with:
-          distribution: 'adopt'
-          java-version: 17
+    - name: Set up JDK 17
+      uses: actions/setup-java@v2
+      with:
+        distribution: 'adopt'
+        java-version: 17
 
-      - name: Grant execute permissions for gradlew
-        run: chmod +x ./gradlew
+    - name: Grant execute permissions for gradlew
+      run: chmod +x ./gradlew
 
-      - name: Build Debug APK
-        run: ./gradlew assembleDebug
+    - name: Build Debug APK
+      run: ./gradlew assembleDebug
 
-      - name: Extract version details and rename APK
-        run: |
-          # Use the "android" directory instead of "app"
-          BUILD_GRADLE_PATH="android/build.gradle"
-          if [[ ! -f "$BUILD_GRADLE_PATH" ]]; then
-            echo "Error: $BUILD_GRADLE_PATH not found"
-            exit 1
-          fi
+    - name: Extract version details and rename APK
+      run: |
+        BUILD_GRADLE_PATH="android/build.gradle"
+        VERSION_NAME=$(grep "versionName" $BUILD_GRADLE_PATH | awk '{print $2}' | tr -d \")
+        VERSION_CODE=$(grep "versionCode" $BUILD_GRADLE_PATH | awk '{print $2}')
+        APK_PATH="android/build/outputs/apk/debug/android-debug.apk"
+        mv $APK_PATH android/build/outputs/apk/debug/android-$VERSION_NAME-$VERSION_CODE.apk
 
-          VERSION_NAME=$(grep "versionName" $BUILD_GRADLE_PATH | awk '{print $2}' | tr -d \")
-          VERSION_CODE=$(grep "versionCode" $BUILD_GRADLE_PATH | awk '{print $2}')
-          
-          # Adjust the APK path based on the "android" directory
-          APK_PATH="android/build/outputs/apk/debug/android-debug.apk"
-          if [[ ! -f "$APK_PATH" ]]; then
-            echo "Error: $APK_PATH not found"
-            exit 1
-          fi
-
-          mv $APK_PATH android/build/outputs/apk/debug/android-$VERSION_NAME-$VERSION_CODE.apk
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v2
-        with:
-          name: android-versioned-debug
-          path: android/build/outputs/apk/debug/android-*.apk
+    - name: Create GitHub Release and Upload APK
+      uses: gh-actions/gh-release@master
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: false
+        prerelease: false
+        files: android/build/outputs/apk/debug/android-*.apk
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
