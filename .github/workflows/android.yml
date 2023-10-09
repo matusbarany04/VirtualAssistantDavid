@@ -1,14 +1,9 @@
-name: Build APK and Create Release
+name: Build APK and Create Release on Master Push
 
 on:
   push:
     branches:
       - master
-      
-# on:
-#   push:
-#     tags:
-#       - 'v*'
 
 jobs:
   build:
@@ -41,6 +36,7 @@ jobs:
 
     - name: Create GitHub Release and Upload APK
       run: |
-        gh release create ${{ github.ref }} android/build/outputs/apk/debug/android-*.apk --title "Release ${{ github.ref }}" --notes "Release notes for ${{ github.ref }}"
+        COMMIT_SHA=$(git rev-parse --short HEAD)
+        gh release create master-$COMMIT_SHA android/build/outputs/apk/debug/android-*.apk --title "Release for master $COMMIT_SHA" --notes "Release notes for commit $COMMIT_SHA"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
