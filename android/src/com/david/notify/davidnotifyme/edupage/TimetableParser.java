@@ -85,12 +85,20 @@ public class TimetableParser {
         for (int i = 0; i < arrayOfSubjects.length(); i++) {
             JSONObject obj = (JSONObject) arrayOfSubjects.get(i);
             try {
+                if(obj.get("subjectid") == null){
+                    Log.e("SEMI SUBJECT", obj.get("subjectid").toString() + " doesnt exist!!");
+                }
                 SemiSubject semiSubject = subjectHashMap.get(Integer.valueOf(obj.get("subjectid").toString()));
+                if(semiSubject == null) {
+                    Log.e("SEMI SUBJECT", obj.get("subjectid").toString() + " doesnt exist!!");
+                }
 
                 Subject subject;
                 JSONArray classroomIds = ((JSONArray) obj.get("classroomids"));
                 String[] groupnames = toStringArray(obj.getJSONArray("groupnames"));
-
+                if(groupnames == null) {
+                    Log.e("SEMI SUBJECT", "null!!!");
+                }
                 String id = classroomIds.length() > 0 ? classroomIds.getString(0) : "-1";
                 EdupageSerializable s = classroomHashMap.get(Integer.parseInt(id));
                 subject = new Subject(

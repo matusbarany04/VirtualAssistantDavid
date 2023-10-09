@@ -166,7 +166,7 @@ public class Timetable {
             }*/
         }
 
-        return new Pair<>(null, "voľno");
+        return new Pair<>("voľno", "voľno");
     }
 
     public int getClassIndexBasedOnCurrentTime() {
