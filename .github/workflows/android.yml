@@ -35,12 +35,7 @@ jobs:
         mv $APK_PATH android/build/outputs/apk/debug/android-$VERSION_NAME-$VERSION_CODE.apk
 
     - name: Create GitHub Release and Upload APK
-      uses: gh-actions/gh-release@master
-      with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
-        draft: false
-        prerelease: false
-        files: android/build/outputs/apk/debug/android-*.apk
+      run: |
+        gh release create ${{ github.ref }} android/build/outputs/apk/debug/android-*.apk --title "Release ${{ github.ref }}" --notes "Release notes for ${{ github.ref }}"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
