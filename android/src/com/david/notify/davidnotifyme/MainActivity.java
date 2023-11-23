@@ -173,7 +173,7 @@ public class MainActivity extends AppCompatActivity implements AndroidFragmentAp
                     Log.d("prH", david.ziskajPrebiehajucuHodinu().first + " " + david.ziskajPrebiehajucuHodinu().second);
                     String description = "";
 
-                    if(david.ziskajRozvrh().freeTime()) header = "Máš voľno";
+                    if(david.ziskajRozvrh().freeTime()) header = "Škola sa ti už skončila";
                     else {
                         if(DavidClockUtils.afterEleven() || DavidClockUtils.beforeThree()) header = "Bež už spať ! Dobrú noc !";
                         else if(david.ziskajRozvrh().getIndexOfCurrentLesson() == -3) header = "Dobré ráno";

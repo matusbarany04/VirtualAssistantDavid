@@ -79,9 +79,11 @@ public class Edupage {
                     classroom = Edupage.this.findClassroomByName(classname);
                 }
 
-                Log.d("trieda", classroom.getName());
-
-                Edupage.this.timetableFetch(classroom.getId());
+//                Log.d("trieda", classroom.getName());
+                if(classroom != null){
+                    Log.e("trieda je null", "pomoc nieco je zleee aaa");
+                    Edupage.this.timetableFetch(classroom.getId());
+                }
                 return null;
             }
         });

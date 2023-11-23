@@ -225,7 +225,7 @@ public class David {
                 } else if (input.second.equals("víkend")) {
                     header = "Je víkend";
 
-                } else header = "Máš voľno";
+                } else header = "Máš voľno :)";
 
                 if (verbose != null && Boolean.TRUE && input.first != null) {
                     text += " (" + navigator.whereIs(input.second) + ")";
@@ -246,7 +246,7 @@ public class David {
 
         String lesson = timetable.getCurrentLessonName();
 
-        if(lesson.equals("voľno")) return new Pair<>("Máš voľno", "");
+        if(lesson.equals("voľno")) return new Pair<>("Pravdepobne voľno", "");
 
         String header = "Aktuálne prebieha " + lesson;
 

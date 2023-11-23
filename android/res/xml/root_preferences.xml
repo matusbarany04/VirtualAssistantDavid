@@ -84,15 +84,15 @@
         android:key="developer_category"
         app:isPreferenceVisible="true">
 
-        <SwitchPreferenceCompat
-            app:key="two_notify"
-            app:title="David power"
-            android:summary=""/>
+<!--        <SwitchPreferenceCompat-->
+<!--            app:key="two_notify"-->
+<!--            app:title="David power"-->
+<!--            android:summary=""/>-->
 
-        <SwitchPreferenceCompat
-            app:key="two_notify1"
-            app:title="Smart David"
-            android:summary=""/>
+<!--        <SwitchPreferenceCompat-->
+<!--            app:key="two_notify1"-->
+<!--            app:title="Smart David"-->
+<!--            android:summary=""/>-->
 
         <Preference
             app:key="logs"
