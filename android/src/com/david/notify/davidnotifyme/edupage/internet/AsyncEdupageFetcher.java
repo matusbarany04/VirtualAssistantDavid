@@ -29,9 +29,9 @@ public class AsyncEdupageFetcher extends AsyncTask<String, Integer, String> {
     protected void onPreExecute() {
         super.onPreExecute();//TODO change timeout dynamically
         client = new OkHttpClient.Builder()
-                .connectTimeout(3, TimeUnit.SECONDS)
-                .writeTimeout(3, TimeUnit.SECONDS)
-                .readTimeout(5, TimeUnit.SECONDS)
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .writeTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(10, TimeUnit.SECONDS)
                 .retryOnConnectionFailure(false)
                 .build();
 
@@ -70,9 +70,12 @@ public class AsyncEdupageFetcher extends AsyncTask<String, Integer, String> {
                 assert response.body() != null;
                 return response.body().string();
             }
+
+            System.out.println("fetch error " + response.body().string());
             return "fallback"; //WARNING make an interface
 
         } catch (Exception e) {
+            System.out.println("there was an exceptiobn");
             e.printStackTrace();
             return "fallback";
         }

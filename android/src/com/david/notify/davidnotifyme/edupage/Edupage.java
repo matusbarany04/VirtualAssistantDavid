@@ -55,7 +55,7 @@ public class Edupage {
         asyncEdupageFetcher = new AsyncEdupageFetcher(new EdupageCallback<String>() {
             @Override
             public String onComplete(Result.Success<String> result) {
-
+                Log.d("data fetched ", result.data);
                 String rawJSON = result.data;
 
                 StudentsClass[] classArray = Edupage.this.parseClasses(rawJSON);
