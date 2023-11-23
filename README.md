@@ -2,6 +2,11 @@
 
 Welcome to VirtualAssistantDavid, your digital school companion designed to make your academic journey smoother and more manageable. 
 
+
+<img src="/.img/screenshot.png" alt="DavidAssistent" width="300">
+
+
+
 ## Features
 
 ### 1. Lunch Data
