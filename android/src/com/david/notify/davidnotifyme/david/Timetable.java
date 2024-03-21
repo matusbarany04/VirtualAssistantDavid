@@ -234,7 +234,7 @@ public class Timetable {
 
             int minutesEnd= Integer.MIN_VALUE; //defaultne je skola u konca
             String output = getEndOfAllLessons();
-            if(output.matches("-?\\d+")){ // minus sign ot not with one or more digits
+            if(output.matches("-?\\d+:\\d\\d")){ // minus sign ot not with one or more digits
                 minutesEnd = DavidClockUtils.timeToMinutes(output);
             }else{
                 System.err.println("Timetable.class 240: was not a digit!");
